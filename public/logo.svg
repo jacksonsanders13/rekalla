@@ -1,4 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+<g transform="translate(-53 -11)">
   <!-- R letterform, drawn as a contour outline -->
   <g stroke="#ffffff" stroke-width="13">
     <path d="M118 136 L226 136 C288 136 324 168 324 220 C324 258 302 287 264 298 L330 416 L274 416 L212 302 L170 302 L170 416 L118 416 Z" stroke-linejoin="round"/>
@@ -16,4 +17,5 @@
     <path d="M350 208 C368 224 396 230 420 222"/>
     <path d="M356 270 C382 282 416 280 440 264"/>
   </g>
+</g>
 </svg>
