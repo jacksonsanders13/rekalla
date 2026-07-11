@@ -145,7 +145,7 @@ export function VaultView({ userId }: { userId: string }) {
             className={cn(
               "min-h-11 rounded-full border px-4 text-base font-medium transition-colors",
               filter === "all"
-                ? "border-tint-green bg-tint-green text-black"
+                ? "border-white bg-white text-black"
                 : "border-white/15 bg-elev-1 text-label-2 hover:border-white/25",
             )}
           >
@@ -165,7 +165,7 @@ export function VaultView({ userId }: { userId: string }) {
               className={cn(
                 "inline-flex min-h-11 items-center gap-1.5 rounded-full border px-4 text-base font-medium transition-colors",
                 filter === value
-                  ? "border-tint-green bg-tint-green text-black"
+                  ? "border-white bg-white text-black"
                   : "border-white/15 bg-elev-1 text-label-2 hover:border-white/25",
               )}
             >
@@ -244,9 +244,9 @@ export function VaultView({ userId }: { userId: string }) {
                   {item.phone && (
                     <a
                       href={`tel:${item.phone.replace(/[^+\d]/g, "")}`}
-                      className="flex min-h-12 items-center gap-3 rounded-xl bg-tint-green/10 px-4 text-lg font-semibold text-tint-green transition-colors hover:bg-tint-green/15"
+                      className="flex min-h-12 items-center gap-3 rounded-xl bg-white/10 px-4 text-lg font-semibold text-white transition-colors hover:bg-white/10"
                     >
-                      <Phone className="size-5 text-tint-green" aria-hidden="true" />
+                      <Phone className="size-5 text-white" aria-hidden="true" />
                       {item.phone}
                     </a>
                   )}

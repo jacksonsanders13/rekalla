@@ -10,6 +10,7 @@ import { createClient } from "@/lib/supabase/client";
 import { signupSchema, type SignupValues } from "@/lib/validations/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Field } from "@/components/ui/field";
 import { AuthCard, AuthError } from "../auth-card";
 
@@ -58,7 +59,7 @@ export function SignupForm() {
         subtitle="We sent you a confirmation link. Open it to finish creating your account."
       >
         <div className="flex justify-center py-4">
-          <div className="flex size-16 items-center justify-center rounded-2xl bg-tint-green/15 text-tint-green">
+          <div className="flex size-16 items-center justify-center rounded-2xl bg-white/10 text-white">
             <MailCheck className="size-8" aria-hidden="true" />
           </div>
         </div>
@@ -66,7 +67,7 @@ export function SignupForm() {
           Once you&apos;ve confirmed, you can{" "}
           <Link
             href="/login"
-            className="font-semibold text-tint-green underline-offset-4 hover:underline"
+            className="font-semibold text-white underline-offset-4 hover:underline"
           >
             log in here
           </Link>
@@ -113,8 +114,7 @@ export function SignupForm() {
           error={errors.password?.message}
         >
           {(fieldProps) => (
-            <Input
-              type="password"
+            <PasswordInput
               autoComplete="new-password"
               placeholder="Choose a password"
               {...fieldProps}
@@ -132,7 +132,7 @@ export function SignupForm() {
         Already have an account?{" "}
         <Link
           href="/login"
-          className="font-semibold text-tint-green underline-offset-4 hover:underline"
+          className="font-semibold text-white underline-offset-4 hover:underline"
         >
           Log in
         </Link>

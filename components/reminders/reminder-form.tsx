@@ -150,7 +150,7 @@ export function ReminderForm({
                       className={cn(
                         "min-h-12 min-w-14 rounded-xl border px-3 text-base font-semibold transition-colors",
                         selected
-                          ? "border-tint-green bg-tint-green text-black"
+                          ? "border-white bg-white text-black"
                           : "border-white/15 bg-elev-2 text-label-2 hover:border-white/25",
                       )}
                     >

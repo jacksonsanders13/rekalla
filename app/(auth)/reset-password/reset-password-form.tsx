@@ -10,7 +10,7 @@ import {
   type ResetPasswordValues,
 } from "@/lib/validations/auth";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Field } from "@/components/ui/field";
 import { AuthCard, AuthError } from "../auth-card";
 
@@ -56,8 +56,7 @@ export function ResetPasswordForm() {
 
         <Field label="New password" error={errors.password?.message}>
           {(fieldProps) => (
-            <Input
-              type="password"
+            <PasswordInput
               autoComplete="new-password"
               placeholder="New password"
               {...fieldProps}
@@ -71,8 +70,7 @@ export function ResetPasswordForm() {
           error={errors.confirmPassword?.message}
         >
           {(fieldProps) => (
-            <Input
-              type="password"
+            <PasswordInput
               autoComplete="new-password"
               placeholder="Type it once more"
               {...fieldProps}

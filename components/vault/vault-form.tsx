@@ -174,7 +174,7 @@ export function VaultForm({
       <label className="flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border border-white/15 bg-elev-2 px-4 py-3">
         <input
           type="checkbox"
-          className="size-6 accent-tint-green"
+          className="size-6 accent-white"
           {...register("isPinned")}
         />
         <span className="text-base font-medium text-label-2">

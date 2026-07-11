@@ -141,7 +141,7 @@ export function RemindersView({
             className={cn(
               "min-h-12 rounded-xl px-5 text-base font-semibold transition-colors",
               tab === item.id
-                ? "bg-tint-green text-black"
+                ? "bg-white text-black"
                 : "text-label-2 hover:bg-elev-2",
             )}
           >

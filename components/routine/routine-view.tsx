@@ -227,7 +227,7 @@ export function RoutineView({ userId }: { userId: string }) {
                           className={cn(
                             "absolute -left-[38.5px] top-1/2 size-4 -translate-y-1/2 rounded-full border-2 transition-colors",
                             isDone
-                              ? "border-tint-green bg-tint-green"
+                              ? "border-white bg-white"
                               : "border-white/25 bg-elev-1",
                           )}
                         />
@@ -249,8 +249,8 @@ export function RoutineView({ userId }: { userId: string }) {
                             className={cn(
                               "flex size-12 shrink-0 items-center justify-center rounded-xl border-2 transition-all",
                               isDone
-                                ? "border-tint-green bg-tint-green text-black"
-                                : "border-white/25 bg-elev-2 text-transparent hover:border-tint-green",
+                                ? "border-white bg-white text-black"
+                                : "border-white/25 bg-elev-2 text-transparent hover:border-white",
                             )}
                           >
                             <Check className="size-6" aria-hidden="true" />

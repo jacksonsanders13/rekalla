@@ -12,7 +12,7 @@ export default function AuthLayout({
           width={88}
           height={88}
           priority
-          className="rounded-[24%] ring-1 ring-white/15"
+          className="rounded-[24%]"
         />
         <p className="text-2xl font-semibold tracking-tight text-label">
           Rekalla

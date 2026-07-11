@@ -24,7 +24,7 @@ export function TabBar() {
                 aria-current={active ? "page" : undefined}
                 className={cn(
                   "flex min-h-16 flex-col items-center justify-center gap-1 px-1 text-xs font-medium transition-colors",
-                  active ? "text-tint-green" : "text-label-3 hover:text-label-2",
+                  active ? "text-white" : "text-label-3 hover:text-label-2",
                 )}
               >
                 <item.icon

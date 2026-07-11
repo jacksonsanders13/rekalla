@@ -48,7 +48,7 @@ export function ForgotPasswordForm() {
         subtitle="If an account exists with that address, we've sent a link to reset your password."
       >
         <div className="flex justify-center py-4">
-          <div className="flex size-16 items-center justify-center rounded-2xl bg-tint-green/15 text-tint-green">
+          <div className="flex size-16 items-center justify-center rounded-2xl bg-white/10 text-white">
             <MailCheck className="size-8" aria-hidden="true" />
           </div>
         </div>
@@ -56,7 +56,7 @@ export function ForgotPasswordForm() {
           Remembered it after all?{" "}
           <Link
             href="/login"
-            className="font-semibold text-tint-green underline-offset-4 hover:underline"
+            className="font-semibold text-white underline-offset-4 hover:underline"
           >
             Back to log in
           </Link>
@@ -93,7 +93,7 @@ export function ForgotPasswordForm() {
       <p className="mt-7 text-center text-base text-label-3">
         <Link
           href="/login"
-          className="font-semibold text-tint-green underline-offset-4 hover:underline"
+          className="font-semibold text-white underline-offset-4 hover:underline"
         >
           Back to log in
         </Link>

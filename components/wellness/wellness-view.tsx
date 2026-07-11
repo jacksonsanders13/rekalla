@@ -15,7 +15,7 @@ import { CheckInForm, type CheckInValues } from "./check-in-form";
 // Chart accents are deliberately more saturated than the UI palette so the
 // marks don't read as gray (validated for contrast + CVD separation).
 export const CHART_COLORS = {
-  mood: "#30d158",
+  mood: "#ffffff",
   sleep: "#64d2ff",
   energy: "#ff375f",
 } as const;
@@ -169,7 +169,7 @@ export function WellnessView({
               ) : (
                 <ul className="space-y-4">
                   {series.notes.map((entry) => (
-                    <li key={entry.id} className="border-l-2 border-tint-green/30 pl-4">
+                    <li key={entry.id} className="border-l-2 border-white/30 pl-4">
                       <p className="text-sm font-medium text-label-3">
                         {fromDateKey(entry.entry_date).toLocaleDateString("en-US", {
                           weekday: "long",

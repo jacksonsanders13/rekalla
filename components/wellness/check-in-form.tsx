@@ -66,7 +66,7 @@ export function CheckInForm({
               className={cn(
                 "flex min-h-20 flex-col items-center justify-center gap-1 rounded-2xl border-2 px-1 transition-all",
                 mood === option.value
-                  ? "border-tint-green bg-tint-green/10"
+                  ? "border-white bg-white/10"
                   : "border-white/15 bg-elev-2 hover:border-white/25",
               )}
             >
@@ -128,7 +128,7 @@ export function CheckInForm({
               className={cn(
                 "flex min-h-16 flex-col items-center justify-center gap-1.5 rounded-2xl border-2 transition-all",
                 energy === option.value
-                  ? "border-tint-green bg-tint-green/10"
+                  ? "border-white bg-white/10"
                   : "border-white/15 bg-elev-2 hover:border-white/25",
               )}
             >
@@ -138,7 +138,7 @@ export function CheckInForm({
                     key={bar}
                     className={cn(
                       "w-1.5 rounded-full",
-                      bar <= option.value ? "bg-tint-green" : "bg-elev-3",
+                      bar <= option.value ? "bg-white" : "bg-elev-3",
                     )}
                     style={{ height: `${6 + bar * 3}px` }}
                   />

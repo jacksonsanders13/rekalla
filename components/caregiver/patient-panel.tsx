@@ -92,7 +92,7 @@ export function PatientPanel({
         <button
           type="button"
           onClick={onBack}
-          className="mb-5 inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-base font-semibold text-tint-green transition-colors hover:bg-tint-green/10"
+          className="mb-5 inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-base font-semibold text-white transition-colors hover:bg-white/10"
         >
           <ArrowLeft className="size-5" aria-hidden="true" />
           All people

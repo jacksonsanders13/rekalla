@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 import { loginSchema, type LoginValues } from "@/lib/validations/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Field } from "@/components/ui/field";
 import { AuthCard, AuthError } from "../auth-card";
 
@@ -67,8 +68,7 @@ export function LoginForm() {
 
         <Field label="Password" error={errors.password?.message}>
           {(fieldProps) => (
-            <Input
-              type="password"
+            <PasswordInput
               autoComplete="current-password"
               placeholder="Your password"
               {...fieldProps}
@@ -80,7 +80,7 @@ export function LoginForm() {
         <div className="text-right">
           <Link
             href="/forgot-password"
-            className="text-base font-medium text-tint-green underline-offset-4 hover:underline"
+            className="text-base font-medium text-white underline-offset-4 hover:underline"
           >
             Forgot your password?
           </Link>
@@ -95,7 +95,7 @@ export function LoginForm() {
         New to Rekalla?{" "}
         <Link
           href="/signup"
-          className="font-semibold text-tint-green underline-offset-4 hover:underline"
+          className="font-semibold text-white underline-offset-4 hover:underline"
         >
           Create an account
         </Link>

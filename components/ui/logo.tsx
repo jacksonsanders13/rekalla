@@ -34,7 +34,7 @@ export function Logo({
         width={s.box}
         height={s.box}
         priority
-        className="rounded-[24%] bg-base ring-1 ring-white/15"
+        className="rounded-[24%] bg-base"
       />
       {wordmark && (
         <span className={cn("font-semibold tracking-tight text-label", s.text)}>

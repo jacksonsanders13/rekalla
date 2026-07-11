@@ -39,7 +39,7 @@ export function OccurrenceCard({
       <div
         className={cn(
           "flex size-12 shrink-0 items-center justify-center rounded-xl",
-          done ? "bg-tint-green/15 text-tint-green" : "bg-elev-2 text-label-3",
+          done ? "bg-white/10 text-white" : "bg-elev-2 text-label-3",
         )}
       >
         {done ? (

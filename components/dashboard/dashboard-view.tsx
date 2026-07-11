@@ -35,7 +35,7 @@ import { ActivityRings } from "./activity-rings";
 // Ring colors follow the Fitness convention: vivid, distinct, on-black.
 const RING_COLORS = {
   reminders: "#ff375f",
-  routine: "#30d158",
+  routine: "#ffffff",
   checkin: "#64d2ff",
 } as const;
 
@@ -44,7 +44,7 @@ const QUICK_ACTIONS = [
     href: "/reminders",
     label: "Add a reminder",
     icon: Plus,
-    tone: "bg-tint-green/15 text-tint-green",
+    tone: "bg-white/10 text-white",
   },
   {
     href: "/wellness",
@@ -70,7 +70,7 @@ function SectionLink({ href, children }: { href: string; children: string }) {
   return (
     <Link
       href={href}
-      className="inline-flex min-h-11 items-center gap-1 rounded-lg px-2 text-base font-semibold text-tint-green transition-colors hover:bg-tint-green/10"
+      className="inline-flex min-h-11 items-center gap-1 rounded-lg px-2 text-base font-semibold text-white transition-colors hover:bg-white/10"
     >
       {children}
       <ArrowRight className="size-4" aria-hidden="true" />
@@ -235,7 +235,7 @@ export function DashboardView({
           </div>
         ) : open.length === 0 ? (
           <div className="flex items-center gap-4 rounded-3xl bg-elev-1 p-6">
-            <div className="flex size-12 items-center justify-center rounded-full bg-tint-green text-black">
+            <div className="flex size-12 items-center justify-center rounded-full bg-white text-black">
               <Check className="size-6" aria-hidden="true" />
             </div>
             <p className="text-lg font-medium text-label">
@@ -350,7 +350,7 @@ export function DashboardView({
               </p>
               <Link
                 href="/wellness"
-                className="mt-4 inline-flex min-h-12 items-center gap-2 rounded-xl bg-tint-green px-5 text-base font-semibold text-black transition-all hover:brightness-110"
+                className="mt-4 inline-flex min-h-12 items-center gap-2 rounded-xl bg-white px-5 text-base font-semibold text-black transition-all hover:bg-white/90"
               >
                 <HeartPulse className="size-5" aria-hidden="true" />
                 Check in now

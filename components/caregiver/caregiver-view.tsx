@@ -126,12 +126,12 @@ export function CaregiverView({
                 {grouped.incoming.map((link) => (
                   <li
                     key={link.id}
-                    className="flex flex-wrap items-center gap-4 rounded-2xl border border-tint-green/30 bg-tint-green/10 p-6"
+                    className="flex flex-wrap items-center gap-4 rounded-2xl border border-white/30 bg-white/10 p-6"
                   >
-                    <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-tint-green text-black">
+                    <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-white text-black">
                       <HeartHandshake className="size-6" aria-hidden="true" />
                     </div>
-                    <p className="min-w-0 flex-1 text-lg text-tint-green">
+                    <p className="min-w-0 flex-1 text-lg text-white">
                       <strong>{link.patient?.full_name ?? "Someone"}</strong>{" "}
                       has asked you to be their caregiver
                       {link.relationship ? ` (${link.relationship})` : ""}.
