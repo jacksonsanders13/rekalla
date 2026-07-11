@@ -4,6 +4,11 @@ import { AppHeader } from "@/components/layout/app-header";
 import { TabBar } from "@/components/layout/tab-bar";
 import type { AccountType } from "@/types/database";
 
+// Always render the signed-in app fresh and never cache the profile read —
+// account type / session must reflect the current user on every request.
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+
 export default async function AppLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
