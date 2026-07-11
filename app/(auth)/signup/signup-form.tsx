@@ -20,7 +20,7 @@ const ACCOUNT_OPTIONS = [
     value: "patient" as const,
     icon: User,
     title: "For myself",
-    detail: "I want reminders and check-ins for my own day.",
+    detail: "I'd like a family member to set reminders for me.",
   },
   {
     value: "caregiver" as const,
