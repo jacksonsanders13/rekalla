@@ -8,6 +8,7 @@ const PROTECTED_PREFIXES = [
   "/vault",
   "/wellness",
   "/caregiver",
+  "/connect",
   "/settings",
 ];
 

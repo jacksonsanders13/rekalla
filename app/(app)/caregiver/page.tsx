@@ -1,22 +1,18 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { getSessionProfile } from "@/lib/session";
 import { CaregiverHome } from "@/components/caregiver/caregiver-home";
-import { PatientConnect } from "@/components/caregiver/patient-connect";
 
-export const metadata: Metadata = { title: "Caregivers" };
+export const metadata: Metadata = { title: "People" };
 
 export default async function CaregiverPage() {
   const { user, profile } = await getSessionProfile();
 
-  if (profile?.account_type === "caregiver") {
-    return <CaregiverHome caregiverId={user.id} />;
+  // This is the caregiver's dashboard only. A Loved One who lands here goes
+  // to their own connect screen.
+  if (profile?.account_type !== "caregiver") {
+    redirect("/connect");
   }
 
-  // Patient: show their connect code and connected caregivers.
-  return (
-    <PatientConnect
-      patientId={user.id}
-      connectCode={profile?.connect_code ?? "……"}
-    />
-  );
+  return <CaregiverHome caregiverId={user.id} />;
 }
