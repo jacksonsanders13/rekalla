@@ -89,7 +89,7 @@ export default function People() {
                   {link.profile.full_name || "Patient"}
                 </Text>
                 <Text style={styles.personMeta}>
-                  Reminders, routine & wellness
+                  Reminders, routine & memory bank
                 </Text>
               </View>
               <Ionicons name="chevron-forward" size={22} color={colors.label4} />

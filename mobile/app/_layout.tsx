@@ -3,6 +3,7 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SessionProvider } from "../lib/session";
+import { TermsGate } from "../components/terms-gate";
 import { colors } from "../lib/theme";
 
 export default function RootLayout() {
@@ -33,6 +34,7 @@ export default function RootLayout() {
           <Stack.Screen name="settings" options={{ title: "Settings" }} />
           <Stack.Screen name="patient/[id]" options={{ title: "" }} />
         </Stack>
+        <TermsGate />
       </SessionProvider>
     </QueryClientProvider>
   );

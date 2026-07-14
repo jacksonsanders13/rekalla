@@ -3,6 +3,7 @@ import type {
   CompletionStatus,
   ReminderCategory,
   RoutinePeriod,
+  VaultCategory,
   AccountType,
 } from "./database.types";
 
@@ -22,4 +23,10 @@ export interface ReminderOccurrence {
   event: ReminderEvent | null;
 }
 
-export type { CompletionStatus, ReminderCategory, RoutinePeriod, AccountType };
+export type {
+  CompletionStatus,
+  ReminderCategory,
+  RoutinePeriod,
+  VaultCategory,
+  AccountType,
+};

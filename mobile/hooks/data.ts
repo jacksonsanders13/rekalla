@@ -146,6 +146,35 @@ export function useRoutineCompletions(userId: string, dateKey: string) {
   });
 }
 
+export function useSaveRoutineItem(userId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (values: TablesInsert<"routine_items">) => {
+      const { error } = await supabase.from("routine_items").insert(values);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["routine-items", userId] });
+    },
+  });
+}
+
+export function useDeleteRoutineItem(userId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from("routine_items")
+        .delete()
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["routine-items", userId] });
+    },
+  });
+}
+
 export function useToggleRoutine(userId: string, dateKey: string) {
   const qc = useQueryClient();
   return useMutation({
@@ -191,6 +220,32 @@ export function useVaultItems(userId: string) {
         .order("title");
       if (error) throw error;
       return data;
+    },
+  });
+}
+
+export function useSaveVaultItem(userId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (values: TablesInsert<"vault_items">) => {
+      const { error } = await supabase.from("vault_items").insert(values);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["vault-items", userId] });
+    },
+  });
+}
+
+export function useDeleteVaultItem(userId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("vault_items").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["vault-items", userId] });
     },
   });
 }
