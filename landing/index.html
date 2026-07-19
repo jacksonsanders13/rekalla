@@ -83,7 +83,11 @@
     border: 1px solid rgba(255,255,255,0.14);
     box-shadow: 0 30px 80px rgba(0,0,0,0.65), 0 0 0 1px rgba(0,0,0,0.8);
   }
-  .phone img { border-radius: 34px; width: 100%; }
+  .phone img {
+    border-radius: 34px; width: 100%; height: auto;
+    aspect-ratio: 9 / 16.5;
+    object-fit: cover; object-position: top;
+  }
   .phone-sm { width: min(260px, 70vw); }
 
   /* ---- sections ---- */
