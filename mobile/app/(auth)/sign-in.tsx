@@ -2,10 +2,12 @@ import { useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Link, router } from "expo-router";
 import { supabase } from "../../lib/supabase";
+import { useT } from "../../lib/i18n";
 import { colors, font, spacing } from "../../lib/theme";
 import { Screen, Card, Button, Field, Title, Subtitle } from "../../components/ui";
 
 export default function SignIn() {
+  const t = useT();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -23,12 +25,11 @@ export default function SignIn() {
       setBusy(false);
       return setError(
         signInError.message === "Invalid login credentials"
-          ? "That email and password don't match. Please try again."
+          ? t("auth.signIn.badCredentials")
           : signInError.message,
       );
     }
 
-    // Route by role.
     let destination = "/(patient)/summary";
     if (data.user) {
       const { data: profile } = await supabase
@@ -51,46 +52,46 @@ export default function SignIn() {
           style={styles.logo}
           accessibilityLabel="Rekalla"
         />
-        <Text style={styles.wordmark}>Rekalla</Text>
+        <Text style={styles.wordmark}>{t("auth.wordmark")}</Text>
       </View>
 
       <Card>
-        <Title>Welcome back</Title>
-        <Subtitle>Log in to see what&apos;s on your schedule today.</Subtitle>
+        <Title>{t("auth.signIn.title")}</Title>
+        <Subtitle>{t("auth.signIn.subtitle")}</Subtitle>
 
         {error && <Text style={styles.error}>{error}</Text>}
 
         <Field
-          label="Email address"
+          label={t("auth.field.email")}
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
           keyboardType="email-address"
           autoComplete="email"
-          placeholder="you@example.com"
+          placeholder={t("auth.field.emailPlaceholder")}
         />
         <Field
-          label="Password"
+          label={t("auth.field.password")}
           value={password}
           onChangeText={setPassword}
           secureTextEntry
           autoComplete="current-password"
-          placeholder="Your password"
+          placeholder={t("auth.signIn.passwordPlaceholder")}
         />
 
-        <Button label="Log in" loading={busy} onPress={handleSignIn} />
+        <Button label={t("auth.signIn.button")} loading={busy} onPress={handleSignIn} />
 
         <Link href="/(auth)/forgot-password" asChild>
           <Pressable accessibilityRole="link" style={styles.switchLink}>
-            <Text style={styles.forgotText}>Forgot your password?</Text>
+            <Text style={styles.forgotText}>{t("auth.signIn.forgot")}</Text>
           </Pressable>
         </Link>
 
         <Link href="/(auth)/sign-up" asChild>
           <Pressable accessibilityRole="link" style={styles.switchLink}>
             <Text style={styles.switchText}>
-              New to Rekalla?{" "}
-              <Text style={styles.switchStrong}>Create an account</Text>
+              {t("auth.signIn.noAccount")}{" "}
+              <Text style={styles.switchStrong}>{t("auth.signIn.create")}</Text>
             </Text>
           </Pressable>
         </Link>

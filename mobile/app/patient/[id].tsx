@@ -3,10 +3,11 @@ import { Image, Pressable, StyleSheet, Text, TextInput, View } from "react-nativ
 import { Stack, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "../../lib/session";
+import { useT, type TFunc } from "../../lib/i18n";
 import { colors, font, radius, spacing } from "../../lib/theme";
-import { firstName, toDateKey } from "../../lib/utils";
+import { firstName, formatTimeOfDay, fromDateKey, toDateKey } from "../../lib/utils";
 import { pickPhoto, uploadVaultPhoto, type PickedPhoto } from "../../lib/photos";
-import { occurrencesFor, completionSummary, describeSchedule } from "../../lib/reminders";
+import { occurrencesFor, completionSummary } from "../../lib/reminders";
 import {
   useReminders,
   useReminderEvents,
@@ -35,51 +36,81 @@ import type {
 
 type Tab = "reminders" | "routine" | "vault";
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: "reminders", label: "Reminders" },
-  { id: "routine", label: "Routine" },
-  { id: "vault", label: "Memory" },
+const TABS: { id: Tab; labelKey: string }[] = [
+  { id: "reminders", labelKey: "mgr.tab.reminders" },
+  { id: "routine", labelKey: "mgr.tab.routine" },
+  { id: "vault", labelKey: "mgr.tab.vault" },
 ];
 
-const CATEGORIES: { value: ReminderCategory; label: string }[] = [
-  { value: "medication", label: "Medication" },
-  { value: "meals", label: "Meals" },
-  { value: "appointments", label: "Appointments" },
-  { value: "exercise", label: "Exercise" },
-  { value: "family_calls", label: "Family calls" },
-  { value: "custom", label: "Personal" },
+const CATEGORIES: { value: ReminderCategory; labelKey: string }[] = [
+  { value: "medication", labelKey: "cat.medication" },
+  { value: "meals", labelKey: "cat.meals" },
+  { value: "appointments", labelKey: "cat.appointments" },
+  { value: "exercise", labelKey: "cat.exercise" },
+  { value: "family_calls", labelKey: "cat.family_calls" },
+  { value: "custom", labelKey: "cat.custom" },
 ];
 
 const RECURRENCES = [
-  { value: "daily", label: "Every day" },
-  { value: "once", label: "Just once" },
-  { value: "weekly", label: "Weekly" },
+  { value: "daily", labelKey: "freq.daily" },
+  { value: "once", labelKey: "freq.once" },
+  { value: "weekly", labelKey: "freq.weekly" },
 ] as const;
 
 type FormRecurrence = (typeof RECURRENCES)[number]["value"];
 
-const PERIODS: { value: RoutinePeriod; label: string }[] = [
-  { value: "morning", label: "Morning" },
-  { value: "afternoon", label: "Afternoon" },
-  { value: "evening", label: "Evening" },
+const PERIODS: { value: RoutinePeriod; labelKey: string }[] = [
+  { value: "morning", labelKey: "routine.morning" },
+  { value: "afternoon", labelKey: "routine.afternoon" },
+  { value: "evening", labelKey: "routine.evening" },
 ];
 
-const VAULT_CATEGORIES: { value: VaultCategory; label: string }[] = [
-  { value: "family", label: "Family" },
-  { value: "contact", label: "Contact" },
-  { value: "doctor", label: "Doctor" },
-  { value: "medication", label: "Medication" },
-  { value: "important_date", label: "Important date" },
-  { value: "emergency", label: "Emergency" },
-  { value: "note", label: "Note" },
+const VAULT_CATEGORIES: { value: VaultCategory; labelKey: string }[] = [
+  { value: "family", labelKey: "vcat.family" },
+  { value: "contact", labelKey: "vcat.contact" },
+  { value: "doctor", labelKey: "vcat.doctor" },
+  { value: "medication", labelKey: "vcat.medication" },
+  { value: "important_date", labelKey: "vcat.important_date" },
+  { value: "emergency", labelKey: "vcat.emergency" },
+  { value: "note", labelKey: "vcat.note" },
 ];
 
 const TIME_RE = /^([01]?\d|2[0-3]):[0-5]\d$/;
 
+function scheduleText(reminder: Reminder, t: TFunc): string {
+  const time = formatTimeOfDay(reminder.time_of_day);
+  switch (reminder.recurrence) {
+    case "daily":
+      return t("sched.everyDay", { time });
+    case "once": {
+      const date = fromDateKey(reminder.start_date).toLocaleDateString(undefined, {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+      });
+      return t("sched.onDate", { date, time });
+    }
+    case "weekly": {
+      const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const days =
+        reminder.days_of_week.length > 0
+          ? reminder.days_of_week
+          : [fromDateKey(reminder.start_date).getDay()];
+      const list = [...days].sort().map((d) => dayNames[d]).join(", ");
+      return t("sched.every", { days: list, time });
+    }
+    case "monthly": {
+      const day = fromDateKey(reminder.start_date).getDate();
+      return t("sched.monthly", { day, time });
+    }
+  }
+}
+
 export default function ManagePatient() {
   const params = useLocalSearchParams<{ id: string; name?: string }>();
+  const t = useT();
   const patientId = params.id;
-  const patientName = params.name ?? "Patient";
+  const patientName = params.name ?? t("auth.signUp.patient");
   const name = firstName(patientName);
   const [tab, setTab] = useState<Tab>("reminders");
 
@@ -88,21 +119,21 @@ export default function ManagePatient() {
       <Stack.Screen options={{ title: patientName }} />
       <Screen>
         <View style={styles.segmented}>
-          {TABS.map((t) => (
+          {TABS.map((item) => (
             <Pressable
-              key={t.id}
+              key={item.id}
               accessibilityRole="button"
-              accessibilityState={{ selected: tab === t.id }}
-              onPress={() => setTab(t.id)}
-              style={[styles.segment, tab === t.id && styles.segmentActive]}
+              accessibilityState={{ selected: tab === item.id }}
+              onPress={() => setTab(item.id)}
+              style={[styles.segment, tab === item.id && styles.segmentActive]}
             >
               <Text
                 style={[
                   styles.segmentText,
-                  tab === t.id && styles.segmentTextActive,
+                  tab === item.id && styles.segmentTextActive,
                 ]}
               >
-                {t.label}
+                {t(item.labelKey)}
               </Text>
             </Pressable>
           ))}
@@ -132,6 +163,7 @@ function RemindersSection({
   name: string;
 }) {
   const { session } = useSession();
+  const t = useT();
   const caregiverId = session?.user.id ?? "";
   const todayKey = toDateKey();
 
@@ -182,9 +214,9 @@ function RemindersSection({
 
   function handleSubmit() {
     setFormError(null);
-    if (!title.trim()) return setFormError("Please give the reminder a name.");
+    if (!title.trim()) return setFormError(t("mgr.err.name"));
     if (!TIME_RE.test(time.trim())) {
-      return setFormError("Time must look like 08:00 or 19:30.");
+      return setFormError(t("mgr.err.time"));
     }
     if (editingId) {
       update.mutate(
@@ -220,35 +252,33 @@ function RemindersSection({
     <>
       <Text style={styles.summaryLine}>
         {loading
-          ? "Loading today…"
+          ? t("common.loading")
           : summary.total === 0
-            ? "No reminders scheduled today."
-            : `${summary.done} of ${summary.total} reminders done today.`}
+            ? t("mgr.rem.none")
+            : t("mgr.rem.summary", { done: summary.done, total: summary.total })}
       </Text>
 
       <Button
-        label={showForm ? "Cancel" : `Add reminder for ${name}`}
+        label={showForm ? t("common.cancel") : t("mgr.rem.add", { name })}
         variant={showForm ? "secondary" : "primary"}
         onPress={() => (showForm ? reset() : setShowForm(true))}
       />
 
       {showForm && (
         <Card>
-          {editingId && <Text style={styles.editingLabel}>Editing reminder</Text>}
+          {editingId && <Text style={styles.editingLabel}>{t("mgr.rem.editing")}</Text>}
           {formError && <Text style={styles.error}>{formError}</Text>}
-          <Text style={styles.fieldLabel}>
-            What should we remind {name} about?
-          </Text>
+          <Text style={styles.fieldLabel}>{t("mgr.rem.q1", { name })}</Text>
           <TextInput
             value={title}
             onChangeText={setTitle}
-            placeholder="e.g. Take morning medication"
+            placeholder={t("mgr.rem.q1Placeholder")}
             placeholderTextColor={colors.label4}
             style={styles.input}
           />
-          <Text style={styles.fieldLabel}>Category</Text>
+          <Text style={styles.fieldLabel}>{t("mgr.rem.category")}</Text>
           <Chips options={CATEGORIES} value={category} onChange={setCategory} />
-          <Text style={styles.fieldLabel}>At what time? (24-hour, like 08:00)</Text>
+          <Text style={styles.fieldLabel}>{t("mgr.rem.time")}</Text>
           <TextInput
             value={time}
             onChangeText={setTime}
@@ -257,25 +287,25 @@ function RemindersSection({
             style={styles.input}
             keyboardType="numbers-and-punctuation"
           />
-          <Text style={styles.fieldLabel}>How often?</Text>
+          <Text style={styles.fieldLabel}>{t("mgr.rem.freq")}</Text>
           <Chips
             options={RECURRENCES}
             value={recurrence}
             onChange={setRecurrence}
           />
           <Button
-            label={editingId ? "Save changes" : "Add reminder"}
+            label={editingId ? t("mgr.rem.saveBtn") : t("mgr.rem.addBtn")}
             loading={save.isPending || update.isPending}
             onPress={handleSubmit}
           />
         </Card>
       )}
 
-      <SectionTitle>Today</SectionTitle>
+      <SectionTitle>{t("mgr.rem.today")}</SectionTitle>
       {loading ? (
         <Loading />
       ) : occurrences.length === 0 ? (
-        <EmptyNote>Nothing scheduled for {name} today.</EmptyNote>
+        <EmptyNote>{t("mgr.rem.nothingToday", { name })}</EmptyNote>
       ) : (
         occurrences.map((occurrence) => (
           <OccurrenceRow
@@ -286,15 +316,15 @@ function RemindersSection({
         ))
       )}
 
-      <SectionTitle>All reminders</SectionTitle>
+      <SectionTitle>{t("mgr.rem.all")}</SectionTitle>
       {(reminders.data ?? []).length === 0 ? (
-        <EmptyNote>No reminders yet — add the first one above.</EmptyNote>
+        <EmptyNote>{t("mgr.rem.allEmpty")}</EmptyNote>
       ) : (
         (reminders.data ?? []).map((reminder) => (
           <ManageRow
             key={reminder.id}
             title={reminder.title}
-            meta={describeSchedule(reminder)}
+            meta={scheduleText(reminder, t)}
             active={editingId === reminder.id}
             onEdit={() => startEdit(reminder)}
             onDelete={() => remove.mutate(reminder.id)}
@@ -316,6 +346,7 @@ function RoutineSection({
   patientId: string;
   name: string;
 }) {
+  const t = useT();
   const items = useRoutineItems(patientId);
   const save = useSaveRoutineItem(patientId);
   const update = useUpdateRoutineItem(patientId);
@@ -350,9 +381,9 @@ function RoutineSection({
 
   function handleSubmit() {
     setFormError(null);
-    if (!title.trim()) return setFormError("Please name this step.");
+    if (!title.trim()) return setFormError(t("mgr.err.stepName"));
     if (time.trim() && !TIME_RE.test(time.trim())) {
-      return setFormError("Time must look like 08:00, or leave it blank.");
+      return setFormError(t("mgr.err.timeOptional"));
     }
     if (editingId) {
       update.mutate(
@@ -381,43 +412,39 @@ function RoutineSection({
 
   return (
     <>
-      <Text style={styles.summaryLine}>
-        Steps for {name}&apos;s day — they check these off themselves.
-      </Text>
+      <Text style={styles.summaryLine}>{t("mgr.rt.summary", { name })}</Text>
 
       <Button
-        label={showForm ? "Cancel" : `Add a routine step for ${name}`}
+        label={showForm ? t("common.cancel") : t("mgr.rt.add", { name })}
         variant={showForm ? "secondary" : "primary"}
         onPress={() => (showForm ? reset() : setShowForm(true))}
       />
 
       {showForm && (
         <Card>
-          {editingId && <Text style={styles.editingLabel}>Editing step</Text>}
+          {editingId && <Text style={styles.editingLabel}>{t("mgr.rt.editing")}</Text>}
           {formError && <Text style={styles.error}>{formError}</Text>}
-          <Text style={styles.fieldLabel}>What&apos;s the step?</Text>
+          <Text style={styles.fieldLabel}>{t("mgr.rt.q1")}</Text>
           <TextInput
             value={title}
             onChangeText={setTitle}
-            placeholder="e.g. Brush teeth"
+            placeholder={t("mgr.rt.q1Placeholder")}
             placeholderTextColor={colors.label4}
             style={styles.input}
           />
-          <Text style={styles.fieldLabel}>Time of day</Text>
+          <Text style={styles.fieldLabel}>{t("mgr.rt.period")}</Text>
           <Chips options={PERIODS} value={period} onChange={setPeriod} />
-          <Text style={styles.fieldLabel}>
-            Around what time? (optional, like 08:00)
-          </Text>
+          <Text style={styles.fieldLabel}>{t("mgr.rt.time")}</Text>
           <TextInput
             value={time}
             onChangeText={setTime}
-            placeholder="Leave blank if it doesn't matter"
+            placeholder={t("mgr.rt.timePlaceholder")}
             placeholderTextColor={colors.label4}
             style={styles.input}
             keyboardType="numbers-and-punctuation"
           />
           <Button
-            label={editingId ? "Save changes" : "Add step"}
+            label={editingId ? t("mgr.rem.saveBtn") : t("mgr.rt.addBtn")}
             loading={save.isPending || update.isPending}
             onPress={handleSubmit}
           />
@@ -427,20 +454,22 @@ function RoutineSection({
       {items.isLoading ? (
         <Loading />
       ) : all.length === 0 ? (
-        <EmptyNote>No routine yet — add {name}&apos;s first step above.</EmptyNote>
+        <EmptyNote>{t("mgr.rt.empty", { name })}</EmptyNote>
       ) : (
         PERIODS.map((p) => {
           const periodItems = all.filter((i) => i.period === p.value);
           if (periodItems.length === 0) return null;
           return (
             <View key={p.value} style={{ gap: spacing(3) }}>
-              <SectionTitle>{p.label}</SectionTitle>
+              <SectionTitle>{t(p.labelKey)}</SectionTitle>
               {periodItems.map((item) => (
                 <ManageRow
                   key={item.id}
                   title={item.title}
                   meta={
-                    item.time_of_day ? `around ${item.time_of_day}` : "any time"
+                    item.time_of_day
+                      ? t("routine.around", { time: item.time_of_day })
+                      : t("mgr.rt.anyTime")
                   }
                   active={editingId === item.id}
                   onEdit={() => startEdit(item)}
@@ -467,6 +496,7 @@ function VaultSection({
   name: string;
 }) {
   const { session } = useSession();
+  const t = useT();
   const caregiverId = session?.user.id ?? "";
   const items = useVaultItems(patientId);
   const save = useSaveVaultItem(patientId);
@@ -522,19 +552,16 @@ function VaultSection({
 
   async function handleSubmit() {
     setFormError(null);
-    if (!title.trim()) return setFormError("Please give this a name.");
+    if (!title.trim()) return setFormError(t("mgr.err.vaultName"));
     setSaving(true);
 
-    // Keep the existing photo unless the caregiver picked a new one or removed it.
     let photoUrl: string | null = existingPhotoUrl;
     if (photo) {
       try {
         photoUrl = await uploadVaultPhoto(caregiverId, photo);
       } catch {
         setSaving(false);
-        setFormError(
-          "The photo didn't upload. Check your connection and try again, or remove the photo.",
-        );
+        setFormError(t("mgr.vt.photoErr"));
         return;
       }
     }
@@ -577,72 +604,70 @@ function VaultSection({
 
   return (
     <>
-      <Text style={styles.summaryLine}>
-        People, doctors, and details {name} can look up any time.
-      </Text>
+      <Text style={styles.summaryLine}>{t("mgr.vt.summary", { name })}</Text>
 
       <Button
-        label={showForm ? "Cancel" : `Add to ${name}'s memory bank`}
+        label={showForm ? t("common.cancel") : t("mgr.vt.add", { name })}
         variant={showForm ? "secondary" : "primary"}
         onPress={() => (showForm ? reset() : setShowForm(true))}
       />
 
       {showForm && (
         <Card>
-          {editingId && <Text style={styles.editingLabel}>Editing entry</Text>}
+          {editingId && <Text style={styles.editingLabel}>{t("mgr.vt.editing")}</Text>}
           {formError && <Text style={styles.error}>{formError}</Text>}
-          <Text style={styles.fieldLabel}>What kind of thing is this?</Text>
+          <Text style={styles.fieldLabel}>{t("mgr.vt.kind")}</Text>
           <Chips
             options={VAULT_CATEGORIES}
             value={category}
             onChange={setCategory}
           />
-          <Text style={styles.fieldLabel}>Name</Text>
+          <Text style={styles.fieldLabel}>{t("mgr.vt.name")}</Text>
           <TextInput
             value={title}
             onChangeText={setTitle}
-            placeholder="e.g. Dr. Alvarez, or Sarah (daughter)"
+            placeholder={t("mgr.vt.namePlaceholder")}
             placeholderTextColor={colors.label4}
             style={styles.input}
           />
-          <Text style={styles.fieldLabel}>Short description (optional)</Text>
+          <Text style={styles.fieldLabel}>{t("mgr.vt.desc")}</Text>
           <TextInput
             value={subtitle}
             onChangeText={setSubtitle}
-            placeholder="e.g. Primary care doctor"
+            placeholder={t("mgr.vt.descPlaceholder")}
             placeholderTextColor={colors.label4}
             style={styles.input}
           />
-          <Text style={styles.fieldLabel}>Phone number (optional)</Text>
+          <Text style={styles.fieldLabel}>{t("mgr.vt.phone")}</Text>
           <TextInput
             value={phone}
             onChangeText={setPhone}
-            placeholder="e.g. (555) 123-4567"
+            placeholder={t("mgr.vt.phonePlaceholder")}
             placeholderTextColor={colors.label4}
             style={styles.input}
             keyboardType="phone-pad"
           />
-          <Text style={styles.fieldLabel}>Notes (optional)</Text>
+          <Text style={styles.fieldLabel}>{t("mgr.vt.notes")}</Text>
           <TextInput
             value={notes}
             onChangeText={setNotes}
-            placeholder="Anything helpful to remember"
+            placeholder={t("mgr.vt.notesPlaceholder")}
             placeholderTextColor={colors.label4}
             style={[styles.input, styles.multiline]}
             multiline
           />
-          <Text style={styles.fieldLabel}>Photo (optional)</Text>
+          <Text style={styles.fieldLabel}>{t("mgr.vt.photo")}</Text>
           {shownPhotoUri ? (
             <View style={styles.photoRow}>
               <Image source={{ uri: shownPhotoUri }} style={styles.photoPreview} />
               <View style={{ flex: 1, gap: spacing(2) }}>
                 <Button
-                  label="Choose a different photo"
+                  label={t("mgr.vt.changePhoto")}
                   variant="secondary"
                   onPress={handlePickPhoto}
                 />
                 <Button
-                  label="Remove photo"
+                  label={t("mgr.vt.removePhoto")}
                   variant="ghost"
                   onPress={() => {
                     setPhoto(null);
@@ -653,13 +678,13 @@ function VaultSection({
             </View>
           ) : (
             <Button
-              label="Add a photo"
+              label={t("mgr.vt.addPhoto")}
               variant="secondary"
               onPress={handlePickPhoto}
             />
           )}
           <Button
-            label={editingId ? "Save changes" : "Save to memory bank"}
+            label={editingId ? t("mgr.rem.saveBtn") : t("mgr.vt.saveBtn")}
             loading={saving || save.isPending || update.isPending}
             onPress={handleSubmit}
           />
@@ -669,9 +694,7 @@ function VaultSection({
       {items.isLoading ? (
         <Loading />
       ) : all.length === 0 ? (
-        <EmptyNote>
-          Nothing saved yet — add the first person or detail above.
-        </EmptyNote>
+        <EmptyNote>{t("mgr.vt.empty")}</EmptyNote>
       ) : (
         all.map((item) => (
           <ManageRow
@@ -680,8 +703,7 @@ function VaultSection({
             meta={
               item.subtitle ||
               item.phone ||
-              VAULT_CATEGORIES.find((c) => c.value === item.category)?.label ||
-              "Note"
+              t(`vcat.${item.category}`)
             }
             photoUrl={item.photo_url}
             active={editingId === item.id}
@@ -703,10 +725,11 @@ function Chips<T extends string>({
   value,
   onChange,
 }: {
-  options: readonly { value: T; label: string }[];
+  options: readonly { value: T; labelKey: string }[];
   value: T;
   onChange: (v: T) => void;
 }) {
+  const t = useT();
   return (
     <View style={styles.chips}>
       {options.map((option) => (
@@ -723,7 +746,7 @@ function Chips<T extends string>({
               value === option.value && styles.chipTextSelected,
             ]}
           >
-            {option.label}
+            {t(option.labelKey)}
           </Text>
         </Pressable>
       ))}
@@ -746,6 +769,7 @@ function ManageRow({
   onEdit: () => void;
   onDelete: () => void;
 }) {
+  const t = useT();
   return (
     <View style={[styles.row, active && styles.rowActive]}>
       {photoUrl ? (
@@ -756,7 +780,7 @@ function ManageRow({
         <Text style={styles.rowMeta}>{meta}</Text>
       </View>
       <Pressable
-        accessibilityLabel={`Edit ${title}`}
+        accessibilityLabel={t("common.edit")}
         accessibilityRole="button"
         onPress={onEdit}
         style={styles.editButton}
@@ -764,7 +788,7 @@ function ManageRow({
         <Ionicons name="pencil" size={19} color={colors.label2} />
       </Pressable>
       <Pressable
-        accessibilityLabel={`Delete ${title}`}
+        accessibilityLabel={t("delete.open")}
         accessibilityRole="button"
         onPress={onDelete}
         style={styles.deleteButton}

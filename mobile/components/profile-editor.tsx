@@ -2,12 +2,14 @@ import { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { supabase } from "../lib/supabase";
 import { useSession } from "../lib/session";
+import { useT } from "../lib/i18n";
 import { colors, font, radius, spacing } from "../lib/theme";
 import { Card, Button } from "./ui";
 
 /** Shows the signed-in person's name + email, with inline editing of the name. */
 export function ProfileEditor({ fallbackName }: { fallbackName: string }) {
   const { session, profile, refreshProfile } = useSession();
+  const t = useT();
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(profile?.full_name ?? "");
   const [busy, setBusy] = useState(false);
@@ -15,7 +17,7 @@ export function ProfileEditor({ fallbackName }: { fallbackName: string }) {
 
   async function save() {
     setError(null);
-    if (!name.trim()) return setError("Please enter a name.");
+    if (!name.trim()) return setError(t("settings.nameNeeded"));
     if (!session) return;
     setBusy(true);
     const { error: saveError } = await supabase
@@ -37,19 +39,19 @@ export function ProfileEditor({ fallbackName }: { fallbackName: string }) {
   if (editing) {
     return (
       <Card>
-        <Text style={styles.fieldLabel}>Your name</Text>
+        <Text style={styles.fieldLabel}>{t("settings.yourName")}</Text>
         {error && <Text style={styles.error}>{error}</Text>}
         <TextInput
           value={name}
           onChangeText={setName}
-          placeholder="Your name"
+          placeholder={t("settings.yourName")}
           placeholderTextColor={colors.label4}
           style={styles.input}
           autoFocus
         />
-        <Button label="Save name" loading={busy} onPress={save} />
+        <Button label={t("settings.saveName")} loading={busy} onPress={save} />
         <Button
-          label="Cancel"
+          label={t("common.cancel")}
           variant="ghost"
           onPress={() => {
             setEditing(false);
@@ -69,11 +71,11 @@ export function ProfileEditor({ fallbackName }: { fallbackName: string }) {
         </View>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Edit your name"
+          accessibilityLabel={t("common.edit")}
           onPress={startEdit}
           style={styles.editBtn}
         >
-          <Text style={styles.editText}>Edit</Text>
+          <Text style={styles.editText}>{t("common.edit")}</Text>
         </Pressable>
       </View>
     </Card>

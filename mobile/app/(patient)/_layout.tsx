@@ -1,10 +1,12 @@
 import { Redirect, Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "../../lib/session";
+import { useT } from "../../lib/i18n";
 import { colors } from "../../lib/theme";
 
 export default function PatientTabs() {
   const { session, profile, loading } = useSession();
+  const t = useT();
 
   if (!loading && !session) return <Redirect href="/(auth)/sign-in" />;
   if (!loading && profile?.account_type === "caregiver") {
@@ -30,7 +32,7 @@ export default function PatientTabs() {
       <Tabs.Screen
         name="summary"
         options={{
-          title: "Summary",
+          title: t("tab.summary"),
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" size={size} color={color} />
@@ -40,7 +42,7 @@ export default function PatientTabs() {
       <Tabs.Screen
         name="reminders"
         options={{
-          title: "Reminders",
+          title: t("tab.reminders"),
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="notifications" size={size} color={color} />
           ),
@@ -49,7 +51,7 @@ export default function PatientTabs() {
       <Tabs.Screen
         name="routine"
         options={{
-          title: "Routine",
+          title: t("tab.routine"),
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="sunny" size={size} color={color} />
           ),
@@ -58,7 +60,7 @@ export default function PatientTabs() {
       <Tabs.Screen
         name="vault"
         options={{
-          title: "Vault",
+          title: t("tab.vault"),
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="book" size={size} color={color} />
           ),
@@ -67,7 +69,7 @@ export default function PatientTabs() {
       <Tabs.Screen
         name="wellness"
         options={{
-          title: "Wellness",
+          title: t("tab.wellness"),
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="heart" size={size} color={color} />
           ),

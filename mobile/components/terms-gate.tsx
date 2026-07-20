@@ -12,6 +12,7 @@ import {
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSession } from "../lib/session";
+import { useT } from "../lib/i18n";
 import { colors, font, radius, spacing } from "../lib/theme";
 
 /**
@@ -31,6 +32,7 @@ const keyFor = (userId: string) => `rekalla:terms-accepted:${TERMS_VERSION}:${us
  */
 export function TermsGate({ onResolved }: { onResolved?: () => void }) {
   const { session, loading } = useSession();
+  const t = useT();
   const userId = session?.user.id;
 
   const [checked, setChecked] = useState(false);
@@ -78,10 +80,8 @@ export function TermsGate({ onResolved }: { onResolved?: () => void }) {
       <SafeAreaProvider>
       <SafeAreaView style={styles.screen}>
         <View style={styles.header}>
-          <Text style={styles.title}>Before you begin</Text>
-          <Text style={styles.subtitle}>
-            Please review and accept our Terms of Use and Privacy Policy.
-          </Text>
+          <Text style={styles.title}>{t("terms.header")}</Text>
+          <Text style={styles.subtitle}>{t("terms.sub")}</Text>
         </View>
 
         <ScrollView
@@ -109,9 +109,7 @@ export function TermsGate({ onResolved }: { onResolved?: () => void }) {
           </Text>
 
           <Text style={styles.scrollHint}>
-            {scrolledToEnd
-              ? "Thanks for reading."
-              : "Scroll to the bottom to continue."}
+            {scrolledToEnd ? t("terms.thanks") : t("terms.scrollHint")}
           </Text>
         </ScrollView>
 
@@ -133,7 +131,7 @@ export function TermsGate({ onResolved }: { onResolved?: () => void }) {
                 !scrolledToEnd && styles.acceptLabelDisabled,
               ]}
             >
-              {scrolledToEnd ? "Accept & continue" : "Scroll down to accept"}
+              {scrolledToEnd ? t("terms.accept") : t("terms.scrollDown")}
             </Text>
           </Pressable>
         </View>

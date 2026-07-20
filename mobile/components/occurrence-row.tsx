@@ -2,19 +2,20 @@ import { StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, font, radius, spacing } from "../lib/theme";
 import { formatTimeOfDay } from "../lib/utils";
+import { useT } from "../lib/i18n";
 import type { ReminderOccurrence } from "../lib/types";
 import { Button } from "./ui";
 
 const CATEGORY_META: Record<
   string,
-  { label: string; icon: keyof typeof Ionicons.glyphMap; color: string }
+  { icon: keyof typeof Ionicons.glyphMap; color: string }
 > = {
-  medication: { label: "Medication", icon: "medkit", color: colors.pink },
-  meals: { label: "Meals", icon: "restaurant", color: colors.orange },
-  appointments: { label: "Appointments", icon: "calendar", color: colors.blue },
-  exercise: { label: "Exercise", icon: "walk", color: colors.green },
-  family_calls: { label: "Family calls", icon: "call", color: colors.purple },
-  custom: { label: "Personal", icon: "star", color: colors.teal },
+  medication: { icon: "medkit", color: colors.pink },
+  meals: { icon: "restaurant", color: colors.orange },
+  appointments: { icon: "calendar", color: colors.blue },
+  exercise: { icon: "walk", color: colors.green },
+  family_calls: { icon: "call", color: colors.purple },
+  custom: { icon: "star", color: colors.teal },
 };
 
 /** One reminder for today with the two big actions: Done and Snooze. */
@@ -29,6 +30,7 @@ export function OccurrenceRow({
   onAction?: (action: "complete" | "snooze" | "reopen") => void;
   readOnly?: boolean;
 }) {
+  const t = useT();
   const { reminder, status, event } = occurrence;
   const meta = CATEGORY_META[reminder.category] ?? CATEGORY_META.custom;
   const done = status === "completed";
@@ -50,10 +52,15 @@ export function OccurrenceRow({
             {reminder.title}
           </Text>
           <Text style={styles.meta}>
-            {formatTimeOfDay(reminder.time_of_day)} · {meta.label}
-            {overdue ? "  ·  Still waiting" : ""}
+            {formatTimeOfDay(reminder.time_of_day)} · {t(`cat.${reminder.category}`)}
+            {overdue ? `  ·  ${t("reminders.stillWaiting")}` : ""}
             {snoozed && event?.snoozed_until
-              ? `  ·  Snoozed until ${new Date(event.snoozed_until).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}`
+              ? `  ·  ${t("reminders.snoozedUntil", {
+                  time: new Date(event.snoozed_until).toLocaleTimeString(undefined, {
+                    hour: "numeric",
+                    minute: "2-digit",
+                  }),
+                })}`
               : ""}
           </Text>
           {reminder.description && !done ? (
@@ -65,14 +72,14 @@ export function OccurrenceRow({
       {!readOnly && onAction && !done && (
         <View style={styles.actions}>
           <Button
-            label="Done"
+            label={t("common.done")}
             style={{ flex: 1 }}
             disabled={busy}
             onPress={() => onAction("complete")}
           />
           {!snoozed && (
             <Button
-              label="Snooze"
+              label={t("common.snooze")}
               variant="secondary"
               style={{ flex: 1 }}
               disabled={busy}
@@ -83,7 +90,7 @@ export function OccurrenceRow({
       )}
       {!readOnly && onAction && done && (
         <Button
-          label="Undo"
+          label={t("common.undo")}
           variant="ghost"
           disabled={busy}
           onPress={() => onAction("reopen")}

@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useSession } from "../../lib/session";
+import { useT } from "../../lib/i18n";
 import { toDateKey } from "../../lib/utils";
 import { occurrencesFor } from "../../lib/reminders";
 import {
@@ -12,6 +13,7 @@ import { OccurrenceRow } from "../../components/occurrence-row";
 
 export default function Reminders() {
   const { session } = useSession();
+  const t = useT();
   const userId = session?.user.id ?? "";
   const todayKey = toDateKey();
 
@@ -26,16 +28,11 @@ export default function Reminders() {
 
   return (
     <Screen>
-      <Subtitle>
-        Check things off as you go. Your caregiver keeps this list up to date.
-      </Subtitle>
+      <Subtitle>{t("reminders.subtitle")}</Subtitle>
       {reminders.isLoading || events.isLoading ? (
         <Loading />
       ) : occurrences.length === 0 ? (
-        <EmptyNote>
-          Nothing scheduled today. Reminders your caregiver adds will show up
-          here.
-        </EmptyNote>
+        <EmptyNote>{t("reminders.empty")}</EmptyNote>
       ) : (
         occurrences.map((occurrence) => (
           <OccurrenceRow

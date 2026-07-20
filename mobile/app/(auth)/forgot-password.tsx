@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text } from "react-native";
 import { Link } from "expo-router";
 import { supabase } from "../../lib/supabase";
-import { colors, font, spacing } from "../../lib/theme";
+import { useT } from "../../lib/i18n";
+import { colors, font } from "../../lib/theme";
 import { Screen, Card, Button, Field, Title, Subtitle } from "../../components/ui";
 
 export default function ForgotPassword() {
+  const t = useT();
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
@@ -13,7 +15,7 @@ export default function ForgotPassword() {
 
   async function handleSend() {
     setError(null);
-    if (!email.trim()) return setError("Please enter your email address.");
+    if (!email.trim()) return setError(t("auth.forgot.needEmail"));
     setBusy(true);
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(
       email.trim(),
@@ -26,42 +28,35 @@ export default function ForgotPassword() {
   return (
     <Screen>
       <Card>
-        <Title>Reset your password</Title>
+        <Title>{t("auth.forgot.title")}</Title>
         {sent ? (
           <>
-            <Subtitle>
-              If an account exists for {email.trim()}, we&apos;ve sent a link to
-              reset your password. Open the email on this phone and follow the
-              link, then come back and log in.
-            </Subtitle>
+            <Subtitle>{t("auth.forgot.sent", { email: email.trim() })}</Subtitle>
             <Link href="/(auth)/sign-in" asChild>
-              <Button label="Back to log in" variant="secondary" />
+              <Button label={t("auth.forgot.back")} variant="secondary" />
             </Link>
           </>
         ) : (
           <>
-            <Subtitle>
-              Enter your email and we&apos;ll send you a link to set a new
-              password.
-            </Subtitle>
+            <Subtitle>{t("auth.forgot.subtitle")}</Subtitle>
 
             {error && <Text style={styles.error}>{error}</Text>}
 
             <Field
-              label="Email address"
+              label={t("auth.field.email")}
               value={email}
               onChangeText={setEmail}
               autoCapitalize="none"
               keyboardType="email-address"
               autoComplete="email"
-              placeholder="you@example.com"
+              placeholder={t("auth.field.emailPlaceholder")}
             />
 
-            <Button label="Send reset link" loading={busy} onPress={handleSend} />
+            <Button label={t("auth.forgot.button")} loading={busy} onPress={handleSend} />
 
             <Link href="/(auth)/sign-in" asChild>
               <Pressable accessibilityRole="link" style={styles.link}>
-                <Text style={styles.linkText}>Back to log in</Text>
+                <Text style={styles.linkText}>{t("auth.forgot.back")}</Text>
               </Pressable>
             </Link>
           </>

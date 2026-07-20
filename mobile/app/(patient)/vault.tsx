@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Image, Linking, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "../../lib/session";
+import { useT } from "../../lib/i18n";
 import { colors, font, radius, spacing } from "../../lib/theme";
 import { useVaultItems } from "../../hooks/data";
 import { Screen, Subtitle, EmptyNote, Loading } from "../../components/ui";
@@ -21,6 +22,7 @@ const CATEGORY_META: Record<
 
 export default function Vault() {
   const { session } = useSession();
+  const t = useT();
   const userId = session?.user.id ?? "";
   const [query, setQuery] = useState("");
   const items = useVaultItems(userId);
@@ -40,26 +42,19 @@ export default function Vault() {
 
   return (
     <Screen>
-      <Subtitle>
-        People, doctors, and important details — kept up to date by your
-        caregiver.
-      </Subtitle>
+      <Subtitle>{t("vault.subtitle")}</Subtitle>
       <TextInput
         value={query}
         onChangeText={setQuery}
-        placeholder="Search names, medications, notes…"
+        placeholder={t("vault.search")}
         placeholderTextColor={colors.label4}
         style={styles.search}
-        accessibilityLabel="Search the memory vault"
+        accessibilityLabel={t("vault.search")}
       />
       {items.isLoading ? (
         <Loading />
       ) : visible.length === 0 ? (
-        <EmptyNote>
-          {query
-            ? "Nothing matches that search."
-            : "Your caregiver hasn't added anything yet. People, doctors, and important details will appear here."}
-        </EmptyNote>
+        <EmptyNote>{query ? t("vault.noMatch") : t("vault.empty")}</EmptyNote>
       ) : (
         visible.map((item) => {
           const meta = CATEGORY_META[item.category] ?? CATEGORY_META.note;

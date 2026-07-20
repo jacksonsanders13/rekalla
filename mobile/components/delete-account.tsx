@@ -2,6 +2,7 @@ import { useState } from "react";
 import { StyleSheet, Text, TextInput } from "react-native";
 import { router } from "expo-router";
 import { supabase } from "../lib/supabase";
+import { useT } from "../lib/i18n";
 import { colors, font, radius, spacing } from "../lib/theme";
 import { Card, Button } from "./ui";
 
@@ -10,6 +11,7 @@ import { Card, Button } from "./ui";
  * sign-up. Two steps: open the panel, then type DELETE to arm the button.
  */
 export function DeleteAccount() {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [confirmText, setConfirmText] = useState("");
   const [busy, setBusy] = useState(false);
@@ -24,9 +26,7 @@ export function DeleteAccount() {
     const { error: rpcError } = await supabase.rpc("delete_my_account");
     if (rpcError) {
       setBusy(false);
-      setError(
-        "We couldn't delete your account just now. Please try again, or contact us if it keeps happening.",
-      );
+      setError(t("delete.error"));
       return;
     }
     await supabase.auth.signOut();
@@ -36,7 +36,7 @@ export function DeleteAccount() {
   if (!open) {
     return (
       <Button
-        label="Delete my account"
+        label={t("delete.open")}
         variant="ghost"
         onPress={() => setOpen(true)}
       />
@@ -45,28 +45,22 @@ export function DeleteAccount() {
 
   return (
     <Card>
-      <Text style={styles.title}>Delete this account?</Text>
-      <Text style={styles.body}>
-        This permanently erases your account and everything in it — reminders,
-        routine, memory bank, wellness history, and caregiver connections. It
-        cannot be undone.
-      </Text>
-      <Text style={styles.body}>
-        To continue, type <Text style={styles.strong}>DELETE</Text> below.
-      </Text>
+      <Text style={styles.title}>{t("delete.title")}</Text>
+      <Text style={styles.body}>{t("delete.body")}</Text>
+      <Text style={styles.body}>{t("delete.confirmPrompt")}</Text>
       {error && <Text style={styles.error}>{error}</Text>}
       <TextInput
         value={confirmText}
         onChangeText={setConfirmText}
         autoCapitalize="characters"
         autoCorrect={false}
-        placeholder="Type DELETE"
+        placeholder={t("delete.placeholder")}
         placeholderTextColor={colors.label4}
         style={styles.input}
-        accessibilityLabel="Type DELETE to confirm"
+        accessibilityLabel={t("delete.placeholder")}
       />
       <Button
-        label="Permanently delete my account"
+        label={t("delete.button")}
         variant="danger"
         loading={busy}
         disabled={!armed}
@@ -74,7 +68,7 @@ export function DeleteAccount() {
         onPress={handleDelete}
       />
       <Button
-        label="Keep my account"
+        label={t("delete.keep")}
         variant="secondary"
         onPress={() => {
           setOpen(false);

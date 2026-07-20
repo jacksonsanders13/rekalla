@@ -4,6 +4,7 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSession } from "../lib/session";
+import { useT } from "../lib/i18n";
 import { colors, font, radius, spacing } from "../lib/theme";
 
 const VERSION = "v1";
@@ -11,44 +12,24 @@ const keyFor = (userId: string) => `rekalla:welcome-seen:${VERSION}:${userId}`;
 
 interface Slide {
   icon: keyof typeof Ionicons.glyphMap;
-  title: string;
-  body: string;
+  titleKey: string;
+  bodyKey: string;
 }
 
 const PATIENT_SLIDES: Slide[] = [
-  {
-    icon: "sunny-outline",
-    title: "Welcome to Rekalla",
-    body: "A calm, simple place to keep track of your day — reminders, a daily routine, and the people who matter.",
-  },
+  { icon: "sunny-outline", titleKey: "tour.p1.title", bodyKey: "tour.p1.body" },
   {
     icon: "checkmark-circle-outline",
-    title: "Your day at a glance",
-    body: "The Summary screen shows what's coming up and how your day is going. Tap Done on a reminder once you've handled it.",
+    titleKey: "tour.p2.title",
+    bodyKey: "tour.p2.body",
   },
-  {
-    icon: "heart-outline",
-    title: "Let family help",
-    body: "Tap the heart icon at the top to see your connect code. Share it with a family member so they can help set things up for you.",
-  },
+  { icon: "heart-outline", titleKey: "tour.p3.title", bodyKey: "tour.p3.body" },
 ];
 
 const CAREGIVER_SLIDES: Slide[] = [
-  {
-    icon: "people-outline",
-    title: "Welcome to Rekalla",
-    body: "Help someone you care for stay on top of their day — right from your own phone.",
-  },
-  {
-    icon: "key-outline",
-    title: "Connect with a code",
-    body: "Ask your loved one to open Rekalla and read you their 6-letter connect code. Enter it on the People screen — no shared passwords.",
-  },
-  {
-    icon: "create-outline",
-    title: "Set up their day",
-    body: "Add reminders, build a daily routine, and fill their Memory Vault with people and photos. It appears on their phone instantly.",
-  },
+  { icon: "people-outline", titleKey: "tour.c1.title", bodyKey: "tour.c1.body" },
+  { icon: "key-outline", titleKey: "tour.c2.title", bodyKey: "tour.c2.body" },
+  { icon: "create-outline", titleKey: "tour.c3.title", bodyKey: "tour.c3.body" },
 ];
 
 /**
@@ -58,6 +39,7 @@ const CAREGIVER_SLIDES: Slide[] = [
  */
 export function WelcomeTour({ enabled }: { enabled: boolean }) {
   const { session, profile, loading } = useSession();
+  const t = useT();
   const userId = session?.user.id;
 
   const [checked, setChecked] = useState(false);
@@ -103,15 +85,15 @@ export function WelcomeTour({ enabled }: { enabled: boolean }) {
             onPress={finish}
             style={styles.skip}
           >
-            <Text style={styles.skipText}>Skip</Text>
+            <Text style={styles.skipText}>{t("tour.skip")}</Text>
           </Pressable>
 
           <View style={styles.body}>
             <View style={styles.iconWrap}>
               <Ionicons name={slide.icon} size={56} color={colors.label} />
             </View>
-            <Text style={styles.title}>{slide.title}</Text>
-            <Text style={styles.text}>{slide.body}</Text>
+            <Text style={styles.title}>{t(slide.titleKey)}</Text>
+            <Text style={styles.text}>{t(slide.bodyKey)}</Text>
           </View>
 
           <View style={styles.footer}>
@@ -132,7 +114,7 @@ export function WelcomeTour({ enabled }: { enabled: boolean }) {
               ]}
             >
               <Text style={styles.buttonText}>
-                {isLast ? "Get started" : "Next"}
+                {isLast ? t("tour.start") : t("tour.next")}
               </Text>
             </Pressable>
           </View>

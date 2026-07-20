@@ -1,5 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
+import { Stack } from "expo-router";
 import { useSession } from "../lib/session";
+import { useT } from "../lib/i18n";
 import { colors, font, radius, spacing } from "../lib/theme";
 import { initials } from "../lib/utils";
 import { useMyCaregivers } from "../hooks/data";
@@ -8,46 +10,43 @@ import { Screen, Card, Subtitle, SectionTitle, EmptyNote, Loading } from "../com
 /** The patient's screen: their connect code + who's connected. */
 export default function Connect() {
   const { session, profile } = useSession();
+  const t = useT();
   const patientId = session?.user.id ?? "";
   const caregivers = useMyCaregivers(patientId);
 
   return (
-    <Screen>
-      <Subtitle>
-        Share your code so a family member can help set up your reminders.
-      </Subtitle>
+    <>
+      <Stack.Screen options={{ title: t("connect.caregivers") }} />
+      <Screen>
+        <Subtitle>{t("connect.subtitle")}</Subtitle>
 
-      <Card style={{ alignItems: "center" }}>
-        <Text style={styles.codeLabel}>Your connect code</Text>
-        <Text style={styles.code}>{profile?.connect_code ?? "……"}</Text>
-        <Text style={styles.codeHelp}>
-          Give this code to the person who cares for you. They&apos;ll type it
-          into their own Rekalla account to connect.
-        </Text>
-      </Card>
+        <Card style={{ alignItems: "center" }}>
+          <Text style={styles.codeLabel}>{t("connect.yourCode")}</Text>
+          <Text style={styles.code}>{profile?.connect_code ?? "……"}</Text>
+          <Text style={styles.codeHelp}>{t("connect.codeHelp")}</Text>
+        </Card>
 
-      <SectionTitle>Connected caregivers</SectionTitle>
-      {caregivers.isLoading ? (
-        <Loading />
-      ) : (caregivers.data ?? []).length === 0 ? (
-        <EmptyNote>
-          No caregivers yet. Share your code above to connect one.
-        </EmptyNote>
-      ) : (
-        (caregivers.data ?? []).map((link) => (
-          <View key={link.relationshipId} style={styles.row}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>
-                {initials(link.profile.full_name)}
+        <SectionTitle>{t("connect.caregivers")}</SectionTitle>
+        {caregivers.isLoading ? (
+          <Loading />
+        ) : (caregivers.data ?? []).length === 0 ? (
+          <EmptyNote>{t("connect.none")}</EmptyNote>
+        ) : (
+          (caregivers.data ?? []).map((link) => (
+            <View key={link.relationshipId} style={styles.row}>
+              <View style={styles.avatar}>
+                <Text style={styles.avatarText}>
+                  {initials(link.profile.full_name)}
+                </Text>
+              </View>
+              <Text style={styles.name}>
+                {link.profile.full_name || t("settings.caregiver")}
               </Text>
             </View>
-            <Text style={styles.name}>
-              {link.profile.full_name || "Caregiver"}
-            </Text>
-          </View>
-        ))
-      )}
-    </Screen>
+          ))
+        )}
+      </Screen>
+    </>
   );
 }
 

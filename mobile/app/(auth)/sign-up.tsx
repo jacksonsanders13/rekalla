@@ -3,6 +3,7 @@ import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Link, router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { supabase } from "../../lib/supabase";
+import { useT } from "../../lib/i18n";
 import { colors, font, radius, spacing } from "../../lib/theme";
 import { Screen, Card, Button, Field, Title, Subtitle } from "../../components/ui";
 import type { AccountType } from "../../lib/types";
@@ -10,24 +11,25 @@ import type { AccountType } from "../../lib/types";
 const OPTIONS: {
   value: AccountType;
   icon: keyof typeof Ionicons.glyphMap;
-  title: string;
-  detail: string;
+  titleKey: string;
+  detailKey: string;
 }[] = [
   {
     value: "patient",
     icon: "person",
-    title: "Loved One",
-    detail: "Someone sets up reminders for me.",
+    titleKey: "auth.signUp.patient",
+    detailKey: "auth.signUp.patientDetail",
   },
   {
     value: "caregiver",
     icon: "heart",
-    title: "Caregiver",
-    detail: "I set up reminders for someone I care for.",
+    titleKey: "auth.signUp.caregiver",
+    detailKey: "auth.signUp.caregiverDetail",
   },
 ];
 
 export default function SignUp() {
+  const t = useT();
   const [accountType, setAccountType] = useState<AccountType>("patient");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -37,10 +39,9 @@ export default function SignUp() {
 
   async function handleSignUp() {
     setError(null);
-    if (fullName.trim().length < 2) return setError("Please enter your name.");
-    if (!email.includes("@")) return setError("Please enter a valid email.");
-    if (password.length < 8)
-      return setError("Your password needs at least 8 characters.");
+    if (fullName.trim().length < 2) return setError(t("auth.err.name"));
+    if (!email.includes("@")) return setError(t("auth.err.email"));
+    if (password.length < 8) return setError(t("auth.err.password"));
 
     setBusy(true);
     const { data, error: signUpError } = await supabase.auth.signUp({
@@ -58,12 +59,9 @@ export default function SignUp() {
 
     if (!data.session) {
       setBusy(false);
-      return setError(
-        "Check your email for a confirmation link, then log in.",
-      );
+      return setError(t("auth.err.confirm"));
     }
 
-    // Belt and suspenders: write the chosen role directly too.
     if (data.user) {
       await supabase
         .from("profiles")
@@ -84,16 +82,16 @@ export default function SignUp() {
           style={styles.logo}
           accessibilityLabel="Rekalla"
         />
-        <Text style={styles.wordmark}>Rekalla</Text>
+        <Text style={styles.wordmark}>{t("auth.wordmark")}</Text>
       </View>
 
       <Card>
-        <Title>Create your account</Title>
-        <Subtitle>A few details and you&apos;re all set.</Subtitle>
+        <Title>{t("auth.signUp.title")}</Title>
+        <Subtitle>{t("auth.signUp.subtitle")}</Subtitle>
 
         {error && <Text style={styles.error}>{error}</Text>}
 
-        <Text style={styles.legend}>Who is this account for?</Text>
+        <Text style={styles.legend}>{t("auth.signUp.who")}</Text>
         <View style={{ gap: spacing(3) }}>
           {OPTIONS.map((option) => {
             const selected = accountType === option.value;
@@ -115,8 +113,8 @@ export default function SignUp() {
                   />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.optionTitle}>{option.title}</Text>
-                  <Text style={styles.optionDetail}>{option.detail}</Text>
+                  <Text style={styles.optionTitle}>{t(option.titleKey)}</Text>
+                  <Text style={styles.optionDetail}>{t(option.detailKey)}</Text>
                 </View>
               </Pressable>
             );
@@ -124,37 +122,37 @@ export default function SignUp() {
         </View>
 
         <Field
-          label="Your name"
+          label={t("auth.field.name")}
           value={fullName}
           onChangeText={setFullName}
           autoComplete="name"
-          placeholder="Rose Alvarez"
+          placeholder={t("auth.field.namePlaceholder")}
         />
         <Field
-          label="Email address"
+          label={t("auth.field.email")}
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
           keyboardType="email-address"
           autoComplete="email"
-          placeholder="you@example.com"
+          placeholder={t("auth.field.emailPlaceholder")}
         />
         <Field
-          label="Password"
+          label={t("auth.field.password")}
           value={password}
           onChangeText={setPassword}
           secureTextEntry
           autoComplete="new-password"
-          placeholder="At least 8 characters"
+          placeholder={t("auth.field.passwordPlaceholder")}
         />
 
-        <Button label="Create account" loading={busy} onPress={handleSignUp} />
+        <Button label={t("auth.signUp.button")} loading={busy} onPress={handleSignUp} />
 
         <Link href="/(auth)/sign-in" asChild>
           <Pressable accessibilityRole="link" style={styles.switchLink}>
             <Text style={styles.switchText}>
-              Already have an account?{" "}
-              <Text style={styles.switchStrong}>Log in</Text>
+              {t("auth.signUp.haveAccount")}{" "}
+              <Text style={styles.switchStrong}>{t("auth.signUp.logIn")}</Text>
             </Text>
           </Pressable>
         </Link>

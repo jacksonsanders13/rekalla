@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { Link } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "../../lib/session";
+import { useT } from "../../lib/i18n";
 import { colors, font, radius, spacing } from "../../lib/theme";
 import { initials } from "../../lib/utils";
 import { useMyPatients, useConnectWithCode } from "../../hooks/data";
@@ -10,6 +11,7 @@ import { Screen, Card, Button, Subtitle, SectionTitle, EmptyNote, Loading } from
 
 export default function People() {
   const { session } = useSession();
+  const t = useT();
   const caregiverId = session?.user.id ?? "";
   const [code, setCode] = useState("");
   const [message, setMessage] = useState<{ text: string; ok: boolean } | null>(
@@ -27,7 +29,9 @@ export default function People() {
       onSuccess: (patient) => {
         setCode("");
         setMessage({
-          text: `Connected to ${patient.full_name || "your person"}.`,
+          text: t("people.connected", {
+            name: patient.full_name || t("settings.you"),
+          }),
           ok: true,
         });
       },
@@ -37,14 +41,11 @@ export default function People() {
 
   return (
     <Screen>
-      <Subtitle>Everyone you help care for, in one place.</Subtitle>
+      <Subtitle>{t("people.subtitle")}</Subtitle>
 
       <Card>
-        <Text style={styles.cardTitle}>Connect to someone</Text>
-        <Text style={styles.cardBody}>
-          Ask the person you care for to open Rekalla and read you their
-          connect code, then type it in here.
-        </Text>
+        <Text style={styles.cardTitle}>{t("people.connectTitle")}</Text>
+        <Text style={styles.cardBody}>{t("people.connectBody")}</Text>
         {message && (
           <Text style={[styles.message, { color: message.ok ? colors.green : colors.red }]}>
             {message.text}
@@ -55,22 +56,19 @@ export default function People() {
           onChangeText={(v) => setCode(v.toUpperCase())}
           autoCapitalize="characters"
           maxLength={6}
-          placeholder="e.g. R7K2QX"
+          placeholder={t("people.codePlaceholder")}
           placeholderTextColor={colors.label4}
           style={styles.codeInput}
-          accessibilityLabel="Their connect code"
+          accessibilityLabel={t("connect.yourCode")}
         />
-        <Button label="Connect" loading={connect.isPending} onPress={handleConnect} />
+        <Button label={t("people.connect")} loading={connect.isPending} onPress={handleConnect} />
       </Card>
 
-      <SectionTitle>People I care for</SectionTitle>
+      <SectionTitle>{t("people.mine")}</SectionTitle>
       {patients.isLoading ? (
         <Loading />
       ) : (patients.data ?? []).length === 0 ? (
-        <EmptyNote>
-          No one connected yet. Enter a connect code above and they&apos;ll
-          appear here.
-        </EmptyNote>
+        <EmptyNote>{t("people.empty")}</EmptyNote>
       ) : (
         (patients.data ?? []).map((link) => (
           <Link
@@ -86,11 +84,9 @@ export default function People() {
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.personName}>
-                  {link.profile.full_name || "Patient"}
+                  {link.profile.full_name || t("auth.signUp.patient")}
                 </Text>
-                <Text style={styles.personMeta}>
-                  Reminders, routine & memory bank
-                </Text>
+                <Text style={styles.personMeta}>{t("people.rowMeta")}</Text>
               </View>
               <Ionicons name="chevron-forward" size={22} color={colors.label4} />
             </Pressable>

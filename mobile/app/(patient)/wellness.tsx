@@ -1,21 +1,23 @@
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSession } from "../../lib/session";
+import { useT } from "../../lib/i18n";
 import { colors, font, radius, spacing } from "../../lib/theme";
 import { toDateKey, fromDateKey } from "../../lib/utils";
 import { useWellnessEntries, useSaveWellness } from "../../hooks/data";
 import { Screen, Card, Subtitle, SectionTitle, Button, Loading } from "../../components/ui";
 
 const MOODS = [
-  { value: 1, label: "Very low", emoji: "😞" },
-  { value: 2, label: "Low", emoji: "🙁" },
-  { value: 3, label: "Okay", emoji: "😐" },
-  { value: 4, label: "Good", emoji: "🙂" },
-  { value: 5, label: "Great", emoji: "😄" },
+  { value: 1, labelKey: "wellness.mood1", emoji: "😞" },
+  { value: 2, labelKey: "wellness.mood2", emoji: "🙁" },
+  { value: 3, labelKey: "wellness.mood3", emoji: "😐" },
+  { value: 4, labelKey: "wellness.mood4", emoji: "🙂" },
+  { value: 5, labelKey: "wellness.mood5", emoji: "😄" },
 ];
 
 export default function Wellness() {
   const { session } = useSession();
+  const t = useT();
   const userId = session?.user.id ?? "";
   const todayKey = toDateKey();
 
@@ -59,10 +61,10 @@ export default function Wellness() {
 
   return (
     <Screen>
-      <Subtitle>A quick daily check-in — it takes about 30 seconds.</Subtitle>
+      <Subtitle>{t("wellness.subtitle")}</Subtitle>
 
       <Card>
-        <Text style={styles.question}>How are you feeling today?</Text>
+        <Text style={styles.question}>{t("wellness.mood")}</Text>
         <View style={styles.moodRow}>
           {MOODS.map((option) => {
             const selected = mood === option.value;
@@ -70,7 +72,7 @@ export default function Wellness() {
               <Pressable
                 key={option.value}
                 accessibilityRole="button"
-                accessibilityLabel={option.label}
+                accessibilityLabel={t(option.labelKey)}
                 accessibilityState={{ selected }}
                 onPress={() => {
                   setSaved(false);
@@ -79,26 +81,26 @@ export default function Wellness() {
                 style={[styles.mood, selected && styles.moodSelected]}
               >
                 <Text style={styles.moodEmoji}>{option.emoji}</Text>
-                <Text style={styles.moodLabel}>{option.label}</Text>
+                <Text style={styles.moodLabel}>{t(option.labelKey)}</Text>
               </Pressable>
             );
           })}
         </View>
 
-        <Text style={styles.question}>How did you sleep last night?</Text>
+        <Text style={styles.question}>{t("wellness.sleep")}</Text>
         <View style={styles.sleepRow}>
           <Pressable
-            accessibilityLabel="Half an hour less sleep"
+            accessibilityLabel="-0.5h"
             onPress={() => adjustSleep(-0.5)}
             style={styles.stepper}
           >
             <Text style={styles.stepperText}>−</Text>
           </Pressable>
           <Text style={styles.sleepValue}>
-            {sleep === null ? "—" : `${sleep} hours`}
+            {sleep === null ? "—" : t("wellness.hours", { n: sleep })}
           </Text>
           <Pressable
-            accessibilityLabel="Half an hour more sleep"
+            accessibilityLabel="+0.5h"
             onPress={() => adjustSleep(0.5)}
             style={styles.stepper}
           >
@@ -106,7 +108,7 @@ export default function Wellness() {
           </Pressable>
         </View>
 
-        <Text style={styles.question}>How is your energy?</Text>
+        <Text style={styles.question}>{t("wellness.energy")}</Text>
         <View style={styles.energyRow}>
           {[1, 2, 3, 4, 5].map((value) => {
             const selected = energy === value;
@@ -114,7 +116,7 @@ export default function Wellness() {
               <Pressable
                 key={value}
                 accessibilityRole="button"
-                accessibilityLabel={`Energy level ${value} of 5`}
+                accessibilityLabel={t("wellness.energyOf", { n: value })}
                 accessibilityState={{ selected }}
                 onPress={() => {
                   setSaved(false);
@@ -129,7 +131,7 @@ export default function Wellness() {
         </View>
 
         <Button
-          label={today ? "Update today's check-in" : "Save today's check-in"}
+          label={today ? t("wellness.update") : t("wellness.save")}
           loading={save.isPending}
           onPress={() =>
             save.mutate(
@@ -144,16 +146,16 @@ export default function Wellness() {
             )
           }
         />
-        {saved && <Text style={styles.saved}>Saved. Have a lovely day!</Text>}
+        {saved && <Text style={styles.saved}>{t("wellness.saved")}</Text>}
       </Card>
 
       {history.length > 0 && (
         <>
-          <SectionTitle>Recent days</SectionTitle>
+          <SectionTitle>{t("wellness.recent")}</SectionTitle>
           {history.map((entry) => (
             <View key={entry.id} style={styles.historyRow}>
               <Text style={styles.historyDate}>
-                {fromDateKey(entry.entry_date).toLocaleDateString("en-US", {
+                {fromDateKey(entry.entry_date).toLocaleDateString(undefined, {
                   weekday: "short",
                   month: "short",
                   day: "numeric",
@@ -161,8 +163,8 @@ export default function Wellness() {
               </Text>
               <Text style={styles.historyValues}>
                 {entry.mood ? `${MOODS.find((m) => m.value === entry.mood)?.emoji ?? ""} ` : ""}
-                {entry.sleep_hours != null ? `${Number(entry.sleep_hours)}h sleep` : ""}
-                {entry.energy != null ? `  ·  energy ${entry.energy}/5` : ""}
+                {entry.sleep_hours != null ? t("wellness.hSleep", { n: Number(entry.sleep_hours) }) : ""}
+                {entry.energy != null ? `  ·  ${t("wellness.energyOf", { n: entry.energy })}` : ""}
               </Text>
             </View>
           ))}

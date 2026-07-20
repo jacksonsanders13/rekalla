@@ -1,8 +1,9 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "../../lib/session";
+import { useT } from "../../lib/i18n";
 import { colors, font, radius, spacing } from "../../lib/theme";
-import { formatTimeOfDay, toDateKey } from "../../lib/utils";
+import { toDateKey } from "../../lib/utils";
 import {
   useRoutineItems,
   useRoutineCompletions,
@@ -11,14 +12,15 @@ import {
 import { Screen, Subtitle, SectionTitle, EmptyNote, Loading } from "../../components/ui";
 import type { RoutinePeriod } from "../../lib/types";
 
-const PERIODS: { id: RoutinePeriod; label: string }[] = [
-  { id: "morning", label: "Morning" },
-  { id: "afternoon", label: "Afternoon" },
-  { id: "evening", label: "Evening" },
+const PERIODS: { id: RoutinePeriod; labelKey: string }[] = [
+  { id: "morning", labelKey: "routine.morning" },
+  { id: "afternoon", labelKey: "routine.afternoon" },
+  { id: "evening", labelKey: "routine.evening" },
 ];
 
 export default function Routine() {
   const { session } = useSession();
+  const t = useT();
   const userId = session?.user.id ?? "";
   const todayKey = toDateKey();
 
@@ -40,19 +42,16 @@ export default function Routine() {
 
   return (
     <Screen>
-      <Subtitle>Check off each step as your day goes on.</Subtitle>
+      <Subtitle>{t("routine.subtitle")}</Subtitle>
       {all.length === 0 ? (
-        <EmptyNote>
-          Your caregiver hasn&apos;t set up a routine yet. Steps will appear
-          here when they do.
-        </EmptyNote>
+        <EmptyNote>{t("routine.empty")}</EmptyNote>
       ) : (
         PERIODS.map((period) => {
           const periodItems = all.filter((i) => i.period === period.id);
           if (periodItems.length === 0) return null;
           return (
             <View key={period.id} style={{ gap: spacing(3) }}>
-              <SectionTitle>{period.label}</SectionTitle>
+              <SectionTitle>{t(period.labelKey)}</SectionTitle>
               {periodItems.map((item) => {
                 const done = doneIds.has(item.id);
                 return (
@@ -75,7 +74,7 @@ export default function Routine() {
                       </Text>
                       {item.time_of_day && (
                         <Text style={styles.time}>
-                          around {formatTimeOfDay(item.time_of_day)}
+                          {t("routine.around", { time: item.time_of_day })}
                         </Text>
                       )}
                     </View>

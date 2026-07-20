@@ -3,8 +3,9 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Link } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "../../lib/session";
+import { useT } from "../../lib/i18n";
 import { colors, font, spacing } from "../../lib/theme";
-import { greetingFor, firstName, toDateKey } from "../../lib/utils";
+import { firstName, toDateKey } from "../../lib/utils";
 import { occurrencesFor, openOccurrences, completionSummary } from "../../lib/reminders";
 import {
   useReminders,
@@ -21,6 +22,7 @@ import { syncReminderNotifications } from "../../lib/notifications";
 
 export default function Summary() {
   const { session, profile } = useSession();
+  const t = useT();
   const userId = session?.user.id ?? "";
   const todayKey = toDateKey();
 
@@ -33,9 +35,9 @@ export default function Summary() {
 
   useEffect(() => {
     if (reminders.data) {
-      syncReminderNotifications(reminders.data);
+      syncReminderNotifications(reminders.data, t);
     }
-  }, [reminders.data]);
+  }, [reminders.data, t]);
 
   const occurrences = useMemo(
     () => occurrencesFor(reminders.data ?? [], events.data ?? [], todayKey),
@@ -54,13 +56,17 @@ export default function Summary() {
   const loading =
     reminders.isLoading || events.isLoading || routineItems.isLoading;
 
+  const hour = new Date().getHours();
+  const greetKey =
+    hour < 12 ? "morning" : hour < 17 ? "afternoon" : "evening";
+
   return (
     <Screen>
       <View style={styles.headerRow}>
         <View style={{ flex: 1 }}>
           <Text style={styles.eyebrow}>
             {new Date()
-              .toLocaleDateString("en-US", {
+              .toLocaleDateString(undefined, {
                 weekday: "long",
                 month: "long",
                 day: "numeric",
@@ -68,16 +74,16 @@ export default function Summary() {
               .toUpperCase()}
           </Text>
           <Text style={styles.greeting}>
-            {greetingFor()}, {firstName(profile?.full_name)}
+            {t(`summary.greeting.${greetKey}`)}, {firstName(profile?.full_name)}
           </Text>
         </View>
         <Link href="/connect" asChild>
-          <Pressable accessibilityLabel="My caregivers" style={styles.headerButton}>
+          <Pressable accessibilityLabel={t("connect.caregivers")} style={styles.headerButton}>
             <Ionicons name="heart-outline" size={24} color={colors.label2} />
           </Pressable>
         </Link>
         <Link href="/settings" asChild>
-          <Pressable accessibilityLabel="Settings" style={styles.headerButton}>
+          <Pressable accessibilityLabel={t("tab.account")} style={styles.headerButton}>
             <Ionicons name="settings-outline" size={24} color={colors.label2} />
           </Pressable>
         </Link>
@@ -91,40 +97,42 @@ export default function Summary() {
             <ActivityRings
               rings={[
                 {
-                  label: "Reminders",
+                  label: t("summary.ring.reminders"),
                   color: colors.pink,
                   progress: summary.total > 0 ? summary.done / summary.total : 0,
                   value:
                     summary.total > 0
-                      ? `${summary.done} of ${summary.total}`
-                      : "None today",
+                      ? t("summary.ofCount", { done: summary.done, total: summary.total })
+                      : t("summary.ring.none"),
                 },
                 {
-                  label: "Routine",
+                  label: t("summary.ring.routine"),
                   color: colors.green,
                   progress:
                     routineTotal > 0 ? routineDoneCount / routineTotal : 0,
                   value:
                     routineTotal > 0
-                      ? `${routineDoneCount} of ${routineTotal}`
-                      : "Not set up",
+                      ? t("summary.ofCount", { done: routineDoneCount, total: routineTotal })
+                      : t("summary.ring.notSet"),
                 },
                 {
-                  label: "Check-in",
+                  label: t("summary.ring.checkin"),
                   color: colors.teal,
                   progress: todayEntry ? 1 : 0,
-                  value: todayEntry ? "Done" : "Not yet",
+                  value: todayEntry
+                    ? t("summary.ring.checkinDone")
+                    : t("summary.ring.checkinNot"),
                 },
               ]}
             />
           </Card>
 
-          <SectionTitle>Up next</SectionTitle>
+          <SectionTitle>{t("summary.upNext")}</SectionTitle>
           {open.length === 0 ? (
             <EmptyNote>
               {summary.total === 0
-                ? "No reminders scheduled for today."
-                : "All caught up — nothing waiting on you."}
+                ? t("summary.noneToday")
+                : t("summary.allCaught")}
             </EmptyNote>
           ) : (
             open

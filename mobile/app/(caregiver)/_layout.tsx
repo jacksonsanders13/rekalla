@@ -1,10 +1,12 @@
 import { Redirect, Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "../../lib/session";
+import { useT } from "../../lib/i18n";
 import { colors } from "../../lib/theme";
 
 export default function CaregiverTabs() {
   const { session, profile, loading } = useSession();
+  const t = useT();
 
   if (!loading && !session) return <Redirect href="/(auth)/sign-in" />;
   if (!loading && profile && profile.account_type !== "caregiver") {
@@ -30,7 +32,7 @@ export default function CaregiverTabs() {
       <Tabs.Screen
         name="people"
         options={{
-          title: "People",
+          title: t("tab.people"),
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="people" size={size} color={color} />
           ),
@@ -39,7 +41,7 @@ export default function CaregiverTabs() {
       <Tabs.Screen
         name="account"
         options={{
-          title: "Settings",
+          title: t("tab.account"),
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="settings" size={size} color={color} />
           ),

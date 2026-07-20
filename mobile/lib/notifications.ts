@@ -1,7 +1,8 @@
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import { fromDateKey } from "./utils";
-import type { Reminder, ReminderCategory } from "./types";
+import type { TFunc } from "./i18n";
+import type { Reminder } from "./types";
 
 /**
  * Local, on-device reminder notifications. Reminders are scheduled as
@@ -36,17 +37,8 @@ export async function requestNotificationPermission(): Promise<boolean> {
   return asked.granted;
 }
 
-const BODY: Record<ReminderCategory, string> = {
-  medication: "Time for your medication.",
-  meals: "Time to eat.",
-  appointments: "You have an appointment.",
-  exercise: "Time to move a little.",
-  family_calls: "Time to make a call.",
-  custom: "Here's your reminder.",
-};
-
-function parseTime(t: string) {
-  const [hour, minute] = t.split(":").map(Number);
+function parseTime(time: string) {
+  const [hour, minute] = time.split(":").map(Number);
   return { hour, minute };
 }
 
@@ -55,7 +47,10 @@ function parseTime(t: string) {
  * Cancels everything and reschedules, so it's safe to call whenever reminders
  * change.
  */
-export async function syncReminderNotifications(reminders: Reminder[]) {
+export async function syncReminderNotifications(
+  reminders: Reminder[],
+  t: TFunc,
+) {
   if (Platform.OS === "web") return;
 
   const granted = await requestNotificationPermission();
@@ -68,7 +63,7 @@ export async function syncReminderNotifications(reminders: Reminder[]) {
     const { hour, minute } = parseTime(r.time_of_day);
     const content = {
       title: r.title,
-      body: BODY[r.category] ?? BODY.custom,
+      body: t(`notif.${r.category}`),
       sound: true,
     };
 
