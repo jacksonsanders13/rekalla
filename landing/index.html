@@ -191,6 +191,23 @@
   .faq summary::after { content: "+"; color: var(--label3); font-size: 24px; font-weight: 400; }
   .faq details[open] summary::after { content: "\2013"; }
   .faq details p { color: var(--label3); font-size: 16px; padding: 0 0 20px; margin: 0; }
+
+  /* ---- interactive demo ---- */
+  .demo { text-align: center; }
+  .demo-tabs {
+    display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+    background: var(--elev1); border-radius: 999px; padding: 6px; margin: 8px 0 36px;
+  }
+  .demo-tab {
+    border: 0; cursor: pointer; font-family: inherit;
+    min-height: 44px; padding: 0 20px; border-radius: 999px;
+    background: transparent; color: var(--label3);
+    font-size: 15px; font-weight: 600; transition: all .15s;
+  }
+  .demo-tab:hover { color: var(--label); }
+  .demo-tab[aria-selected="true"] { background: var(--label); color: #000; }
+  .demo-stage { display: flex; justify-content: center; }
+  .demo-hint { color: var(--label4); font-size: 14px; margin-top: 22px; }
 </style>
 </head>
 <body>
@@ -203,6 +220,7 @@
     </a>
     <div class="nav-links">
       <a class="link" href="#features">Features</a>
+      <a class="link" href="#demo">Demo</a>
       <a class="link" href="#how">How it works</a>
       <a class="link" href="/privacy">Privacy</a>
       <a class="btn btn-primary" href="#join">Get early access</a>
@@ -287,6 +305,31 @@
     </div>
     <div class="media"><div class="phone phone-sm"><img src="https://raw.githubusercontent.com/jacksonsanders13/rekalla/main/landing/img/routine.png" alt="The Routine screen: morning, afternoon, and evening steps with large checkboxes." width="480" height="1043"></div></div>
   </div>
+</section>
+
+<section id="demo" class="wrap demo">
+  <div class="section-head" style="margin-left:auto;margin-right:auto;">
+    <h2>See it in action.</h2>
+    <p>
+      Tap through the four screens people use every day. This is the real
+      app — the same clear layout that ships on your phone.
+    </p>
+  </div>
+
+  <div class="demo-tabs" role="tablist" aria-label="Rekalla screens">
+    <button class="demo-tab" role="tab" aria-selected="true" data-img="summary" aria-controls="demo-img">Today</button>
+    <button class="demo-tab" role="tab" aria-selected="false" data-img="routine" aria-controls="demo-img">Routine</button>
+    <button class="demo-tab" role="tab" aria-selected="false" data-img="vault" aria-controls="demo-img">Memory</button>
+    <button class="demo-tab" role="tab" aria-selected="false" data-img="manager" aria-controls="demo-img">Caregiver</button>
+  </div>
+
+  <div class="demo-stage">
+    <div class="phone">
+      <img id="demo-img" src="https://raw.githubusercontent.com/jacksonsanders13/rekalla/main/landing/img/summary.png" alt="Rekalla's Today screen" width="480" height="1043">
+    </div>
+  </div>
+
+  <p class="demo-hint">A screenshot walkthrough — the full app is coming to the App Store.</p>
 </section>
 
 <section id="how" class="wrap">
@@ -442,6 +485,23 @@
         .catch(function () {
           msg.textContent = "Hmm, that didn't work. Please try again.";
         });
+    });
+  })();
+</script>
+
+<script>
+  (function () {
+    var base = "https://raw.githubusercontent.com/jacksonsanders13/rekalla/main/landing/img/";
+    var labels = { summary: "Today", routine: "Routine", vault: "Memory", manager: "Caregiver" };
+    var img = document.getElementById("demo-img");
+    var tabs = document.querySelectorAll(".demo-tab");
+    tabs.forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        var name = tab.getAttribute("data-img");
+        tabs.forEach(function (t) { t.setAttribute("aria-selected", t === tab ? "true" : "false"); });
+        img.src = base + name + ".png";
+        img.alt = "Rekalla's " + labels[name] + " screen";
+      });
     });
   })();
 </script>
