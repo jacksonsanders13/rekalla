@@ -21,7 +21,23 @@ Get the Rekalla **iOS app** (in `mobile/`, Expo SDK 54) onto **TestFlight** via 
   (`59c872ad-d2b9-4413-a884-1a67b75e1d13`) under `extra.eas`.
 - Supabase `EXPO_PUBLIC_SUPABASE_URL` / `EXPO_PUBLIC_SUPABASE_ANON_KEY` are set
   in **EAS → production** environment (visibility: plain text). Also mirrored in
-  a local `mobile/.env` (that file is gitignored — recreate it on a new machine).
+  a local `mobile/.env` (that file is gitignored — recreate it on a new machine
+  using the values in "Environment values" below).
+
+## Environment values
+These are the **public** Supabase values — safe to keep here because the anon
+key ships inside the app and is protected by RLS. **Never** add the Supabase
+`service_role` (secret) key to this file or any client/repo.
+
+Recreate `mobile/.env` with exactly:
+
+```
+EXPO_PUBLIC_SUPABASE_URL=https://mhahpfcjxnoelcthdsss.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1oYWhwZmNqeG5vZWxjdGhkc3NzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1ODcyODQsImV4cCI6MjA5OTE2MzI4NH0.ev4eaDbr5JLZXR0aJVCLH1VGk1-riPwmaq3c0PUNV1c
+```
+
+- Supabase project ref: `mhahpfcjxnoelcthdsss`
+- EAS project id: `59c872ad-d2b9-4413-a884-1a67b75e1d13`
 
 ## Not yet committed
 - `babel-preset-expo` was installed locally via `npx expo install babel-preset-expo`,
