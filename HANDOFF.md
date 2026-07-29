@@ -109,13 +109,23 @@ exactly `FontLoaderModule` + `FontUtilsModule` and **loses nothing**; the `.app`
 layout is otherwise identical. The thing that killed the app on launch is gone.
 
 ## Next steps
-1. Submit build 6 to App Store Connect:
-   ```
-   cd mobile && eas submit --platform ios --profile production
-   ```
+Build 6 was **submitted to App Store Connect** on 2026-07-28
+(submission `b30a598f-c2e2-4136-921d-8b05421df9b8`, ASC app id `6794918254`).
+Apple processing takes ~5–10 min; you get an email when it's ready.
+
+1. Wait for the processing email, then open
+   https://appstoreconnect.apple.com/apps/6794918254/testflight/ios
 2. In TestFlight on the phone, make sure the shown build is **build 6**,
    tap **Update**, and launch.
 3. Confirm it opens to the **sign-up screen** instead of crashing.
+
+If it still crashes, it is **not** the expo-font problem — that one is proven
+absent from the build-6 binary. Get the fresh crash log off the device
+(Settings → Privacy & Security → Analytics & Improvements → Analytics Data)
+and start from the new stack, not from this document.
+
+Note: `eas submit --non-interactive` needs `ascAppId` in `eas.json`; it's now
+set in the `submit.production.ios` profile.
 
 ## Guardrail
 Run `npx expo-doctor` from `mobile/` before every production build. All three
