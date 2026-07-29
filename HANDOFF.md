@@ -158,21 +158,47 @@ Diffing the full native-module list between the two binaries: build 6 **gains**
 exactly `FontLoaderModule` + `FontUtilsModule` and **loses nothing**; the `.app`
 layout is otherwise identical. The thing that killed the app on launch is gone.
 
+Build 6 was submitted on 2026-07-28
+(submission `b30a598f-c2e2-4136-921d-8b05421df9b8`). It **launched** — proving
+the fix — and then failed at sign-up, which is Bug 2 above.
+
+## Build 7 — anon key verified in the bundle
+Build 7 (`970275a0-5488-4381-adeb-5afaf76e29e2`), built after correcting the EAS
+variable:
+
+| check | result |
+|---|---|
+| exact anon key bytes in bundle | **offset 481912**, sha256 `98f00a774188` — identical to `mobile/.env` |
+| Supabase URL inlined | offset 514123 |
+| corrupted UTF-16 value | **gone** (`find` → `-1`) |
+| longest run of `•` in bundle | **1** (124 scattered singles are legitimate UI text; the corruption was a run of 200) |
+| `FontLoaderModule` in binary | **3** — build 6's crash fix still intact |
+
+Both the `production` **and** `preview` EAS environments had the identical
+corrupted value (sha `ec5272601f4f`); both are now fixed and verified ASCII and
+hash-identical to `.env`. `development` has no variables (local `.env` covers it).
+
+Careful when extracting strings from a Hermes bundle: it packs strings
+contiguously with no delimiter, so a greedy regex runs straight off the end of
+one string into the next. Search for **exact expected bytes**, don't regex-extract.
+
 ## Next steps
-Build 6 was **submitted to App Store Connect** on 2026-07-28
-(submission `b30a598f-c2e2-4136-921d-8b05421df9b8`, ASC app id `6794918254`).
+Build 7 was **submitted to App Store Connect** on 2026-07-28
+(submission `9c22b8a1-2c0c-40dc-b9a4-0e289d0542a8`, ASC app id `6794918254`).
 Apple processing takes ~5–10 min; you get an email when it's ready.
 
 1. Wait for the processing email, then open
    https://appstoreconnect.apple.com/apps/6794918254/testflight/ios
-2. In TestFlight on the phone, make sure the shown build is **build 6**,
+2. In TestFlight on the phone, make sure the shown build is **build 7**,
    tap **Update**, and launch.
-3. Confirm it opens to the **sign-up screen** instead of crashing.
+3. Create an account. It should reach the patient/caregiver home, not
+   "No API key found in request".
 
-If it still crashes, it is **not** the expo-font problem — that one is proven
-absent from the build-6 binary. Get the fresh crash log off the device
-(Settings → Privacy & Security → Analytics & Improvements → Analytics Data)
-and start from the new stack, not from this document.
+If it crashes on launch, it is **not** the expo-font problem, and if sign-up
+fails it is **not** the anon key — both are proven fixed in the build-7
+artifact. Get the fresh crash log off the device (Settings → Privacy & Security
+→ Analytics & Improvements → Analytics Data) and start from the new evidence,
+not from this document.
 
 Note: `eas submit --non-interactive` needs `ascAppId` in `eas.json`; it's now
 set in the `submit.production.ios` profile.
