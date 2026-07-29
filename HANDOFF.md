@@ -7,6 +7,10 @@ without re-deriving context. Update this as things change.
 Get the Rekalla **iOS app** (in `mobile/`, Expo SDK 54) onto **TestFlight** via EAS.
 
 ## The saga so far
+There were **two independent bugs**, one masking the other. Build 6 fixed the
+launch crash; build 7 fixes the sign-up failure that was hiding behind it.
+
+### Bug 1 — launch crash (fixed in build 6)
 - EAS build + submit to App Store Connect worked; app installed via TestFlight.
 - **It crashed on launch** on every build (2, 3, 4 and 5), on the
   `com.facebook.react.runtime.JavaScript` thread (New Architecture / bridgeless).
@@ -14,7 +18,7 @@ Get the Rekalla **iOS app** (in `mobile/`, Expo SDK 54) onto **TestFlight** via 
   did not stop the crash. Build 5 shipped a valid Hermes bytecode bundle and
   still crashed.
 
-### Actual root cause: `expo-font` native module was never in the binary
+#### Root cause: `expo-font` native module was never in the binary
 `@expo/vector-icons` declares `expo-font` as a **peer dependency with an
 unbounded range (`>=14.0.4`)**. npm auto-installed peers, so it hoisted
 **`expo-font@57.0.0`** (an SDK 56-era release) to `mobile/node_modules/expo-font`,
@@ -77,6 +81,52 @@ strings -a main.jsbundle | grep -c ExpoFontLoader  # is 1
   in **EAS → production** environment (visibility: plain text). Also mirrored in
   a local `mobile/.env` (that file is gitignored — recreate it on a new machine
   using the values in "Environment values" below).
+- The EAS `EXPO_PUBLIC_SUPABASE_ANON_KEY` value was **corrupted** and has been
+  corrected — see Bug 2 below.
+
+### Bug 2 — "No API key found in request" on sign-up (fixed in build 7)
+Build 6 launched fine, then failed at account creation with Supabase's
+**"No API key found in request"**.
+
+The value stored in the EAS `production` environment for
+`EXPO_PUBLIC_SUPABASE_ANON_KEY` was literally:
+
+```
+eyJhbGci••••••••••••••••••••••…   (8 ASCII chars + 200 × U+2022 BULLET, length 208)
+```
+
+Someone copy-pasted the **masked terminal output** of `eas env:list` back in as
+the value. It is the right length and right prefix, so it looks correct in every
+listing — and `eas env:list` re-masks it, which makes the corruption invisible.
+
+Proof it shipped: the build-6 `main.jsbundle` contains that exact string at byte
+offset 808518, stored as **UTF-16** (Hermes encodes any non-ASCII string as
+UTF-16, which is why a plain `strings` scan finds nothing):
+
+```
+python3 -c "d=open('main.jsbundle','rb').read(); i=d.find('eyJhbGci'.encode('utf-16-le')); \
+print(d[i:i+416].decode('utf-16-le'))"
+```
+
+At runtime supabase-js sets `apikey: "eyJhbGci•••…"`. U+2022 is not encodable in
+an HTTP header (Latin-1 only), so the header is dropped — hence *No API key
+found*, rather than *Invalid API key*.
+
+The local `mobile/.env` was always correct, which is why dev and web worked. Fixed with:
+
+```
+eas env:update production --variable-name EXPO_PUBLIC_SUPABASE_ANON_KEY \
+  --variable-environment production --value "<real key>" --visibility plaintext
+```
+
+**Never paste a value copied from `eas env:list` output.** Always take it from
+`mobile/.env` or the "Environment values" block below. To verify a value really
+round-tripped, pull it and compare hashes against `.env` — do not eyeball it:
+
+```
+eas env:pull production --path /tmp/eas.env
+# then diff the sha256 of each value against mobile/.env
+```
 
 ## Environment values
 These are the **public** Supabase values — safe to keep here because the anon
