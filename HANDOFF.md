@@ -8,15 +8,69 @@ Get the Rekalla **iOS app** (in `mobile/`, Expo SDK 54) onto **TestFlight** via 
 
 ## The saga so far
 - EAS build + submit to App Store Connect worked; app installed via TestFlight.
-- **It crashed on launch.** Not the env vars — the crash log showed a native
-  **Hermes `Object.defineProperty` → `HiddenClass::addProperty` segfault** on
-  the `com.facebook.react.runtime.JavaScript` thread (New Architecture / bridgeless).
-- **Root cause found:** the Expo app had **no `babel.config.js` and no
-  `babel-preset-expo`**. Without the preset the bundle is mis-transpiled for
-  release-mode Hermes (works in dev/web, segfaults in the release build).
+- **It crashed on launch** on every build (2, 3, 4 and 5), on the
+  `com.facebook.react.runtime.JavaScript` thread (New Architecture / bridgeless).
+- The missing `babel.config.js` was a **real but separate** problem — fixing it
+  did not stop the crash. Build 5 shipped a valid Hermes bytecode bundle and
+  still crashed.
+
+### Actual root cause: `expo-font` native module was never in the binary
+`@expo/vector-icons` declares `expo-font` as a **peer dependency with an
+unbounded range (`>=14.0.4`)**. npm auto-installed peers, so it hoisted
+**`expo-font@57.0.0`** (an SDK 56-era release) to `mobile/node_modules/expo-font`,
+while SDK 54's own `expo-font@14.0.12` got buried at
+`node_modules/expo/node_modules/expo-font`. `expo-font` was never a direct
+dependency of `mobile/package.json`, so nothing pinned it.
+
+That state was baked into the committed `package-lock.json`, and EAS runs
+`npm ci`, so **every** build got `expo-font@57.0.0`.
+
+Consequences, all verified against the shipped build-5 IPA:
+- Expo autolinking selected `expo-font@57.0.0`, whose podspec requires
+  `:ios => '16.4'` (SDK 54's target is 15.1) and which ships prebuilt
+  XCFrameworks SDK 54's autolinking doesn't consume.
+- The shipped `Rekalla` binary contains **zero** `ExpoFontLoader` /
+  `FontLoaderModule` / `FontUtilsModule` symbols — every other Expo module
+  (ImagePicker, Notifications, Localization, …) is present.
+- The shipped `main.jsbundle` **does** contain `requireNativeModule('ExpoFontLoader')`.
+
+`expo-font/build/ExpoFontLoader.js` calls `requireNativeModule('ExpoFontLoader')`
+at **module top level**, and `@expo/vector-icons/build/createIconSet.js` does
+`import * as Font from 'expo-font'` at top level. `expo-router` itself imports
+vector-icons, so this runs during bundle evaluation before anything renders.
+Native module missing → throw during bundle load → in a release/bridgeless
+build there is no LogBox, so the JS thread aborts and the app dies instantly.
+
+`npx expo-doctor` run against the exact shipped dependency state says it outright:
+
+```
+✖ Check that required peer dependencies are installed
+Missing peer dependency: expo-font
+Required by: @expo/vector-icons
+Your app may crash outside of Expo Go without this dependency.
+
+✖ Check that no duplicate dependencies are installed
+Found duplicates for expo-font:
+  ├─ expo-font@57.0.0 (at: node_modules/expo-font)
+  └─ expo-font@14.0.12 (at: node_modules/expo/node_modules/expo-font)
+```
+
+How to re-verify on any future build (no device needed):
+
+```
+curl -sL -o build.ipa "<Application Archive URL from eas build:list>"
+unzip -q build.ipa && cd Payload/Rekalla.app
+strings -a Rekalla    | grep -c FontLoaderModule   # must be > 0
+strings -a main.jsbundle | grep -c ExpoFontLoader  # is 1
+```
 
 ## What's already fixed (committed to `main`)
 - `mobile/babel.config.js` added (`presets: ["babel-preset-expo"]`).
+- `expo-font` pinned as a **direct** dependency (`~14.0.12`) so npm can no
+  longer hoist a mismatched copy; lockfile deduped to a single 14.0.12.
+  `expo-font` added to `app.json` `plugins`.
+- `expo` bumped to `54.0.36`. `npx expo-doctor` is now **18/18 green** — it was
+  3 checks failing on every build that shipped.
 - `mobile/app.json` has the EAS `projectId`
   (`59c872ad-d2b9-4413-a884-1a67b75e1d13`) under `extra.eas`.
 - Supabase `EXPO_PUBLIC_SUPABASE_URL` / `EXPO_PUBLIC_SUPABASE_ANON_KEY` are set
@@ -39,22 +93,23 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzd
 - Supabase project ref: `mhahpfcjxnoelcthdsss`
 - EAS project id: `59c872ad-d2b9-4413-a884-1a67b75e1d13`
 
-## Not yet committed
-- `babel-preset-expo` was installed locally via `npx expo install babel-preset-expo`,
-  which changed `mobile/package.json` + `mobile/package-lock.json`. **These still
-  need to be committed** so a fresh clone has the dependency. (On a fresh clone,
-  just run `npx expo install babel-preset-expo` again — it's idempotent.)
-
 ## Next steps
-1. From `mobile/`, rebuild and resubmit:
+1. From `mobile/`, rebuild and resubmit (this will be **build 6**):
    ```
    eas build --platform ios --profile production
    eas submit --platform ios --profile production
    ```
-2. In TestFlight on the phone, make sure the shown build is the **newest**
+2. Before installing, sanity-check the artifact with the `strings` recipe above —
+   `FontLoaderModule` must now appear in the binary.
+3. In TestFlight on the phone, make sure the shown build is the **newest**
    (build number will have auto-incremented), tap **Update**, and launch.
-3. Confirm it opens to the **sign-in screen** instead of crashing.
-4. Commit the `package.json` / `package-lock.json` changes for `babel-preset-expo`.
+4. Confirm it opens to the **sign-up screen** instead of crashing.
+
+## Guardrail
+Run `npx expo-doctor` from `mobile/` before every production build. All three
+failures it reported would have caught this before burning four builds. Treat
+"Missing peer dependency" and "duplicate native module" as **build blockers**,
+not warnings.
 
 ## New-machine setup
 1. `git clone https://github.com/jacksonsanders13/rekalla.git && cd rekalla`
