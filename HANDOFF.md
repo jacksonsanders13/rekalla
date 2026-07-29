@@ -93,17 +93,29 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzd
 - Supabase project ref: `mhahpfcjxnoelcthdsss`
 - EAS project id: `59c872ad-d2b9-4413-a884-1a67b75e1d13`
 
+## Build 6 — fix verified in the binary
+Build 6 (`bf3013e6-97c6-4cf7-9bc5-034032b6e049`) was built from the fix and the
+IPA was checked with the recipe above. The native module is now present:
+
+| symbol             | build 5 (crashed) | build 6 (fix) |
+|--------------------|-------------------|---------------|
+| `FontLoaderModule` | 0                 | **3**         |
+| `FontUtilsModule`  | 0                 | **3**         |
+| `ExpoFont`         | 0                 | **16**        |
+| `ExpoImagePicker`  | 41                | 41            |
+
+Diffing the full native-module list between the two binaries: build 6 **gains**
+exactly `FontLoaderModule` + `FontUtilsModule` and **loses nothing**; the `.app`
+layout is otherwise identical. The thing that killed the app on launch is gone.
+
 ## Next steps
-1. From `mobile/`, rebuild and resubmit (this will be **build 6**):
+1. Submit build 6 to App Store Connect:
    ```
-   eas build --platform ios --profile production
-   eas submit --platform ios --profile production
+   cd mobile && eas submit --platform ios --profile production
    ```
-2. Before installing, sanity-check the artifact with the `strings` recipe above —
-   `FontLoaderModule` must now appear in the binary.
-3. In TestFlight on the phone, make sure the shown build is the **newest**
-   (build number will have auto-incremented), tap **Update**, and launch.
-4. Confirm it opens to the **sign-up screen** instead of crashing.
+2. In TestFlight on the phone, make sure the shown build is **build 6**,
+   tap **Update**, and launch.
+3. Confirm it opens to the **sign-up screen** instead of crashing.
 
 ## Guardrail
 Run `npx expo-doctor` from `mobile/` before every production build. All three
