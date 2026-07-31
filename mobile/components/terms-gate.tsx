@@ -146,8 +146,8 @@ const TERMS_SECTIONS = [
     body: "Rekalla is operated by Rekalla LLC (\"Rekalla,\" \"we,\" \"us\"). These Terms of Use are an agreement between you and Rekalla LLC. By tapping Accept and by using the app, you agree to these terms and to our Privacy Policy. If you do not agree, please do not use Rekalla.",
   },
   {
-    heading: "2. Rekalla is not medical care",
-    body: "Rekalla is a memory and coordination aid. It is not a medical device and does not provide medical advice, diagnosis, or treatment, and it does not replace professional care. Always talk to a qualified professional about health decisions. In an emergency, call your local emergency number — do not rely on Rekalla.",
+    heading: "2. Rekalla is not a medical app",
+    body: "Rekalla is a simple reminder and organization app for everyday forgetfulness, made for individuals and their families. It is not a medical or healthcare app, not a medical device, and is not intended to diagnose, treat, cure, prevent, or monitor any disease or health condition. It does not provide medical advice and does not replace professional care. Always talk to a qualified professional about health decisions, and in an emergency call your local emergency number — do not rely on Rekalla.",
   },
   {
     heading: "3. Reminders are not guaranteed",
