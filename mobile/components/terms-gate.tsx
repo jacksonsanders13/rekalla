@@ -187,7 +187,7 @@ const TERMS_SECTIONS = [
   },
   {
     heading: "12. Governing law and contact",
-    body: "These terms are governed by the laws of the State of Delaware, United States, without regard to its conflict-of-laws rules. Questions about these terms or your data can be sent to madmanjack8@gmail.com.",
+    body: "These terms are governed by the laws of the State of Delaware, United States, without regard to its conflict-of-laws rules. Questions about these terms or your data can be sent to rekallasupport@gmail.com.",
   },
 ];
 
