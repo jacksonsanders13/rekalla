@@ -147,7 +147,7 @@ const TERMS_SECTIONS = [
   },
   {
     heading: "2. Rekalla is not a medical app",
-    body: "Rekalla is a simple reminder and organization app for everyday forgetfulness, made for individuals and their families. It is not a medical or healthcare app, not a medical device, and is not intended to diagnose, treat, cure, prevent, or monitor any disease or health condition. It does not provide medical advice and does not replace professional care. Always talk to a qualified professional about health decisions, and in an emergency call your local emergency number — do not rely on Rekalla.",
+    body: "Rekalla is a simple reminder and organization app that helps aging adults, and the family members who care for them, keep up with everyday things as memory naturally changes with age. It is not a medical or healthcare app, not a medical device, and is not intended to diagnose, treat, cure, prevent, or monitor any disease or health condition, including any memory-related condition. It does not provide medical advice and does not replace professional care. Always talk to a qualified professional about health decisions, and in an emergency call your local emergency number — do not rely on Rekalla.",
   },
   {
     heading: "3. Reminders are not guaranteed",
