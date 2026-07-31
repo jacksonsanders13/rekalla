@@ -4,6 +4,7 @@ import { useT } from "../lib/i18n";
 import { Screen, Card, Button } from "../components/ui";
 import { ProfileEditor } from "../components/profile-editor";
 import { LanguagePicker } from "../components/language-picker";
+import { LegalLinks } from "../components/legal-links";
 import { DeleteAccount } from "../components/delete-account";
 
 /** Shared settings screen (patients reach it from the Summary header). */
@@ -21,6 +22,7 @@ export default function Settings() {
       <Screen>
         <ProfileEditor fallbackName={t("settings.you")} />
         <LanguagePicker />
+        <LegalLinks />
         <Card>
           <Button label={t("common.signOut")} variant="secondary" onPress={signOut} />
         </Card>
