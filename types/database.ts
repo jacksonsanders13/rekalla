@@ -56,6 +56,7 @@ export type Database = {
           timezone: string;
           account_type: AccountType;
           connect_code: string | null;
+          self_managed: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -67,6 +68,7 @@ export type Database = {
           timezone?: string;
           account_type?: AccountType;
           connect_code?: string | null;
+          self_managed?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -78,6 +80,7 @@ export type Database = {
           timezone?: string;
           account_type?: AccountType;
           connect_code?: string | null;
+          self_managed?: boolean;
           created_at?: string;
           updated_at?: string;
         };

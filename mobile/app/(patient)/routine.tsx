@@ -10,6 +10,7 @@ import {
   useToggleRoutine,
 } from "../../hooks/data";
 import { Screen, Subtitle, SectionTitle, EmptyNote, Loading } from "../../components/ui";
+import { ManageButton } from "../../components/manage-button";
 import type { RoutinePeriod } from "../../lib/types";
 
 const PERIODS: { id: RoutinePeriod; labelKey: string }[] = [
@@ -43,6 +44,7 @@ export default function Routine() {
   return (
     <Screen>
       <Subtitle>{t("routine.subtitle")}</Subtitle>
+      <ManageButton />
       {all.length === 0 ? (
         <EmptyNote>{t("routine.empty")}</EmptyNote>
       ) : (

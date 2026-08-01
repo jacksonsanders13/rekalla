@@ -19,6 +19,7 @@ export default async function SettingsPage() {
     timezone: "America/New_York",
     account_type: "patient",
     connect_code: null,
+    self_managed: false,
     created_at: "",
     updated_at: "",
   };
