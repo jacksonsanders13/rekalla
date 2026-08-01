@@ -42,7 +42,7 @@ const en: Dict = {
   "auth.signUp.caregiver": "Caregiver",
   "auth.signUp.caregiverDetail": "I set up reminders for someone I care for.",
   "auth.signUp.manageQ": "Who will manage the reminders?",
-  "auth.signUp.self": "I'll manage them myself",
+  "auth.signUp.self": "I'll manage myself",
   "auth.signUp.selfDetail": "You add and edit your own reminders, routine, and memory bank.",
   "auth.signUp.helped": "A family caregiver will help",
   "auth.signUp.helpedDetail": "A family member sets things up for you using a connect code.",
@@ -333,7 +333,7 @@ const es: Dict = {
   "auth.signUp.caregiverDetail":
     "Yo configuro recordatorios para alguien a quien cuido.",
   "auth.signUp.manageQ": "¿Quién administrará los recordatorios?",
-  "auth.signUp.self": "Los administraré yo mismo",
+  "auth.signUp.self": "Yo me encargo",
   "auth.signUp.selfDetail":
     "Tú agregas y editas tus propios recordatorios, rutina y recuerdos.",
   "auth.signUp.helped": "Un cuidador familiar ayudará",
