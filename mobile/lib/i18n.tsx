@@ -251,6 +251,9 @@ const en: Dict = {
   "settings.legal": "Legal",
   "settings.terms": "Terms of Use",
   "settings.privacy": "Privacy Policy",
+  "settings.selfManageTitle": "Manage my own reminders",
+  "settings.selfManageBody":
+    "Turn this on to add and edit your own reminders, routine, and memory bank.",
   "selfManage.button": "Add or edit my reminders",
   "delete.open": "Delete my account",
   "delete.title": "Delete this account?",
@@ -535,6 +538,9 @@ const es: Dict = {
   "settings.legal": "Legal",
   "settings.terms": "Términos de uso",
   "settings.privacy": "Política de privacidad",
+  "settings.selfManageTitle": "Administrar mis propios recordatorios",
+  "settings.selfManageBody":
+    "Actívalo para agregar y editar tus propios recordatorios, rutina y recuerdos.",
   "selfManage.button": "Agregar o editar mis recordatorios",
   "settings.language": "Idioma",
   "settings.english": "English",
