@@ -7,8 +7,12 @@ import { Button } from "./ui";
  * Shown to self-managed patients: opens the full add/edit screen for their own
  * reminders, routine, and memory bank. Renders nothing for caregiver-managed
  * accounts (their reminders stay read-only).
+ *
+ * `labelKey` names what the current screen manages — the destination is the
+ * same editor either way, so a single shared label read wrong on two of the
+ * three screens.
  */
-export function ManageButton() {
+export function ManageButton({ labelKey }: { labelKey: string }) {
   const { session, profile } = useSession();
   const t = useT();
 
@@ -18,7 +22,7 @@ export function ManageButton() {
 
   return (
     <Button
-      label={t("selfManage.button")}
+      label={t(labelKey)}
       variant="secondary"
       onPress={() =>
         router.push({

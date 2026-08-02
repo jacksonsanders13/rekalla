@@ -44,7 +44,7 @@ export default function Vault() {
   return (
     <Screen>
       <Subtitle>{t("vault.subtitle")}</Subtitle>
-      <ManageButton />
+      <ManageButton labelKey="selfManage.vault" />
       <TextInput
         value={query}
         onChangeText={setQuery}

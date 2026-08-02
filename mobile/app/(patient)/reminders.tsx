@@ -30,7 +30,7 @@ export default function Reminders() {
   return (
     <Screen>
       <Subtitle>{t("reminders.subtitle")}</Subtitle>
-      <ManageButton />
+      <ManageButton labelKey="selfManage.reminders" />
       {reminders.isLoading || events.isLoading ? (
         <Loading />
       ) : occurrences.length === 0 ? (

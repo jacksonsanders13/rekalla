@@ -269,7 +269,9 @@ const en: Dict = {
   "settings.selfManageTitle": "Manage my own reminders",
   "settings.selfManageBody":
     "Turn this on to add and edit your own reminders, routine, and memory bank.",
-  "selfManage.button": "Add or edit my reminders",
+  "selfManage.reminders": "Add or edit my reminders",
+  "selfManage.routine": "Add or edit my routine",
+  "selfManage.vault": "Add or edit my memory bank",
   "delete.open": "Delete my account",
   "delete.title": "Delete this account?",
   "delete.body":
@@ -570,7 +572,9 @@ const es: Dict = {
   "settings.selfManageTitle": "Administrar mis propios recordatorios",
   "settings.selfManageBody":
     "Actívalo para agregar y editar tus propios recordatorios, rutina y recuerdos.",
-  "selfManage.button": "Agregar o editar mis recordatorios",
+  "selfManage.reminders": "Agregar o editar mis recordatorios",
+  "selfManage.routine": "Agregar o editar mi rutina",
+  "selfManage.vault": "Agregar o editar mis recuerdos",
   "settings.language": "Idioma",
   "settings.english": "English",
   "settings.spanish": "Español",

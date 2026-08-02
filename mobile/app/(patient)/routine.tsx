@@ -44,7 +44,7 @@ export default function Routine() {
   return (
     <Screen>
       <Subtitle>{t("routine.subtitle")}</Subtitle>
-      <ManageButton />
+      <ManageButton labelKey="selfManage.routine" />
       {all.length === 0 ? (
         <EmptyNote>{t("routine.empty")}</EmptyNote>
       ) : (
