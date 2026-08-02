@@ -31,6 +31,7 @@ const en: Dict = {
   "common.signOut": "Sign out",
   "common.edit": "Edit",
   "common.optional": "optional",
+  "common.back": "Back",
 
   // auth
   "auth.wordmark": "Rekalla",
@@ -336,6 +337,7 @@ const es: Dict = {
   "common.signOut": "Cerrar sesión",
   "common.edit": "Editar",
   "common.optional": "opcional",
+  "common.back": "Atrás",
 
   "auth.wordmark": "Rekalla",
   "auth.signUp.title": "Crea tu cuenta",
