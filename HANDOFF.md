@@ -7,8 +7,9 @@ without re-deriving context. Update this as things change.
 Get the Rekalla **iOS app** (in `mobile/`, Expo SDK 54) onto **TestFlight** via EAS.
 
 ## The saga so far
-There were **two independent bugs**, one masking the other. Build 6 fixed the
-launch crash; build 7 fixes the sign-up failure that was hiding behind it.
+There were **three independent bugs**, each masking the next. Build 6 fixed the
+launch crash; build 7 fixed the sign-up failure hiding behind it; build 9 fixed
+the stale checkout that kept all later feature work out of the binary entirely.
 
 ### Bug 1 — launch crash (fixed in build 6)
 - EAS build + submit to App Store Connect worked; app installed via TestFlight.
@@ -182,32 +183,104 @@ Careful when extracting strings from a Hermes bundle: it packs strings
 contiguously with no delimiter, so a greedy regex runs straight off the end of
 one string into the next. Search for **exact expected bytes**, don't regex-extract.
 
+### Bug 3 — new features missing from TestFlight (fixed in build 9)
+Builds kept shipping, but none of the work done after 2026-07-28 (self-managed
+patient accounts, in-app legal links, the sign-up rewording) ever appeared in
+the app.
+
+**Root cause: the build machine's checkout was 11 commits behind `origin/main`.**
+Feature work was committed and pushed from a different environment on Jul 30 –
+Aug 1. This machine never pulled, so `eas build` uploaded the Jul 28 tree.
+`git status` showed a clean working tree the whole time — clean means "matches
+HEAD", *not* "matches the remote", which is why nothing looked wrong.
+
+The branch had **diverged both ways**, which is the part that makes this
+dangerous:
+
+| | local `main` | `origin/main` |
+|---|---|---|
+| self-managed accounts, legal links, i18n | absent | present |
+| `expo-font` pin + plugin (Bug 1 fix) | present | **absent** |
+| `expo` version | `~54.0.36` | `54.0.35` |
+| `ascAppId` in `eas.json` | present | **absent** |
+
+So neither branch alone could produce a working build with the new features —
+building from `origin/main` would have reintroduced the Bug 1 launch crash.
+Fixed by merging (the two sides touched **disjoint files**, so it was clean)
+and rebuilding as build 9.
+
+EAS records the source commit, so this is detectable in seconds *before* a build
+finishes — `eas build:list` prints a `Commit` field. Build 8's was
+`4a52dd1` (the Jul 28 handoff commit); build 9's is `ebce71e` (the merge).
+Confirmed in the binary: build 8's bundle still contained the **old** string
+`"Someone sets up reminders for me."` and none of the new ones.
+
 ## Next steps
-Build 7 was **submitted to App Store Connect** on 2026-07-28
-(submission `9c22b8a1-2c0c-40dc-b9a4-0e289d0542a8`, ASC app id `6794918254`).
+Build 9 was **submitted to App Store Connect** on 2026-08-02
+(submission `6347ac27-9fb4-485a-a949-44e5db2f9213`, ASC app id `6794918254`).
 Apple processing takes ~5–10 min; you get an email when it's ready.
 
 1. Wait for the processing email, then open
    https://appstoreconnect.apple.com/apps/6794918254/testflight/ios
-2. In TestFlight on the phone, make sure the shown build is **build 7**,
+2. In TestFlight on the phone, make sure the shown build is **build 9**,
    tap **Update**, and launch.
-3. Create an account. It should reach the patient/caregiver home, not
-   "No API key found in request".
+3. Create an account, choosing **"I'll manage myself"**, and confirm the
+   self-managed patient can actually add a reminder / routine item / vault
+   entry. That exercises the new RLS write paths, which no binary check covers.
+4. In Settings, confirm the **"Manage my own reminders"** toggle and the
+   **Terms of Use / Privacy Policy** links are present.
 
-If it crashes on launch, it is **not** the expo-font problem, and if sign-up
-fails it is **not** the anon key — both are proven fixed in the build-7
-artifact. Get the fresh crash log off the device (Settings → Privacy & Security
-→ Analytics & Improvements → Analytics Data) and start from the new evidence,
-not from this document.
+If it crashes on launch, it is **not** the expo-font problem; if sign-up fails
+it is **not** the anon key; and if the new features are missing it is **not** a
+stale checkout — all three are proven fixed in the build-9 artifact (see the
+verification table below). Get the fresh crash log off the device (Settings →
+Privacy & Security → Analytics & Improvements → Analytics Data) and start from
+the new evidence, not from this document.
+
+## Build 9 — features and fixes both verified in the binary
+Build 9 (`47e35f0d-7660-4e30-9429-97f720137a4e`), built from merge commit
+`ebce71e`. Took **3.9 min** — builds 6–8's ~3.5 h was almost entirely queue
+wait, not build time, so don't plan around the longer figure.
+
+| check | build 8 | build 9 |
+|---|---|---|
+| `"Add or edit my reminders"` | MISSING | **FOUND** @522247 |
+| `"Manage my own reminders"` | MISSING | **FOUND** @570216 |
+| `"Who will manage the reminders?"` | MISSING | **FOUND** @611638 |
+| `"Someone sets up reminders for me."` (old, must be gone) | present | **MISSING** |
+| `"Yo me encargo"` / `"¿Quién administrará…"` (es) | — | **FOUND** (2nd is UTF-16) |
+| `FontLoaderModule` / `FontUtilsModule` | 3 / 3 | **3 / 3** |
+| anon key sha256 vs `.env` | — | **`98f00a774188` exact match** |
+| longest run of `•` | — | **1** |
+
+The `20260801000000_self_managed.sql` migration is **already applied** to the
+hosted Supabase — verified with the anon key: `profiles?select=self_managed`
+returns `[]` (not a column error) and `rpc/is_self_managed` returns `false`.
 
 Note: `eas submit --non-interactive` needs `ascAppId` in `eas.json`; it's now
 set in the `submit.production.ios` profile.
 
-## Guardrail
-Run `npx expo-doctor` from `mobile/` before every production build. All three
-failures it reported would have caught this before burning four builds. Treat
-"Missing peer dependency" and "duplicate native module" as **build blockers**,
-not warnings.
+## Guardrails
+Before **every** production build, from `mobile/`:
+
+1. **`git fetch && git status -sb`** — must show neither "ahead" nor "behind".
+   A clean working tree does **not** mean you are building current code; it only
+   means you match your own HEAD. This shipped build 8 with a week-old app
+   (Bug 3). If the branch has diverged, merge before building — and check
+   *both* directions, because the remote may be missing local fixes.
+2. **`npx expo-doctor`** — must be 18/18. Treat "Missing peer dependency" and
+   "duplicate native module" as **build blockers**, not warnings. The three
+   failures it reported would have caught Bug 1 before burning four builds.
+
+After the build starts, confirm EAS picked up the commit you think it did:
+
+```
+npx eas-cli build:list --platform ios --limit 1   # read the "Commit" field
+git rev-parse HEAD                                # must be identical
+```
+
+Then verify the artifact itself before submitting — a build that compiles proves
+nothing about what is in the bundle. Use the string/symbol recipes above.
 
 ## New-machine setup
 1. `git clone https://github.com/jacksonsanders13/rekalla.git && cd rekalla`
@@ -220,10 +293,23 @@ not warnings.
 - Caregiver "missed-reminder" alerts don't actually deliver (mock providers, no
   cron, nothing queues). Don't promise that feature to testers yet.
 - `vault-photos` storage bucket is public-read — should be private + signed URLs.
-- A patient with no caregiver can't create reminders/routine/vault (RLS is
-  caregiver-write-only) — confirm that's intended before wider testing.
+- ~~A patient with no caregiver can't create reminders/routine/vault (RLS is
+  caregiver-write-only)~~ — addressed by the self-managed account feature
+  (`20260801000000_self_managed.sql`), shipping in build 9. Still needs a real
+  device test to confirm the new RLS write paths work.
 
 ## Conventions (important)
 - Commit as **Jackson Sanders <madmanjack8@gmail.com>**, author + committer.
 - **No AI attribution** anywhere in commit messages (no "Co-authored-by",
   no "Generated with…", no model names). Verify: `git log -1 --format=%B | grep -ci claude` → must be `0`.
+- This machine has **no git identity configured** — neither `--local` nor
+  `--global` sets `user.name` / `user.email`, so a bare `git commit` fails.
+  Either set it once, or pass it per-commit (note `-c` goes **before** the
+  subcommand):
+
+  ```
+  git -c user.name="Jackson Sanders" -c user.email="madmanjack8@gmail.com" commit …
+  ```
+
+- Work happens in **more than one environment** on this repo. Push when you
+  finish, and fetch before you build — see Guardrail 1.
