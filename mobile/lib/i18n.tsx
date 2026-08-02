@@ -59,6 +59,23 @@ const en: Dict = {
   "auth.err.email": "Please enter a valid email.",
   "auth.err.password": "Your password needs at least 8 characters.",
   "auth.err.confirm": "Check your email for a confirmation link, then log in.",
+
+  // email verification (6-digit code)
+  "auth.verify.title": "Check your email",
+  "auth.verify.subtitle":
+    "We sent a 6-digit code to {email}. Enter it below to finish setting up your account.",
+  "auth.verify.code": "6-digit code",
+  "auth.verify.codePlaceholder": "123456",
+  "auth.verify.button": "Verify and continue",
+  "auth.verify.resend": "Send a new code",
+  "auth.verify.resendIn": "You can ask for a new code in {seconds}s",
+  "auth.verify.resent": "Sent. Check your email again.",
+  "auth.verify.err.code": "Please enter the 6-digit code from your email.",
+  "auth.verify.err.invalid":
+    "That code didn't work. Check it and try again, or ask for a new one.",
+  "auth.verify.backToSignUp": "Wrong email? Go back and sign up again.",
+  "auth.signIn.unverified":
+    "Your email isn't verified yet. Enter the code we just sent you.",
   "auth.signIn.title": "Welcome back",
   "auth.signIn.subtitle": "Log in to see what's on your schedule today.",
   "auth.signIn.passwordPlaceholder": "Your password",
@@ -103,32 +120,29 @@ const en: Dict = {
   "summary.allCaught": "All caught up — nothing waiting on you.",
 
   // reminders (patient)
-  "reminders.subtitle":
-    "Check things off as you go. Your caregiver keeps this list up to date.",
-  "reminders.empty":
-    "Nothing scheduled today. Reminders your caregiver adds will show up here.",
+  "reminders.subtitle": "Check things off as you go.",
+  "reminders.empty": "Nothing scheduled today. Reminders will show up here.",
   "reminders.stillWaiting": "Still waiting",
   "reminders.snoozedUntil": "Snoozed until {time}",
 
   // routine (patient)
   "routine.subtitle": "Check off each step as your day goes on.",
   "routine.empty":
-    "Your caregiver hasn't set up a routine yet. Steps will appear here when they do.",
+    "No routine set up yet. Steps will appear here once they're added.",
   "routine.morning": "Morning",
   "routine.afternoon": "Afternoon",
   "routine.evening": "Evening",
   "routine.around": "around {time}",
 
   // vault (patient)
-  "vault.subtitle":
-    "People, doctors, and important details — kept up to date by your caregiver.",
+  "vault.subtitle": "People, doctors, and important details.",
   "vault.search": "Search names, medications, notes…",
   "vault.noMatch": "Nothing matches that search.",
   "vault.empty":
-    "Your caregiver hasn't added anything yet. People, doctors, and important details will appear here.",
+    "Nothing added yet. People, doctors, and important details will appear here.",
 
   // wellness
-  "wellness.subtitle": "A quick daily check-in — it takes about 30 seconds.",
+  "wellness.subtitle": "A quick daily check-in.",
   "wellness.mood": "How are you feeling today?",
   "wellness.mood1": "Very low",
   "wellness.mood2": "Low",
@@ -353,6 +367,22 @@ const es: Dict = {
   "auth.err.password": "Tu contraseña necesita al menos 8 caracteres.",
   "auth.err.confirm":
     "Revisa tu correo para el enlace de confirmación y luego inicia sesión.",
+
+  "auth.verify.title": "Revisa tu correo",
+  "auth.verify.subtitle":
+    "Enviamos un código de 6 dígitos a {email}. Escríbelo abajo para terminar de crear tu cuenta.",
+  "auth.verify.code": "Código de 6 dígitos",
+  "auth.verify.codePlaceholder": "123456",
+  "auth.verify.button": "Verificar y continuar",
+  "auth.verify.resend": "Enviar un código nuevo",
+  "auth.verify.resendIn": "Puedes pedir un código nuevo en {seconds}s",
+  "auth.verify.resent": "Enviado. Revisa tu correo otra vez.",
+  "auth.verify.err.code": "Por favor, escribe el código de 6 dígitos de tu correo.",
+  "auth.verify.err.invalid":
+    "Ese código no funcionó. Revísalo e inténtalo de nuevo, o pide uno nuevo.",
+  "auth.verify.backToSignUp": "¿Correo equivocado? Vuelve y crea la cuenta otra vez.",
+  "auth.signIn.unverified":
+    "Tu correo aún no está verificado. Escribe el código que acabamos de enviarte.",
   "auth.signIn.title": "Bienvenido de nuevo",
   "auth.signIn.subtitle": "Inicia sesión para ver tu día de hoy.",
   "auth.signIn.passwordPlaceholder": "Tu contraseña",
@@ -394,30 +424,27 @@ const es: Dict = {
   "summary.noneToday": "No hay recordatorios para hoy.",
   "summary.allCaught": "Todo al día — nada pendiente.",
 
-  "reminders.subtitle":
-    "Marca las cosas a medida que avanzas. Tu cuidador mantiene esta lista al día.",
+  "reminders.subtitle": "Marca las cosas a medida que avanzas.",
   "reminders.empty":
-    "Nada programado hoy. Los recordatorios que añada tu cuidador aparecerán aquí.",
+    "Nada programado hoy. Los recordatorios aparecerán aquí.",
   "reminders.stillWaiting": "Aún pendiente",
   "reminders.snoozedUntil": "Pospuesto hasta {time}",
 
   "routine.subtitle": "Marca cada paso a medida que avanza tu día.",
   "routine.empty":
-    "Tu cuidador aún no ha configurado una rutina. Los pasos aparecerán aquí cuando lo haga.",
+    "Aún no hay una rutina configurada. Los pasos aparecerán aquí cuando se añadan.",
   "routine.morning": "Mañana",
   "routine.afternoon": "Tarde",
   "routine.evening": "Noche",
   "routine.around": "alrededor de las {time}",
 
-  "vault.subtitle":
-    "Personas, médicos y detalles importantes — actualizados por tu cuidador.",
+  "vault.subtitle": "Personas, médicos y detalles importantes.",
   "vault.search": "Buscar nombres, medicamentos, notas…",
   "vault.noMatch": "Nada coincide con esa búsqueda.",
   "vault.empty":
-    "Tu cuidador aún no ha añadido nada. Personas, médicos y detalles importantes aparecerán aquí.",
+    "Aún no se ha añadido nada. Personas, médicos y detalles importantes aparecerán aquí.",
 
-  "wellness.subtitle":
-    "Un registro diario rápido — toma unos 30 segundos.",
+  "wellness.subtitle": "Un registro diario rápido.",
   "wellness.mood": "¿Cómo te sientes hoy?",
   "wellness.mood1": "Muy bajo",
   "wellness.mood2": "Bajo",

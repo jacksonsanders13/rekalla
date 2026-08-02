@@ -2,7 +2,10 @@ import { Redirect, Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "../../lib/session";
 import { useT } from "../../lib/i18n";
-import { colors } from "../../lib/theme";
+import { colors, font } from "../../lib/theme";
+
+/** Bottom-tab icon size — larger than the platform default for easier reading. */
+const TAB_ICON = 30;
 
 export default function PatientTabs() {
   const { session, profile, loading } = useSession();
@@ -18,7 +21,7 @@ export default function PatientTabs() {
       screenOptions={{
         headerStyle: { backgroundColor: colors.base },
         headerTintColor: colors.label,
-        headerTitleStyle: { fontWeight: "700" },
+        headerTitleStyle: { fontWeight: "700", fontSize: font.xl },
         headerShadowVisible: false,
         tabBarStyle: {
           backgroundColor: colors.base,
@@ -34,8 +37,8 @@ export default function PatientTabs() {
         options={{
           title: t("tab.summary"),
           headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home" size={size} color={color} />
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="home" size={TAB_ICON} color={color} />
           ),
         }}
       />
@@ -43,8 +46,8 @@ export default function PatientTabs() {
         name="reminders"
         options={{
           title: t("tab.reminders"),
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="notifications" size={size} color={color} />
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="notifications" size={TAB_ICON} color={color} />
           ),
         }}
       />
@@ -52,8 +55,8 @@ export default function PatientTabs() {
         name="routine"
         options={{
           title: t("tab.routine"),
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="sunny" size={size} color={color} />
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="sunny" size={TAB_ICON} color={color} />
           ),
         }}
       />
@@ -61,8 +64,8 @@ export default function PatientTabs() {
         name="vault"
         options={{
           title: t("tab.vault"),
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="book" size={size} color={color} />
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="book" size={TAB_ICON} color={color} />
           ),
         }}
       />
@@ -70,8 +73,8 @@ export default function PatientTabs() {
         name="wellness"
         options={{
           title: t("tab.wellness"),
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="heart" size={size} color={color} />
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="heart" size={TAB_ICON} color={color} />
           ),
         }}
       />

@@ -82,9 +82,19 @@ export default function SignUp() {
       return setError(signUpError.message);
     }
 
+    // No session means Supabase is set to confirm emails. Send them to the
+    // code screen rather than dead-ending on an error they can't act on.
     if (!data.session) {
       setBusy(false);
-      return setError(t("auth.err.confirm"));
+      return router.push({
+        pathname: "/(auth)/verify",
+        params: {
+          email: email.trim(),
+          accountType,
+          selfManaged:
+            accountType === "patient" && selfManaged ? "1" : "0",
+        },
+      });
     }
 
     if (data.user) {

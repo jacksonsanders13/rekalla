@@ -23,6 +23,18 @@ export default function SignIn() {
 
     if (signInError) {
       setBusy(false);
+
+      // Signed up while "Confirm email" was on but never entered the code.
+      // Send a fresh one and take them to the code screen instead of stranding
+      // them on an error they have no way to clear.
+      if (/not confirmed/i.test(signInError.message)) {
+        await supabase.auth.resend({ type: "signup", email: email.trim() });
+        return router.push({
+          pathname: "/(auth)/verify",
+          params: { email: email.trim() },
+        });
+      }
+
       return setError(
         signInError.message === "Invalid login credentials"
           ? t("auth.signIn.badCredentials")

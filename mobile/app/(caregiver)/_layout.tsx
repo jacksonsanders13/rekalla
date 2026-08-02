@@ -2,7 +2,10 @@ import { Redirect, Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "../../lib/session";
 import { useT } from "../../lib/i18n";
-import { colors } from "../../lib/theme";
+import { colors, font } from "../../lib/theme";
+
+/** Bottom-tab icon size — larger than the platform default for easier reading. */
+const TAB_ICON = 30;
 
 export default function CaregiverTabs() {
   const { session, profile, loading } = useSession();
@@ -18,7 +21,7 @@ export default function CaregiverTabs() {
       screenOptions={{
         headerStyle: { backgroundColor: colors.base },
         headerTintColor: colors.label,
-        headerTitleStyle: { fontWeight: "700" },
+        headerTitleStyle: { fontWeight: "700", fontSize: font.xl },
         headerShadowVisible: false,
         tabBarStyle: {
           backgroundColor: colors.base,
@@ -33,8 +36,8 @@ export default function CaregiverTabs() {
         name="people"
         options={{
           title: t("tab.people"),
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="people" size={size} color={color} />
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="people" size={TAB_ICON} color={color} />
           ),
         }}
       />
@@ -42,8 +45,8 @@ export default function CaregiverTabs() {
         name="account"
         options={{
           title: t("tab.account"),
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings" size={size} color={color} />
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="settings" size={TAB_ICON} color={color} />
           ),
         }}
       />

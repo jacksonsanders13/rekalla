@@ -7,7 +7,7 @@ import { I18nProvider } from "../lib/i18n";
 import { TermsGate } from "../components/terms-gate";
 import { WelcomeTour } from "../components/welcome-tour";
 import { configureNotifications } from "../lib/notifications";
-import { colors } from "../lib/theme";
+import { colors, font } from "../lib/theme";
 
 export default function RootLayout() {
   const [termsResolved, setTermsResolved] = useState(false);
@@ -32,8 +32,12 @@ export default function RootLayout() {
           screenOptions={{
             headerStyle: { backgroundColor: colors.base },
             headerTintColor: colors.label,
-            headerTitleStyle: { fontWeight: "700" },
+            headerTitleStyle: { fontWeight: "700", fontSize: font.xl },
             contentStyle: { backgroundColor: colors.base },
+            // Chevron only. Without this, pushed screens label the back button
+            // with the previous route's name — which for a route group renders
+            // literally as "(patient)".
+            headerBackButtonDisplayMode: "minimal",
           }}
         >
           <Stack.Screen name="index" options={{ headerShown: false }} />
