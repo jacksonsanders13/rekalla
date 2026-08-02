@@ -10,6 +10,7 @@ import {
 } from "../../hooks/data";
 import { Screen, Subtitle, EmptyNote, Loading } from "../../components/ui";
 import { OccurrenceRow } from "../../components/occurrence-row";
+import { ManageButton } from "../../components/manage-button";
 
 export default function Reminders() {
   const { session } = useSession();
@@ -29,6 +30,7 @@ export default function Reminders() {
   return (
     <Screen>
       <Subtitle>{t("reminders.subtitle")}</Subtitle>
+      <ManageButton />
       {reminders.isLoading || events.isLoading ? (
         <Loading />
       ) : occurrences.length === 0 ? (

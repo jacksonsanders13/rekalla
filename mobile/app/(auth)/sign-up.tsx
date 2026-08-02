@@ -28,9 +28,30 @@ const OPTIONS: {
   },
 ];
 
+const MANAGE_OPTIONS: {
+  value: boolean;
+  icon: keyof typeof Ionicons.glyphMap;
+  titleKey: string;
+  detailKey: string;
+}[] = [
+  {
+    value: true,
+    icon: "person-circle",
+    titleKey: "auth.signUp.self",
+    detailKey: "auth.signUp.selfDetail",
+  },
+  {
+    value: false,
+    icon: "people",
+    titleKey: "auth.signUp.helped",
+    detailKey: "auth.signUp.helpedDetail",
+  },
+];
+
 export default function SignUp() {
   const t = useT();
   const [accountType, setAccountType] = useState<AccountType>("patient");
+  const [selfManaged, setSelfManaged] = useState(true);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -48,7 +69,11 @@ export default function SignUp() {
       email: email.trim(),
       password,
       options: {
-        data: { full_name: fullName.trim(), account_type: accountType },
+        data: {
+          full_name: fullName.trim(),
+          account_type: accountType,
+          self_managed: accountType === "patient" ? selfManaged : false,
+        },
       },
     });
 
@@ -65,7 +90,10 @@ export default function SignUp() {
     if (data.user) {
       await supabase
         .from("profiles")
-        .update({ account_type: accountType })
+        .update({
+          account_type: accountType,
+          self_managed: accountType === "patient" ? selfManaged : false,
+        })
         .eq("id", data.user.id);
     }
 
@@ -120,6 +148,40 @@ export default function SignUp() {
             );
           })}
         </View>
+
+        {accountType === "patient" && (
+          <>
+            <Text style={styles.legend}>{t("auth.signUp.manageQ")}</Text>
+            <View style={{ gap: spacing(3) }}>
+              {MANAGE_OPTIONS.map((option) => {
+                const selected = selfManaged === option.value;
+                return (
+                  <Pressable
+                    key={String(option.value)}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected }}
+                    onPress={() => setSelfManaged(option.value)}
+                    style={[styles.option, selected && styles.optionSelected]}
+                  >
+                    <View
+                      style={[styles.optionIcon, selected && styles.optionIconSelected]}
+                    >
+                      <Ionicons
+                        name={option.icon}
+                        size={22}
+                        color={selected ? "#000" : colors.label2}
+                      />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.optionTitle}>{t(option.titleKey)}</Text>
+                      <Text style={styles.optionDetail}>{t(option.detailKey)}</Text>
+                    </View>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </>
+        )}
 
         <Field
           label={t("auth.field.name")}

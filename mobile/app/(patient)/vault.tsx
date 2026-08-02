@@ -6,6 +6,7 @@ import { useT } from "../../lib/i18n";
 import { colors, font, radius, spacing } from "../../lib/theme";
 import { useVaultItems } from "../../hooks/data";
 import { Screen, Subtitle, EmptyNote, Loading } from "../../components/ui";
+import { ManageButton } from "../../components/manage-button";
 
 const CATEGORY_META: Record<
   string,
@@ -43,6 +44,7 @@ export default function Vault() {
   return (
     <Screen>
       <Subtitle>{t("vault.subtitle")}</Subtitle>
+      <ManageButton />
       <TextInput
         value={query}
         onChangeText={setQuery}

@@ -16,10 +16,10 @@ import { useT } from "../lib/i18n";
 import { colors, font, radius, spacing } from "../lib/theme";
 
 /**
- * Bump this version to force everyone to re-accept — e.g. when the placeholder
- * terms below are replaced with the real, legally binding agreement.
+ * Bump this version to force everyone to re-accept when the agreement changes
+ * in a meaningful way.
  */
-const TERMS_VERSION = "2026-07-placeholder";
+const TERMS_VERSION = "2026-08-v1";
 const keyFor = (userId: string) => `rekalla:terms-accepted:${TERMS_VERSION}:${userId}`;
 
 /**
@@ -27,8 +27,9 @@ const keyFor = (userId: string) => `rekalla:terms-accepted:${TERMS_VERSION}:${us
  * scroll to the bottom before "Accept" enables. Acceptance is remembered on the
  * device so it never nags again — until the terms version changes.
  *
- * The copy here is a placeholder and will be replaced with the real, legally
- * binding Terms of Use and Privacy Policy before launch.
+ * NOTE: This is the plain-language agreement users accept in-app. The full
+ * Terms of Use and Privacy Policy are also hosted at rekalla.app/terms and
+ * rekalla.app/privacy. Have any wording changes reviewed before shipping.
  */
 export function TermsGate({ onResolved }: { onResolved?: () => void }) {
   const { session, loading } = useSession();
@@ -91,9 +92,9 @@ export function TermsGate({ onResolved }: { onResolved?: () => void }) {
           scrollEventThrottle={16}
         >
           <Text style={styles.heading}>Terms of Use & Privacy Policy</Text>
-          <Text style={styles.meta}>Last updated: this is placeholder text</Text>
+          <Text style={styles.meta}>Rekalla LLC · Last updated August 2026</Text>
 
-          {PLACEHOLDER_SECTIONS.map((section) => (
+          {TERMS_SECTIONS.map((section) => (
             <View key={section.heading} style={styles.section}>
               <Text style={styles.sectionHeading}>{section.heading}</Text>
               <Text style={styles.body}>{section.body}</Text>
@@ -101,11 +102,9 @@ export function TermsGate({ onResolved }: { onResolved?: () => void }) {
           ))}
 
           <Text style={styles.finePrint}>
-            This is placeholder text and does not constitute a legal agreement.
-            The final, legally binding Terms of Use and Privacy Policy will
-            replace it before Rekalla is publicly available. Rekalla is a memory
-            and coordination aid, not a medical device, and does not provide
-            medical advice.
+            The full Terms of Use and Privacy Policy are available at
+            rekalla.app/terms and rekalla.app/privacy. By tapping Accept you
+            confirm you have read and agree to them.
           </Text>
 
           <Text style={styles.scrollHint}>
@@ -141,34 +140,54 @@ export function TermsGate({ onResolved }: { onResolved?: () => void }) {
   );
 }
 
-const PLACEHOLDER_SECTIONS = [
+const TERMS_SECTIONS = [
   {
-    heading: "1. Welcome",
-    body: "Rekalla helps you and the people who care for you keep track of reminders, daily routines, important people, and how you're feeling. By using Rekalla you agree to these terms. This section is placeholder text so you can see how the agreement will look and behave.",
+    heading: "1. About this agreement",
+    body: "Rekalla is operated by Rekalla LLC (\"Rekalla,\" \"we,\" \"us\"). These Terms of Use are an agreement between you and Rekalla LLC. By tapping Accept and by using the app, you agree to these terms and to our Privacy Policy. If you do not agree, please do not use Rekalla.",
   },
   {
-    heading: "2. Your account",
-    body: "You are responsible for keeping your sign-in details private. Loved One accounts and Caregiver accounts can be connected using a connect code. When you connect, a caregiver can help set up your reminders, routine, and memory bank on your behalf. Placeholder text continues here to fill out the section.",
+    heading: "2. Rekalla is not a medical app",
+    body: "Rekalla is a simple reminder and organization app that helps aging adults, and the family members who care for them, keep up with everyday things as memory naturally changes with age. It is not a medical or healthcare app, not a medical device, and is not intended to diagnose, treat, cure, prevent, or monitor any disease or health condition, including any memory-related condition. It does not provide medical advice and does not replace professional care. Always talk to a qualified professional about health decisions, and in an emergency call your local emergency number — do not rely on Rekalla.",
   },
   {
-    heading: "3. What we store",
-    body: "Rekalla stores the information you or your caregiver add — reminders, routine steps, memory-bank entries, and wellness check-ins — so it can be shown back to you. Placeholder text: the real Privacy Policy will describe exactly what is collected, how long it is kept, and your choices about it.",
+    heading: "3. Reminders are not guaranteed",
+    body: "Reminders and notifications depend on your device, its settings, battery, and network, and may be delayed, missed, or not delivered. Do not rely on Rekalla as your only way to remember medication, appointments, or other important or health-related tasks. You are responsible for these tasks whether or not a reminder appears.",
   },
   {
-    heading: "4. What Rekalla is not",
-    body: "Rekalla is a memory and coordination aid. It is not a medical device and does not give medical advice, diagnosis, or treatment. Always talk to a qualified professional about health decisions. This is placeholder wording that will be finalized before launch.",
+    heading: "4. Who can use Rekalla",
+    body: "You must be at least 18 years old to create an account. By using Rekalla, you confirm that you are 18 or older and are able to enter into this agreement. Rekalla is intended for adults and is not directed to children under 13.",
   },
   {
-    heading: "5. Sharing and connections",
-    body: "You control who is connected to your account. A connection can be ended at any time. Caregivers only see the accounts they are actively connected to. Placeholder text continues to describe how connections and permissions work.",
+    heading: "5. Your account",
+    body: "You are responsible for keeping your sign-in details private and for activity that happens under your account. Please use a password you don't use elsewhere, and let us know if you believe your account has been used without your permission.",
   },
   {
-    heading: "6. Changes to these terms",
-    body: "We may update these terms from time to time. When we make meaningful changes, we'll ask you to review and accept the new version the next time you open the app. Placeholder text fills out the remainder of this section so there is enough to scroll through.",
+    heading: "6. Caregivers and connections",
+    body: "Loved One and Caregiver accounts can be linked using a connect code. A connected caregiver can view and help manage the Loved One's reminders, routine, and memory bank. Only share your connect code with people you trust. You can end a connection at any time from the app, which removes that caregiver's access going forward.",
   },
   {
-    heading: "7. Contact",
-    body: "Questions about these placeholder terms can be directed to the Rekalla team. The final agreement will include real contact details and the governing law. Thank you for helping test Rekalla during this early stage.",
+    heading: "7. Your content",
+    body: "You are responsible for the information you add to Rekalla, including that you have the right to add any other person's details (such as a family member's phone number). Do not add unlawful content or anything you do not have permission to store.",
+  },
+  {
+    heading: "8. Privacy",
+    body: "Our Privacy Policy explains what information we collect, how it is used, how it is stored with our provider Supabase, and your choices — including deleting your account and all its data from Settings. By using Rekalla you agree to the Privacy Policy at rekalla.app/privacy.",
+  },
+  {
+    heading: "9. Provided \"as is\"",
+    body: "Rekalla is provided on an \"as is\" and \"as available\" basis, without warranties of any kind, whether express or implied. We do not warrant that the app will be uninterrupted, error-free, secure, or that reminders or data will always be available or accurate.",
+  },
+  {
+    heading: "10. Limitation of liability",
+    body: "To the fullest extent permitted by law, Rekalla LLC and its owners will not be liable for any indirect, incidental, special, or consequential damages, or for any harm, loss, or injury arising from your use of or reliance on Rekalla — including missed or late reminders or loss of data. Some places do not allow certain limitations, so parts of this may not apply to you.",
+  },
+  {
+    heading: "11. Changes to these terms",
+    body: "We may update these terms from time to time. When we make meaningful changes, we will ask you to review and accept the new version the next time you open the app. Continuing to use Rekalla after an update means you accept the updated terms.",
+  },
+  {
+    heading: "12. Governing law and contact",
+    body: "These terms are governed by the laws of the State of Delaware, United States, without regard to its conflict-of-laws rules. Questions about these terms or your data can be sent to rekallasupport@gmail.com.",
   },
 ];
 
