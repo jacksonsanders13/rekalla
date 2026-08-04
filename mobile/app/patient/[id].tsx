@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Image, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "../../lib/session";
@@ -7,6 +7,7 @@ import { useT, type TFunc } from "../../lib/i18n";
 import { colors, font, radius, spacing } from "../../lib/theme";
 import { firstName, formatTimeOfDay, fromDateKey, toDateKey } from "../../lib/utils";
 import { pickPhoto, uploadVaultPhoto, type PickedPhoto } from "../../lib/photos";
+import { VaultPhoto } from "../../components/vault-photo";
 import { occurrencesFor, completionSummary } from "../../lib/reminders";
 import {
   useReminders,
@@ -659,7 +660,7 @@ function VaultSection({
           <Text style={styles.fieldLabel}>{t("mgr.vt.photo")}</Text>
           {shownPhotoUri ? (
             <View style={styles.photoRow}>
-              <Image source={{ uri: shownPhotoUri }} style={styles.photoPreview} />
+              <VaultPhoto source={shownPhotoUri} style={styles.photoPreview} />
               <View style={{ flex: 1, gap: spacing(2) }}>
                 <Button
                   label={t("mgr.vt.changePhoto")}
@@ -773,7 +774,7 @@ function ManageRow({
   return (
     <View style={[styles.row, active && styles.rowActive]}>
       {photoUrl ? (
-        <Image source={{ uri: photoUrl }} style={styles.rowPhoto} />
+        <VaultPhoto source={photoUrl} style={styles.rowPhoto} />
       ) : null}
       <View style={{ flex: 1 }}>
         <Text style={styles.rowTitle}>{title}</Text>

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Image, Linking, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Linking, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "../../lib/session";
 import { useT } from "../../lib/i18n";
@@ -7,6 +7,7 @@ import { colors, font, radius, spacing } from "../../lib/theme";
 import { useVaultItems } from "../../hooks/data";
 import { Screen, Subtitle, EmptyNote, Loading } from "../../components/ui";
 import { ManageButton } from "../../components/manage-button";
+import { VaultPhoto } from "../../components/vault-photo";
 
 const CATEGORY_META: Record<
   string,
@@ -63,10 +64,10 @@ export default function Vault() {
           return (
             <View key={item.id} style={styles.card}>
               {item.photo_url ? (
-                <Image
-                  source={{ uri: item.photo_url }}
+                <VaultPhoto
+                  source={item.photo_url}
                   style={styles.photo}
-                  accessibilityLabel={`Photo of ${item.title}`}
+                  alt={`Photo of ${item.title}`}
                 />
               ) : null}
               <View style={styles.top}>

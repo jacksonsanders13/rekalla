@@ -35,8 +35,9 @@ export async function pickPhoto(): Promise<PickedPhoto | null> {
 
 /**
  * Uploads a picked photo to the vault-photos bucket (under the uploader's
- * own folder, which is what the storage policies require) and returns its
- * public URL for storing on the vault item.
+ * own folder, which is what the storage policies require) and returns the
+ * storage path to save on the vault item. The bucket is private, so the path
+ * is resolved to a short-lived signed URL at display time (see VaultPhoto).
  */
 export async function uploadVaultPhoto(
   uploaderId: string,
@@ -56,7 +57,7 @@ export async function uploadVaultPhoto(
     .upload(path, bytes.buffer as ArrayBuffer, { contentType: photo.mimeType });
   if (error) throw error;
 
-  return supabase.storage.from("vault-photos").getPublicUrl(path).data.publicUrl;
+  return path;
 }
 
 function base64ToBytes(base64: string): Uint8Array {
