@@ -29,7 +29,7 @@ export default function People() {
       onSuccess: (patient) => {
         setCode("");
         setMessage({
-          text: t("people.connected", {
+          text: t("people.requestSent", {
             name: patient.full_name || t("settings.you"),
           }),
           ok: true,

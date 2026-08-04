@@ -5,6 +5,7 @@ import { useT } from "../lib/i18n";
 import { colors, font, radius, spacing } from "../lib/theme";
 import { initials } from "../lib/utils";
 import { useMyCaregivers } from "../hooks/data";
+import { PendingCaregivers } from "../components/pending-caregivers";
 import { Screen, Card, Subtitle, SectionTitle, EmptyNote, Loading } from "../components/ui";
 
 /** The patient's screen: their connect code + who's connected. */
@@ -19,6 +20,8 @@ export default function Connect() {
       <Stack.Screen options={{ title: t("connect.caregivers") }} />
       <Screen>
         <Subtitle>{t("connect.subtitle")}</Subtitle>
+
+        <PendingCaregivers />
 
         <Card style={{ alignItems: "center" }}>
           <Text style={styles.codeLabel}>{t("connect.yourCode")}</Text>

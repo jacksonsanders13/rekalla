@@ -18,6 +18,7 @@ import {
 import { Screen, Card, SectionTitle, EmptyNote, Loading } from "../../components/ui";
 import { ActivityRings } from "../../components/rings";
 import { OccurrenceRow } from "../../components/occurrence-row";
+import { PendingCaregivers } from "../../components/pending-caregivers";
 import { syncReminderNotifications } from "../../lib/notifications";
 
 export default function Summary() {
@@ -88,6 +89,8 @@ export default function Summary() {
           </Pressable>
         </Link>
       </View>
+
+      <PendingCaregivers />
 
       {loading ? (
         <Loading />

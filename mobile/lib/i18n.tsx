@@ -168,6 +168,10 @@ const en: Dict = {
     "Give this code to the person who cares for you. They'll type it into their own Rekalla account to connect.",
   "connect.caregivers": "Connected caregivers",
   "connect.none": "No caregivers yet. Share your code above to connect one.",
+  "connect.pendingTitle": "Caregiver request",
+  "connect.pendingBody": "{name} wants to connect as your caregiver. They'll be able to help manage your reminders, routine, and memory bank.",
+  "connect.approve": "Approve",
+  "connect.decline": "Decline",
 
   // caregiver people
   "people.subtitle": "Everyone you help care for, in one place.",
@@ -177,6 +181,7 @@ const en: Dict = {
   "people.codePlaceholder": "e.g. R7K2QX",
   "people.connect": "Connect",
   "people.connected": "Connected to {name}.",
+  "people.requestSent": "Request sent to {name}. They'll need to approve it before you can help.",
   "people.mine": "People I care for",
   "people.empty":
     "No one connected yet. Enter a connect code above and they'll appear here.",
@@ -473,6 +478,10 @@ const es: Dict = {
   "connect.caregivers": "Cuidadores conectados",
   "connect.none":
     "Aún no hay cuidadores. Comparte tu código de arriba para conectar uno.",
+  "connect.pendingTitle": "Solicitud de cuidador",
+  "connect.pendingBody": "{name} quiere conectarse como tu cuidador. Podrá ayudarte a administrar tus recordatorios, rutina y recuerdos.",
+  "connect.approve": "Aprobar",
+  "connect.decline": "Rechazar",
 
   "people.subtitle": "Todas las personas que ayudas a cuidar, en un solo lugar.",
   "people.connectTitle": "Conectar con alguien",
@@ -481,6 +490,7 @@ const es: Dict = {
   "people.codePlaceholder": "ej. R7K2QX",
   "people.connect": "Conectar",
   "people.connected": "Conectado con {name}.",
+  "people.requestSent": "Solicitud enviada a {name}. Deberá aprobarla antes de que puedas ayudar.",
   "people.mine": "Personas que cuido",
   "people.empty":
     "Aún no hay nadie conectado. Escribe un código de conexión arriba y aparecerán aquí.",

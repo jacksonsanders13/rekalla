@@ -420,3 +420,45 @@ export function useConnectWithCode(caregiverId: string) {
     },
   });
 }
+
+/** Caregiver connection requests awaiting this patient's approval. */
+export function usePendingCaregivers(patientId: string) {
+  return useQuery({
+    queryKey: ["pending-caregivers", patientId],
+    enabled: Boolean(patientId),
+    queryFn: async (): Promise<LinkedPerson[]> => {
+      const { data, error } = await supabase
+        .from("care_relationships")
+        .select("id, caregiver_id, profiles!care_relationships_caregiver_id_fkey(*)")
+        .eq("patient_id", patientId)
+        .eq("status", "pending")
+        .not("caregiver_id", "is", null)
+        .order("created_at");
+      if (error) throw error;
+      return (data ?? [])
+        .filter((row) => row.profiles)
+        .map((row) => ({
+          relationshipId: row.id,
+          profile: row.profiles as unknown as Profile,
+        }));
+    },
+  });
+}
+
+/** Patient approves (-> active) or declines (-> revoked) a caregiver request. */
+export function useRespondToCaregiver(patientId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { relationshipId: string; approve: boolean }) => {
+      const { error } = await supabase
+        .from("care_relationships")
+        .update({ status: input.approve ? "active" : "revoked" })
+        .eq("id", input.relationshipId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["pending-caregivers", patientId] });
+      qc.invalidateQueries({ queryKey: ["my-caregivers", patientId] });
+    },
+  });
+}
