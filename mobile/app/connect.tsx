@@ -5,32 +5,19 @@ import { useSession } from "../lib/session";
 import { useT } from "../lib/i18n";
 import { colors, font, radius, spacing } from "../lib/theme";
 import { initials } from "../lib/utils";
-import {
-  useMyCaregivers,
-  useRegenerateConnectCode,
-  useRespondToCaregiver,
-} from "../hooks/data";
+import { useMyCaregivers, useRespondToCaregiver } from "../hooks/data";
 import { PendingCaregivers } from "../components/pending-caregivers";
-import {
-  Screen,
-  Card,
-  Button,
-  Subtitle,
-  SectionTitle,
-  EmptyNote,
-  Loading,
-} from "../components/ui";
+import { Screen, Card, Subtitle, SectionTitle, EmptyNote, Loading } from "../components/ui";
 
 /** The patient's screen: their connect code + who's connected. */
 export default function Connect() {
-  const { session, profile, refreshProfile } = useSession();
+  const { session, profile } = useSession();
   const t = useT();
   const patientId = session?.user.id ?? "";
   const caregivers = useMyCaregivers(patientId);
   // Declining a pending request and removing an active caregiver are the same
   // operation — both set the relationship to 'revoked'.
   const respond = useRespondToCaregiver(patientId);
-  const newCode = useRegenerateConnectCode();
 
   function confirmRemove(relationshipId: string, name: string) {
     Alert.alert(t("connect.removeTitle"), `${name}\n\n${t("connect.removeBody")}`, [
@@ -47,24 +34,6 @@ export default function Connect() {
     ]);
   }
 
-  function confirmNewCode() {
-    Alert.alert(t("connect.newCodeTitle"), t("connect.newCodeBody"), [
-      { text: t("common.cancel"), style: "cancel" },
-      {
-        text: t("connect.newCode"),
-        style: "destructive",
-        onPress: () =>
-          newCode.mutate(undefined, {
-            // The profile holds the code, so pull the new one in to display it.
-            onSuccess: () => {
-              refreshProfile();
-            },
-            onError: () => Alert.alert(t("connect.newCodeFailed")),
-          }),
-      },
-    ]);
-  }
-
   return (
     <>
       <Stack.Screen options={{ title: t("connect.caregivers") }} />
@@ -77,13 +46,6 @@ export default function Connect() {
           <Text style={styles.codeLabel}>{t("connect.yourCode")}</Text>
           <Text style={styles.code}>{profile?.connect_code ?? "……"}</Text>
           <Text style={styles.codeHelp}>{t("connect.codeHelp")}</Text>
-          <Button
-            label={t("connect.newCode")}
-            variant="secondary"
-            loading={newCode.isPending}
-            onPress={confirmNewCode}
-            style={{ alignSelf: "stretch" }}
-          />
         </Card>
 
         <SectionTitle>{t("connect.caregivers")}</SectionTitle>
