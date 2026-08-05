@@ -408,6 +408,10 @@ export type Database = {
         Args: Record<string, never>;
         Returns: undefined;
       };
+      regenerate_connect_code: {
+        Args: Record<string, never>;
+        Returns: string;
+      };
     };
     Enums: {
       account_type: AccountType;

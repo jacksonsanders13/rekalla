@@ -175,9 +175,14 @@ const en: Dict = {
   "connect.remove": "Remove",
   "connect.removeTitle": "Remove this caregiver?",
   "connect.removeBody":
-    "They will no longer see or manage your reminders, routine, or memory bank. Your connect code will change, so their old code won't work.",
+    "They will no longer see or manage your reminders, routine, or memory bank. If they still have your code, get a new one below.",
   "connect.removeConfirm": "Remove caregiver",
   "connect.removeFailed": "That didn't work. Please try again.",
+  "connect.newCode": "Get a new code",
+  "connect.newCodeTitle": "Get a new connect code?",
+  "connect.newCodeBody":
+    "Your old code will stop working, so anyone who wrote it down can't use it. Caregivers already connected stay connected.",
+  "connect.newCodeFailed": "That didn't work. Please try again.",
 
   // caregiver people
   "people.subtitle": "Everyone you help care for, in one place.",
@@ -491,9 +496,14 @@ const es: Dict = {
   "connect.remove": "Quitar",
   "connect.removeTitle": "¿Quitar a este cuidador?",
   "connect.removeBody":
-    "Ya no podrá ver ni administrar tus recordatorios, rutina ni recuerdos. Tu código de conexión cambiará, así que el código anterior no funcionará.",
+    "Ya no podrá ver ni administrar tus recordatorios, rutina ni recuerdos. Si todavía tiene tu código, consigue uno nuevo abajo.",
   "connect.removeConfirm": "Quitar cuidador",
   "connect.removeFailed": "No funcionó. Por favor, inténtalo de nuevo.",
+  "connect.newCode": "Conseguir un código nuevo",
+  "connect.newCodeTitle": "¿Conseguir un código de conexión nuevo?",
+  "connect.newCodeBody":
+    "Tu código anterior dejará de funcionar, así que nadie que lo haya anotado podrá usarlo. Los cuidadores ya conectados seguirán conectados.",
+  "connect.newCodeFailed": "No funcionó. Por favor, inténtalo de nuevo.",
 
   "people.subtitle": "Todas las personas que ayudas a cuidar, en un solo lugar.",
   "people.connectTitle": "Conectar con alguien",

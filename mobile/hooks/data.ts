@@ -445,6 +445,17 @@ export function usePendingCaregivers(patientId: string) {
   });
 }
 
+/** Issues the patient a fresh connect code; the old one stops working. */
+export function useRegenerateConnectCode() {
+  return useMutation({
+    mutationFn: async (): Promise<string> => {
+      const { data, error } = await supabase.rpc("regenerate_connect_code");
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
 /** Patient approves (-> active) or declines (-> revoked) a caregiver request. */
 export function useRespondToCaregiver(patientId: string) {
   const qc = useQueryClient();
