@@ -61,3 +61,9 @@ drop trigger if exists care_rotate_code_on_revoke on public.care_relationships;
 create trigger care_rotate_code_on_revoke
   after update on public.care_relationships
   for each row execute function public.rotate_code_on_revoke();
+
+-- generate_connect_code is currently callable over the REST API by anyone
+-- (POST /rest/v1/rpc/generate_connect_code returns 200). It leaks no existing
+-- codes, but there is no reason for a client to call it — it is only ever used
+-- by the signup trigger and the rotation trigger above, both SECURITY DEFINER.
+revoke execute on function public.generate_connect_code() from anon, authenticated;
