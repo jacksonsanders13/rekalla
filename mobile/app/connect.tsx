@@ -1,19 +1,44 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { Stack } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "../lib/session";
 import { useT } from "../lib/i18n";
 import { colors, font, radius, spacing } from "../lib/theme";
 import { initials } from "../lib/utils";
-import { useMyCaregivers } from "../hooks/data";
+import { useMyCaregivers, useRespondToCaregiver } from "../hooks/data";
 import { PendingCaregivers } from "../components/pending-caregivers";
 import { Screen, Card, Subtitle, SectionTitle, EmptyNote, Loading } from "../components/ui";
 
 /** The patient's screen: their connect code + who's connected. */
 export default function Connect() {
-  const { session, profile } = useSession();
+  const { session, profile, refreshProfile } = useSession();
   const t = useT();
   const patientId = session?.user.id ?? "";
   const caregivers = useMyCaregivers(patientId);
+  // Declining a pending request and removing an active caregiver are the same
+  // operation — both set the relationship to 'revoked'.
+  const respond = useRespondToCaregiver(patientId);
+
+  function confirmRemove(relationshipId: string, name: string) {
+    Alert.alert(t("connect.removeTitle"), `${name}\n\n${t("connect.removeBody")}`, [
+      { text: t("common.cancel"), style: "cancel" },
+      {
+        text: t("connect.removeConfirm"),
+        style: "destructive",
+        onPress: () =>
+          respond.mutate(
+            { relationshipId, approve: false },
+            {
+              // A trigger rotates the connect code on revoke, so pull the new one.
+              onSuccess: () => {
+                refreshProfile();
+              },
+              onError: () => Alert.alert(t("connect.removeFailed")),
+            },
+          ),
+      },
+    ]);
+  }
 
   return (
     <>
@@ -35,18 +60,32 @@ export default function Connect() {
         ) : (caregivers.data ?? []).length === 0 ? (
           <EmptyNote>{t("connect.none")}</EmptyNote>
         ) : (
-          (caregivers.data ?? []).map((link) => (
-            <View key={link.relationshipId} style={styles.row}>
-              <View style={styles.avatar}>
-                <Text style={styles.avatarText}>
-                  {initials(link.profile.full_name)}
-                </Text>
+          (caregivers.data ?? []).map((link) => {
+            const name = link.profile.full_name || t("settings.caregiver");
+            return (
+              <View key={link.relationshipId} style={styles.row}>
+                <View style={styles.avatar}>
+                  <Text style={styles.avatarText}>
+                    {initials(link.profile.full_name)}
+                  </Text>
+                </View>
+                <Text style={styles.name}>{name}</Text>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={`${t("connect.remove")} ${name}`}
+                  disabled={respond.isPending}
+                  onPress={() => confirmRemove(link.relationshipId, name)}
+                  style={({ pressed }) => [
+                    styles.removeButton,
+                    pressed && { opacity: 0.6 },
+                  ]}
+                >
+                  <Ionicons name="close" size={20} color={colors.red} />
+                  <Text style={styles.removeText}>{t("connect.remove")}</Text>
+                </Pressable>
               </View>
-              <Text style={styles.name}>
-                {link.profile.full_name || t("settings.caregiver")}
-              </Text>
-            </View>
-          ))
+            );
+          })
         )}
       </Screen>
     </>
@@ -84,5 +123,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   avatarText: { color: colors.blue, fontSize: font.base, fontWeight: "700" },
-  name: { color: colors.label, fontSize: font.lg, fontWeight: "700" },
+  name: { color: colors.label, fontSize: font.lg, fontWeight: "700", flex: 1 },
+  removeButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing(1),
+    minHeight: 44,
+    paddingHorizontal: spacing(3),
+    borderRadius: radius.md,
+    backgroundColor: "rgba(255,69,58,0.12)",
+  },
+  removeText: { color: colors.red, fontSize: font.sm, fontWeight: "700" },
 });

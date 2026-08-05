@@ -172,6 +172,12 @@ const en: Dict = {
   "connect.pendingBody": "{name} wants to connect as your caregiver. They'll be able to help manage your reminders, routine, and memory bank.",
   "connect.approve": "Approve",
   "connect.decline": "Decline",
+  "connect.remove": "Remove",
+  "connect.removeTitle": "Remove this caregiver?",
+  "connect.removeBody":
+    "They will no longer see or manage your reminders, routine, or memory bank. Your connect code will change, so their old code won't work.",
+  "connect.removeConfirm": "Remove caregiver",
+  "connect.removeFailed": "That didn't work. Please try again.",
 
   // caregiver people
   "people.subtitle": "Everyone you help care for, in one place.",
@@ -482,6 +488,12 @@ const es: Dict = {
   "connect.pendingBody": "{name} quiere conectarse como tu cuidador. Podrá ayudarte a administrar tus recordatorios, rutina y recuerdos.",
   "connect.approve": "Aprobar",
   "connect.decline": "Rechazar",
+  "connect.remove": "Quitar",
+  "connect.removeTitle": "¿Quitar a este cuidador?",
+  "connect.removeBody":
+    "Ya no podrá ver ni administrar tus recordatorios, rutina ni recuerdos. Tu código de conexión cambiará, así que el código anterior no funcionará.",
+  "connect.removeConfirm": "Quitar cuidador",
+  "connect.removeFailed": "No funcionó. Por favor, inténtalo de nuevo.",
 
   "people.subtitle": "Todas las personas que ayudas a cuidar, en un solo lugar.",
   "people.connectTitle": "Conectar con alguien",
