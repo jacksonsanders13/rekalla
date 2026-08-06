@@ -35,7 +35,14 @@ export default function People() {
           ok: true,
         });
       },
-      onError: (error) => setMessage({ text: error.message, ok: false }),
+      onError: (error) =>
+        setMessage({
+          // The database raises this in English; show the translated copy.
+          text: /self-managed/i.test(error.message)
+            ? t("people.selfManaged")
+            : error.message,
+          ok: false,
+        }),
     });
   }
 

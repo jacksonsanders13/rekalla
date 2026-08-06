@@ -190,6 +190,8 @@ const en: Dict = {
   "people.connect": "Connect",
   "people.connected": "Connected to {name}.",
   "people.requestSent": "Request sent to {name}. They'll need to approve it before you can help.",
+  "people.selfManaged":
+    "Sorry, the account you are attempting to connect to is currently self-managed.",
   "people.mine": "People I care for",
   "people.empty":
     "No one connected yet. Enter a connect code above and they'll appear here.",
@@ -507,6 +509,8 @@ const es: Dict = {
   "people.connect": "Conectar",
   "people.connected": "Conectado con {name}.",
   "people.requestSent": "Solicitud enviada a {name}. Deberá aprobarla antes de que puedas ayudar.",
+  "people.selfManaged":
+    "Lo sentimos, la cuenta a la que intentas conectarte se administra a sí misma en este momento.",
   "people.mine": "Personas que cuido",
   "people.empty":
     "Aún no hay nadie conectado. Escribe un código de conexión arriba y aparecerán aquí.",
