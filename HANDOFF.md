@@ -216,26 +216,76 @@ Confirmed in the binary: build 8's bundle still contained the **old** string
 `"Someone sets up reminders for me."` and none of the new ones.
 
 ## Next steps
-Build 9 was **submitted to App Store Connect** on 2026-08-02
-(submission `6347ac27-9fb4-485a-a949-44e5db2f9213`, ASC app id `6794918254`).
+**Build 15** (`ada9837d-4592-47e4-b21c-728ec6ea8f0d`, commit `b14ae9c`) was
+**submitted to App Store Connect** on 2026-08-06
+(submission `ca8f6cc0-2a29-4009-b4b9-623a7b1883bc`, ASC app id `6794918254`).
 Apple processing takes ~5–10 min; you get an email when it's ready.
 
 1. Wait for the processing email, then open
    https://appstoreconnect.apple.com/apps/6794918254/testflight/ios
-2. In TestFlight on the phone, make sure the shown build is **build 9**,
+2. In TestFlight on the phone, make sure the shown build is **build 15**,
    tap **Update**, and launch.
-3. Create an account, choosing **"I'll manage myself"**, and confirm the
-   self-managed patient can actually add a reminder / routine item / vault
-   entry. That exercises the new RLS write paths, which no binary check covers.
-4. In Settings, confirm the **"Manage my own reminders"** toggle and the
-   **Terms of Use / Privacy Policy** links are present.
+3. Sign up and confirm the email OTP flow works (any code length is accepted
+   now; the verify screen mentions the junk folder).
+4. As a caregiver, enter the connect code of a **self-managed** patient — it
+   must show "Sorry, the account you are attempting to connect to is currently
+   self-managed.", not a raw Postgres error. Then turn self-management off on
+   the patient and confirm the *next* attempt creates a pending request.
+5. Approve that request as the patient, and confirm the caregiver can then see
+   and edit reminders.
+6. Still unverified on a real device: a **self-managed** patient adding a
+   reminder / routine item / vault entry (the RLS write paths from build 9),
+   and the Settings **"Manage my own reminders"** toggle + legal links.
 
 If it crashes on launch, it is **not** the expo-font problem; if sign-up fails
-it is **not** the anon key; and if the new features are missing it is **not** a
-stale checkout — all three are proven fixed in the build-9 artifact (see the
+it is **not** the anon key; and if new features are missing it is **not** a
+stale checkout — all three are proven fixed in the build-15 artifact (see the
 verification table below). Get the fresh crash log off the device (Settings →
 Privacy & Security → Analytics & Improvements → Analytics Data) and start from
 the new evidence, not from this document.
+
+## Builds 10–15
+Builds 10–15 are ordinary feature/fix builds; the three structural bugs above
+stayed fixed throughout. Submitted so far: 9, 11, 12, 14, **15**. (10 and 13
+were superseded before submission — build numbers auto-increment per build, so
+gaps in the submitted set are normal and not a sign anything went wrong.)
+
+| build | commit | what it carried |
+|---|---|---|
+| 11–12 | `094010e` | security pass: caregiver revoke, patient approval gate, private vault photos + signed URLs, connect-code rate limit |
+| 13 | `1738b96` | accept any Supabase email OTP length (not just six digits) |
+| 14 | `279d61c` | "check your junk folder" hint on the verify screen |
+| 15 | `b14ae9c` | self-managed connect message + `care_status` enum casts |
+
+Build 15 artifact checks (recipes in the sections above):
+
+| check | result |
+|---|---|
+| `"…currently self-managed."` (en) | **FOUND** @541513 |
+| `"…se administra a sí misma…"` (es) | **FOUND** @807540 (UTF-16) |
+| anon key sha256 vs `.env` | **`98f00a774188` exact match** |
+| longest run of `•` | **1** |
+| `FontLoaderModule` / `FontUtilsModule` | **3 / 3** |
+
+### Bug 4 — the app shipped ahead of the database (caught before build 15 went out)
+Build 15's whole point is the connect-with-code fix, and half of that fix lives
+in Postgres, not in the binary. The hosted Supabase had the **previous** version
+of `connect_with_code` — the self-managed message from `a7a24c7` was live, but
+the `care_status` enum casts from `b14ae9c` were not, so connecting by code
+still failed server-side. Shipping the IPA alone would have "fixed" nothing.
+
+Applied on 2026-08-06 and verified live:
+
+```sql
+select position('''pending''::public.care_status' in prosrc) > 0
+from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+where n.nspname = 'public' and p.proname = 'connect_with_code';
+```
+
+Note: `supabase_migrations.schema_migrations` on the hosted project is **empty**
+— migrations here have been applied directly, so the migration list tells you
+nothing. Always check the live object (`pg_proc.prosrc`, a column probe, an RPC
+call) rather than trusting the `supabase/migrations/` directory.
 
 ## Build 9 — features and fixes both verified in the binary
 Build 9 (`47e35f0d-7660-4e30-9429-97f720137a4e`), built from merge commit
@@ -281,6 +331,11 @@ git rev-parse HEAD                                # must be identical
 
 Then verify the artifact itself before submitting — a build that compiles proves
 nothing about what is in the bundle. Use the string/symbol recipes above.
+
+3. **Check the hosted database matches the commit you are shipping.** If the
+   release touches `supabase/migrations/`, query the live object and confirm it
+   contains the new definition *before* submitting. A correct binary against a
+   stale function is still a broken feature — that was Bug 4.
 
 ## New-machine setup
 1. `git clone https://github.com/jacksonsanders13/rekalla.git && cd rekalla`
