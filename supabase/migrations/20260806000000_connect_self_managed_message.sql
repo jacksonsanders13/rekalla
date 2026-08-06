@@ -57,12 +57,20 @@ begin
 
   -- Create the request as pending. If an active link already exists, leave it
   -- active (re-entering the code shouldn't drop a caregiver who's already in).
+  -- The enum casts are required: inside a CASE, Postgres resolves the literals
+  -- to text and refuses to assign them to a care_status column.
   insert into public.care_relationships (patient_id, caregiver_id, invited_email, status)
-  values (patient.id, auth.uid(), coalesce(auth.email(), auth.uid()::text), 'pending')
+  values (
+    patient.id,
+    auth.uid(),
+    coalesce(auth.email(), auth.uid()::text),
+    'pending'::public.care_status
+  )
   on conflict (patient_id, lower(invited_email))
     do update set caregiver_id = auth.uid(),
-      status = case when care_relationships.status = 'active'
-                    then 'active' else 'pending' end;
+      status = case when care_relationships.status = 'active'::public.care_status
+                    then 'active'::public.care_status
+                    else 'pending'::public.care_status end;
 
   return patient;
 end;
