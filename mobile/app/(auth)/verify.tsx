@@ -9,8 +9,14 @@ import type { AccountType } from "../../lib/types";
 
 const RESEND_COOLDOWN = 60;
 
+// Supabase's "Email OTP Length" is configurable per project (6–10). Don't
+// assume a length here — accept anything in that range and let the server
+// decide whether the code is right.
+const MIN_CODE = 6;
+const MAX_CODE = 10;
+
 /**
- * Email verification by 6-digit code.
+ * Email verification by emailed code.
  *
  * Reached from sign-up when Supabase returns no session, which happens when
  * "Confirm email" is on (mailer_autoconfirm off). When autoconfirm is on the
@@ -57,7 +63,9 @@ export default function Verify() {
     setNotice(null);
 
     const token = code.replace(/\D/g, "");
-    if (token.length !== 6) return setError(t("auth.verify.err.code"));
+    if (token.length < MIN_CODE || token.length > MAX_CODE) {
+      return setError(t("auth.verify.err.code"));
+    }
 
     setBusy(true);
     const { data, error: verifyError } = await supabase.auth.verifyOtp({
@@ -138,11 +146,11 @@ export default function Verify() {
         <Field
           label={t("auth.verify.code")}
           value={code}
-          onChangeText={(next) => setCode(next.replace(/\D/g, "").slice(0, 6))}
+          onChangeText={(next) => setCode(next.replace(/\D/g, "").slice(0, MAX_CODE))}
           keyboardType="number-pad"
           autoComplete="one-time-code"
           textContentType="oneTimeCode"
-          maxLength={6}
+          maxLength={MAX_CODE}
           placeholder={t("auth.verify.codePlaceholder")}
           style={styles.codeInput}
         />

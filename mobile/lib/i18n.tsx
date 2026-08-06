@@ -61,17 +61,17 @@ const en: Dict = {
   "auth.err.password": "Your password needs at least 8 characters.",
   "auth.err.confirm": "Check your email for a confirmation link, then log in.",
 
-  // email verification (6-digit code)
+  // email verification (emailed code)
   "auth.verify.title": "Check your email",
   "auth.verify.subtitle":
-    "We sent a 6-digit code to {email}. Enter it below to finish setting up your account.",
-  "auth.verify.code": "6-digit code",
+    "We sent a code to {email}. Enter it below to finish setting up your account.",
+  "auth.verify.code": "Code from your email",
   "auth.verify.codePlaceholder": "123456",
   "auth.verify.button": "Verify and continue",
   "auth.verify.resend": "Send a new code",
   "auth.verify.resendIn": "You can ask for a new code in {seconds}s",
   "auth.verify.resent": "Sent. Check your email again.",
-  "auth.verify.err.code": "Please enter the 6-digit code from your email.",
+  "auth.verify.err.code": "Please enter the code from your email.",
   "auth.verify.err.invalid":
     "That code didn't work. Check it and try again, or ask for a new one.",
   "auth.verify.backToSignUp": "Wrong email? Go back and sign up again.",
@@ -385,14 +385,14 @@ const es: Dict = {
 
   "auth.verify.title": "Revisa tu correo",
   "auth.verify.subtitle":
-    "Enviamos un código de 6 dígitos a {email}. Escríbelo abajo para terminar de crear tu cuenta.",
-  "auth.verify.code": "Código de 6 dígitos",
+    "Enviamos un código a {email}. Escríbelo abajo para terminar de crear tu cuenta.",
+  "auth.verify.code": "Código de tu correo",
   "auth.verify.codePlaceholder": "123456",
   "auth.verify.button": "Verificar y continuar",
   "auth.verify.resend": "Enviar un código nuevo",
   "auth.verify.resendIn": "Puedes pedir un código nuevo en {seconds}s",
   "auth.verify.resent": "Enviado. Revisa tu correo otra vez.",
-  "auth.verify.err.code": "Por favor, escribe el código de 6 dígitos de tu correo.",
+  "auth.verify.err.code": "Por favor, escribe el código de tu correo.",
   "auth.verify.err.invalid":
     "Ese código no funcionó. Revísalo e inténtalo de nuevo, o pide uno nuevo.",
   "auth.verify.backToSignUp": "¿Correo equivocado? Vuelve y crea la cuenta otra vez.",
