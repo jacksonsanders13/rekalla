@@ -68,6 +68,8 @@ const en: Dict = {
   "auth.verify.code": "Code from your email",
   "auth.verify.codePlaceholder": "123456",
   "auth.verify.button": "Verify and continue",
+  "auth.verify.junkHint":
+    "Don't see it? Check your junk or spam folder — it often lands there.",
   "auth.verify.resend": "Send a new code",
   "auth.verify.resendIn": "You can ask for a new code in {seconds}s",
   "auth.verify.resent": "Sent. Check your email again.",
@@ -389,6 +391,8 @@ const es: Dict = {
   "auth.verify.code": "Código de tu correo",
   "auth.verify.codePlaceholder": "123456",
   "auth.verify.button": "Verificar y continuar",
+  "auth.verify.junkHint":
+    "¿No lo ves? Revisa tu carpeta de correo no deseado — suele llegar ahí.",
   "auth.verify.resend": "Enviar un código nuevo",
   "auth.verify.resendIn": "Puedes pedir un código nuevo en {seconds}s",
   "auth.verify.resent": "Enviado. Revisa tu correo otra vez.",

@@ -161,6 +161,8 @@ export default function Verify() {
           onPress={handleVerify}
         />
 
+        <Text style={styles.junkHint}>{t("auth.verify.junkHint")}</Text>
+
         <Button
           label={
             cooldown > 0
@@ -191,6 +193,12 @@ const styles = StyleSheet.create({
   error: { color: colors.red, fontSize: font.base, fontWeight: "600" },
   notice: { color: colors.green, fontSize: font.base, fontWeight: "600" },
   codeInput: { fontSize: font.x2, letterSpacing: 6, textAlign: "center" },
+  junkHint: {
+    color: colors.label3,
+    fontSize: font.sm,
+    lineHeight: 21,
+    textAlign: "center",
+  },
   backLink: { minHeight: 44, alignItems: "center", justifyContent: "center" },
   backText: { color: colors.label3, fontSize: font.base },
 });
