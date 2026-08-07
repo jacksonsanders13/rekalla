@@ -68,7 +68,7 @@ const en: Dict = {
   "auth.verify.subtitle":
     "We sent a code to {email}. Enter it below to finish setting up your account.",
   "auth.verify.code": "Code from your email",
-  "auth.verify.codePlaceholder": "123456",
+  "auth.verify.codePlaceholder": "12345678",
   "auth.verify.button": "Verify and continue",
   "auth.verify.junkHint":
     "Don't see it? Check your junk or spam folder — it often lands there.",
@@ -395,7 +395,7 @@ const es: Dict = {
   "auth.verify.subtitle":
     "Enviamos un código a {email}. Escríbelo abajo para terminar de crear tu cuenta.",
   "auth.verify.code": "Código de tu correo",
-  "auth.verify.codePlaceholder": "123456",
+  "auth.verify.codePlaceholder": "12345678",
   "auth.verify.button": "Verificar y continuar",
   "auth.verify.junkHint":
     "¿No lo ves? Revisa tu carpeta de correo no deseado — suele llegar ahí.",

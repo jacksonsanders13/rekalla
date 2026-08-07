@@ -98,6 +98,7 @@ export function Button({
 
 export function Field({
   label,
+  style,
   ...props
 }: TextInputProps & { label: string }) {
   return (
@@ -105,8 +106,11 @@ export function Field({
       <Text style={styles.fieldLabel}>{label}</Text>
       <TextInput
         placeholderTextColor={colors.label4}
-        style={styles.input}
         {...props}
+        // Merged, not replaced. Spreading props over `style` used to drop the
+        // whole base style whenever a caller passed one — that is how the
+        // verify screen's code input lost its white text and its background.
+        style={[styles.input, style]}
       />
     </View>
   );

@@ -198,6 +198,8 @@ const styles = StyleSheet.create({
   wordmark: { color: colors.label, fontSize: font.x2, fontWeight: "700" },
   error: { color: colors.red, fontSize: font.base, fontWeight: "600" },
   notice: { color: colors.green, fontSize: font.base, fontWeight: "600" },
+  // Only the overrides — `Field` merges these over its base input style, which
+  // is what supplies the white text, background, height and padding.
   codeInput: { fontSize: font.x2, letterSpacing: 6, textAlign: "center" },
   junkHint: {
     color: colors.label3,
