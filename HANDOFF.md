@@ -109,6 +109,29 @@ python3 -c "d=open('main.jsbundle','rb').read(); i=d.find('eyJhbGci'.encode('utf
 print(d[i:i+416].decode('utf-16-le'))"
 ```
 
+> **That snippet only finds a *corrupt* key — do not use it as the health
+> check.** The key was UTF-16 precisely *because* the `•` made it non-ASCII.
+> On a healthy build the key is plain ASCII and the UTF-16 search returns
+> `-1`, which reads exactly like a failed check but is the all-clear. This
+> cost time again on build 16. **Search ASCII first; a UTF-16 hit is the
+> alarm.** And take the expected bytes from `.env` rather than extracting
+> from the bundle — see the Hermes packing warning below:
+>
+> Run from `Payload/Rekalla.app` (`.env` is elsewhere, hence the absolute
+> path — verified working on build 16):
+>
+> ```
+> export ENVFILE=~/rekalla/rekalla/mobile/.env   # adjust to your checkout
+> python3 -c "
+> import re,os
+> d=open('main.jsbundle','rb').read()
+> k=re.search(r'EXPO_PUBLIC_SUPABASE_ANON_KEY\s*=\s*\"?([A-Za-z0-9_.\-]+)',
+>             open(os.environ['ENVFILE']).read()).group(1)
+> print('ascii  :', d.find(k.encode()))             # expect >= 0
+> print('utf-16 :', d.find(k.encode('utf-16-le')))  # expect -1
+> "
+> ```
+
 At runtime supabase-js sets `apikey: "eyJhbGci•••…"`. U+2022 is not encodable in
 an HTTP header (Latin-1 only), so the header is dropped — hence *No API key
 found*, rather than *Invalid API key*.
@@ -216,14 +239,14 @@ Confirmed in the binary: build 8's bundle still contained the **old** string
 `"Someone sets up reminders for me."` and none of the new ones.
 
 ## Next steps
-**Build 15** (`ada9837d-4592-47e4-b21c-728ec6ea8f0d`, commit `b14ae9c`) was
+**Build 16** (`f84949d4-0572-46cb-a380-d42115a21761`, commit `7873e74`) was
 **submitted to App Store Connect** on 2026-08-06
-(submission `ca8f6cc0-2a29-4009-b4b9-623a7b1883bc`, ASC app id `6794918254`).
+(submission `a196551e-ecc7-4395-80c4-1d3b88b5f182`, ASC app id `6794918254`).
 Apple processing takes ~5–10 min; you get an email when it's ready.
 
 1. Wait for the processing email, then open
    https://appstoreconnect.apple.com/apps/6794918254/testflight/ios
-2. In TestFlight on the phone, make sure the shown build is **build 15**,
+2. In TestFlight on the phone, make sure the shown build is **build 16**,
    tap **Update**, and launch.
 3. Sign up and confirm the email OTP flow works (any code length is accepted
    now; the verify screen mentions the junk folder).
@@ -236,17 +259,24 @@ Apple processing takes ~5–10 min; you get an email when it's ready.
 6. Still unverified on a real device: a **self-managed** patient adding a
    reminder / routine item / vault entry (the RLS write paths from build 9),
    and the Settings **"Manage my own reminders"** toggle + legal links.
+7. The build-16 auth error guard (Bug 5) **cannot be exercised end-to-end any
+   more** — the NULL-token row that produced the 500 is fixed, so there is no
+   longer a way to make the server return one. The artifact check proves the
+   strings and the `unexpected_failure` branch are in the bundle, not that the
+   guard fires. If you want real confidence, add a unit test on
+   `isInternalAuthError` / `authErrorMessage` rather than trying to reproduce
+   it on a device.
 
 If it crashes on launch, it is **not** the expo-font problem; if sign-up fails
 it is **not** the anon key; and if new features are missing it is **not** a
-stale checkout — all three are proven fixed in the build-15 artifact (see the
+stale checkout — all three are proven fixed in the build-16 artifact (see the
 verification table below). Get the fresh crash log off the device (Settings →
 Privacy & Security → Analytics & Improvements → Analytics Data) and start from
 the new evidence, not from this document.
 
-## Builds 10–15
-Builds 10–15 are ordinary feature/fix builds; the three structural bugs above
-stayed fixed throughout. Submitted so far: 9, 11, 12, 14, **15**. (10 and 13
+## Builds 10–16
+Builds 10–16 are ordinary feature/fix builds; the three structural bugs above
+stayed fixed throughout. Submitted so far: 9, 11, 12, 14, 15, **16**. (10 and 13
 were superseded before submission — build numbers auto-increment per build, so
 gaps in the submitted set are normal and not a sign anything went wrong.)
 
@@ -256,6 +286,7 @@ gaps in the submitted set are normal and not a sign anything went wrong.)
 | 13 | `1738b96` | accept any Supabase email OTP length (not just six digits) |
 | 14 | `279d61c` | "check your junk folder" hint on the verify screen |
 | 15 | `b14ae9c` | self-managed connect message + `care_status` enum casts |
+| 16 | `7873e74` | auth error guard (Bug 5) + the `landing/` support page |
 
 Build 15 artifact checks (recipes in the sections above):
 
@@ -266,6 +297,20 @@ Build 15 artifact checks (recipes in the sections above):
 | anon key sha256 vs `.env` | **`98f00a774188` exact match** |
 | longest run of `•` | **1** |
 | `FontLoaderModule` / `FontUtilsModule` | **3 / 3** |
+
+Build 16 artifact checks (`Info.plist` confirms version 1.0.0 / build 16):
+
+| check | result |
+|---|---|
+| `"Something went wrong on our end…"` (en) | **FOUND** @594344 (ASCII) |
+| `"Algo salió mal de nuestro lado…"` (es) | **FOUND** @802306 (UTF-16) |
+| `unexpected_failure` | **FOUND** @684275 |
+| `"Invalid login credentials"` passthrough | **FOUND** @567163 |
+| raw `converting NULL to string…` text | **absent** (must stay absent) |
+| anon key vs `.env` | **byte-identical**, pure ASCII, no `•` |
+| longest run of `•` | **1** |
+| `FontLoaderModule` | **3** |
+| `ExpoFontLoader` in bundle | **1** |
 
 ### Bug 4 — the app shipped ahead of the database (caught before build 15 went out)
 Build 15's whole point is the connect-with-code fix, and half of that fix lives
@@ -310,7 +355,7 @@ returns `[]` (not a column error) and `rpc/is_self_managed` returns `false`.
 Note: `eas submit --non-interactive` needs `ascAppId` in `eas.json`; it's now
 set in the `submit.production.ios` profile.
 
-### Bug 5 — sign-up 500s with a wall of red SQL text (fixed 2026-08-06)
+### Bug 5 — sign-up 500s with a wall of red SQL text (fixed 2026-08-06, shipped in build 16)
 Sign-up failed with a long red error. The auth log has the real cause:
 
 ```
@@ -390,6 +435,14 @@ nothing about what is in the bundle. Use the string/symbol recipes above.
 - Caregiver "missed-reminder" alerts don't actually deliver (mock providers, no
   cron, nothing queues). Don't promise that feature to testers yet.
 - `vault-photos` storage bucket is public-read — should be private + signed URLs.
+- **Lint does not run at all** on the web app, via `npm run lint` or a direct
+  `npx eslint`: `eslint-config-next` fails to patch the installed ESLint
+  (`@rushstack/eslint-patch` → "Failed to patch ESLint because the calling
+  module was not recognized"). So "checks pass" on this repo currently means
+  **typecheck only** — don't read it as lint-clean. `next lint` is also
+  deprecated and removed in Next 16. Related: two lockfiles
+  (`rekalla/package-lock.json` and `rekalla/rekalla/package-lock.json`) make
+  Next infer the wrong workspace root.
 - ~~A patient with no caregiver can't create reminders/routine/vault (RLS is
   caregiver-write-only)~~ — addressed by the self-managed account feature
   (`20260801000000_self_managed.sql`), shipping in build 9. Still needs a real
@@ -399,9 +452,14 @@ nothing about what is in the bundle. Use the string/symbol recipes above.
 - Commit as **Jackson Sanders <madmanjack8@gmail.com>**, author + committer.
 - **No AI attribution** anywhere in commit messages (no "Co-authored-by",
   no "Generated with…", no model names). Verify: `git log -1 --format=%B | grep -ci claude` → must be `0`.
-- This machine has **no git identity configured** — neither `--local` nor
-  `--global` sets `user.name` / `user.email`, so a bare `git commit` fails.
-  Either set it once, or pass it per-commit (note `-c` goes **before** the
+- This machine now has a **repo-local** git identity (set 2026-08-06 while
+  committing build 16). A bare `git commit` works here again — it used to fail
+  with "Author identity unknown", and this document said so for a long time.
+  That cuts both ways: the failure was a useful backstop that forced you to
+  think about attribution, and it is gone, so **check the `grep -ci claude`
+  line above yourself** rather than trusting a commit to fail first. Confirm
+  with `git config user.email`. On a fresh checkout there is still no identity,
+  so set it once, or pass it per-commit (note `-c` goes **before** the
   subcommand):
 
   ```
