@@ -239,14 +239,14 @@ Confirmed in the binary: build 8's bundle still contained the **old** string
 `"Someone sets up reminders for me."` and none of the new ones.
 
 ## Next steps
-**Build 16** (`f84949d4-0572-46cb-a380-d42115a21761`, commit `7873e74`) was
+**Build 17** (`406ce3e0-2950-43de-a1df-50af0e12b85b`, commit `5763088`) was
 **submitted to App Store Connect** on 2026-08-06
-(submission `a196551e-ecc7-4395-80c4-1d3b88b5f182`, ASC app id `6794918254`).
+(submission `3a9d587c-bae7-43c4-97a5-8ac7850c5c56`, ASC app id `6794918254`).
 Apple processing takes ~5–10 min; you get an email when it's ready.
 
 1. Wait for the processing email, then open
    https://appstoreconnect.apple.com/apps/6794918254/testflight/ios
-2. In TestFlight on the phone, make sure the shown build is **build 16**,
+2. In TestFlight on the phone, make sure the shown build is **build 17**,
    tap **Update**, and launch.
 3. Sign up and confirm the email OTP flow works (any code length is accepted
    now; the verify screen mentions the junk folder).
@@ -266,19 +266,26 @@ Apple processing takes ~5–10 min; you get an email when it's ready.
    guard fires. If you want real confidence, add a unit test on
    `isInternalAuthError` / `authErrorMessage` rather than trying to reproduce
    it on a device.
+8. **Look at the verify screen's code field** (build 17, Bug 6). It should be
+   white digits on the dark rounded input with a `12345678` placeholder. This
+   is the one build-17 change that **static verification cannot confirm** —
+   styles compile into Hermes bytecode, so there is no string to grep. The
+   artifact checks only prove the bundle is current. If the digits are still
+   black, the `Field` style merge did not take effect.
 
 If it crashes on launch, it is **not** the expo-font problem; if sign-up fails
 it is **not** the anon key; and if new features are missing it is **not** a
-stale checkout — all three are proven fixed in the build-16 artifact (see the
+stale checkout — all three are proven fixed in the build-17 artifact (see the
 verification table below). Get the fresh crash log off the device (Settings →
 Privacy & Security → Analytics & Improvements → Analytics Data) and start from
 the new evidence, not from this document.
 
-## Builds 10–16
-Builds 10–16 are ordinary feature/fix builds; the three structural bugs above
-stayed fixed throughout. Submitted so far: 9, 11, 12, 14, 15, **16**. (10 and 13
-were superseded before submission — build numbers auto-increment per build, so
-gaps in the submitted set are normal and not a sign anything went wrong.)
+## Builds 10–17
+Builds 10–17 are ordinary feature/fix builds; the three structural bugs above
+stayed fixed throughout. Submitted so far: 9, 11, 12, 14, 15, 16, **17**. (10
+and 13 were superseded before submission — build numbers auto-increment per
+build, so gaps in the submitted set are normal and not a sign anything went
+wrong.)
 
 | build | commit | what it carried |
 |---|---|---|
@@ -287,6 +294,7 @@ gaps in the submitted set are normal and not a sign anything went wrong.)
 | 14 | `279d61c` | "check your junk folder" hint on the verify screen |
 | 15 | `b14ae9c` | self-managed connect message + `care_status` enum casts |
 | 16 | `7873e74` | auth error guard (Bug 5) + the `landing/` support page |
+| 17 | `5763088` | `Field` style merge (Bug 6) + 8-digit code placeholder |
 
 Build 15 artifact checks (recipes in the sections above):
 
@@ -311,6 +319,26 @@ Build 16 artifact checks (`Info.plist` confirms version 1.0.0 / build 16):
 | longest run of `•` | **1** |
 | `FontLoaderModule` | **3** |
 | `ExpoFontLoader` in bundle | **1** |
+
+Build 17 artifact checks (`Info.plist` confirms version 1.0.0 / build 17). This
+was the first run of the **corrected** anon-key recipe, and the polarity came
+out as documented — ASCII hit, UTF-16 miss:
+
+| check | result |
+|---|---|
+| anon key — ASCII / UTF-16 | **483484 / -1** |
+| longest run of `•` | **1** |
+| `FontLoaderModule` / `ExpoFontLoader` | **3 / 1** |
+| `"12345678"` placeholder | **FOUND** @510650 |
+| `"Code from your email"` | **FOUND** @537889 |
+| Bug 5 copy (en / es / `unexpected_failure`) | **all FOUND** |
+| raw `converting NULL to string…` text | **absent** |
+
+**Not covered by any of that: the Bug 6 style fix itself.** Styles compile to
+Hermes bytecode, so there is no string to search for. These checks prove the
+bundle is *current* (the new placeholder is in it, and the EAS commit matched
+`HEAD`), which means the `Field` change shipped — but whether it *renders*
+correctly is a device check. See step 8 under Next steps.
 
 ### Bug 4 — the app shipped ahead of the database (caught before build 15 went out)
 Build 15's whole point is the connect-with-code fix, and half of that fix lives
@@ -397,6 +425,39 @@ wrong on our end. Please try again in a moment.", while human-readable errors
 ("Invalid login credentials") still pass through verbatim. Applied to sign-up,
 sign-in, forgot-password, reset-password and the verify resend on both clients.
 
+### Bug 6 — verify screen's code digits were black on black (fixed in build 17)
+Reported as "the code text is black, make it white". It was never styled black;
+it was **unstyled**. `Field` in `mobile/components/ui.tsx` rendered:
+
+```tsx
+<TextInput placeholderTextColor={…} style={styles.input} {...props} />
+```
+
+The spread comes *after* `style`, so any caller passing `style` replaced the
+base input style **wholesale** rather than merging with it. `styles.input` is
+what carries `color: colors.label` — plus `backgroundColor`, `minHeight: 52`
+and `paddingHorizontal`. The verify screen's `codeInput` set only `fontSize`,
+`letterSpacing` and `textAlign`, so it silently lost all four.
+
+Fixed by destructuring `style` out and applying it **after** the spread, merged:
+
+```tsx
+<TextInput placeholderTextColor={…} {...props} style={[styles.input, style]} />
+```
+
+Two things worth carrying forward:
+
+- **Only two `Field` call sites pass `style`.** `people.tsx` looked fine purely
+  because it happens to restate all six base properties — it was masking the
+  same bug, not avoiding it. Its restatement is now redundant and should be
+  trimmed to just the overrides; leaving it there hides the next occurrence.
+  The seven `styles.input` hits in `patient/[id].tsx` are raw `TextInput`s, not
+  `Field`, and were never affected.
+- **"Make it white" was the symptom, not the fix.** Adding `color` to the
+  caller would have left the field with no background, no min-height and no
+  padding — still wrong, just less obviously. Check what the *base* style was
+  supposed to supply before patching a single property at the call site.
+
 ## Guardrails
 Before **every** production build, from `mobile/`:
 
@@ -435,6 +496,9 @@ nothing about what is in the bundle. Use the string/symbol recipes above.
 - Caregiver "missed-reminder" alerts don't actually deliver (mock providers, no
   cron, nothing queues). Don't promise that feature to testers yet.
 - `vault-photos` storage bucket is public-read — should be private + signed URLs.
+- `mobile/app/(caregiver)/people.tsx` `codeInput` restates all six properties
+  that `Field`'s base style now supplies (see Bug 6). Harmless, but trim it to
+  the real overrides so the next style-merge bug isn't masked.
 - **Lint does not run at all** on the web app, via `npm run lint` or a direct
   `npx eslint`: `eslint-config-next` fails to patch the installed ESLint
   (`@rushstack/eslint-patch` → "Failed to patch ESLint because the calling
