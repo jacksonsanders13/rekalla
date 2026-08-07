@@ -310,6 +310,48 @@ returns `[]` (not a column error) and `rpc/is_self_managed` returns `false`.
 Note: `eas submit --non-interactive` needs `ascAppId` in `eas.json`; it's now
 set in the `submit.production.ios` profile.
 
+### Bug 5 — sign-up 500s with a wall of red SQL text (fixed 2026-08-06)
+Sign-up failed with a long red error. The auth log has the real cause:
+
+```
+unable to find user from email identity for duplicates: error finding user:
+sql: Scan error on column index 3, name "confirmation_token":
+converting NULL to string is unsupported
+```
+
+GoTrue scans `auth.users` token columns into Go `string`, which cannot hold
+NULL. **Exactly one row was bad**: the App Store demo account
+`jacksonsandersbusiness@gmail.com` (`48d84136-…`, created 2026-07-26), which was
+inserted with raw SQL. A manual insert leaves `confirmation_token`,
+`recovery_token`, `email_change` and `email_change_token_new` NULL, where
+GoTrue's own signup path writes `''`. Every sign-up runs a duplicate check that
+scans that row, so one hand-made row broke sign-up for everybody.
+
+**If you ever insert into `auth.users` by hand, set every token column to `''`,
+never NULL.** Prefer the Admin API (`auth.admin.createUser`) instead.
+
+Fixed by coalescing all eight token columns to `''`. Re-verify with:
+
+```sql
+select count(*) from auth.users
+where confirmation_token is null or recovery_token is null
+   or email_change is null or email_change_token_new is null
+   or email_change_token_current is null or phone_change is null
+   or phone_change_token is null or reauthentication_token is null;  -- must be 0
+```
+
+Confirmed fixed by replaying the failing request against the live API: a signup
+POST for that email now returns **200** (it was 500), and no row was created —
+the id it returns is Supabase's anti-enumeration decoy, not a real user.
+
+The second half of the bug is that the app *showed* that text at all. Both
+clients now route auth errors through a guard (`authErrorMessage` in
+`lib/utils.ts`, `isInternalAuthError` in `mobile/lib/utils.ts`): anything with
+HTTP status ≥ 500 or `code === "unexpected_failure"` becomes "Something went
+wrong on our end. Please try again in a moment.", while human-readable errors
+("Invalid login credentials") still pass through verbatim. Applied to sign-up,
+sign-in, forgot-password, reset-password and the verify resend on both clients.
+
 ## Guardrails
 Before **every** production build, from `mobile/`:
 

@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createClient } from "@/lib/supabase/client";
 import { loginSchema, type LoginValues } from "@/lib/validations/auth";
+import { authErrorMessage } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
@@ -36,7 +37,7 @@ export function LoginForm() {
       setServerError(
         error.message === "Invalid login credentials"
           ? "That email and password don't match. Please try again."
-          : error.message,
+          : authErrorMessage(error),
       );
       return;
     }

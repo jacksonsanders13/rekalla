@@ -42,5 +42,24 @@ export function initials(name: string | null | undefined): string {
     .join("");
 }
 
+/**
+ * Whether a Supabase auth error is an internal failure rather than something
+ * the person can act on.
+ *
+ * Most auth errors are written for humans ("Invalid login credentials") and
+ * should be shown as-is. A 5xx is not: it carries raw Go/Postgres text, and one
+ * of them filled the sign-up screen with `sql: Scan error on column index 3,
+ * name "confirmation_token"…`. Callers show `auth.err.unexpected` instead.
+ */
+export function isInternalAuthError(
+  error: { status?: number; code?: string } | null,
+): boolean {
+  if (!error) return false;
+  return (
+    (error.status !== undefined && error.status >= 500) ||
+    error.code === "unexpected_failure"
+  );
+}
+
 /** Minutes a snoozed reminder waits before coming back. */
 export const SNOOZE_MINUTES = 30;

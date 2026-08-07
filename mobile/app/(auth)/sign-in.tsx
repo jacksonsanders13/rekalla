@@ -4,6 +4,7 @@ import { Link, router } from "expo-router";
 import { supabase } from "../../lib/supabase";
 import { useT } from "../../lib/i18n";
 import { colors, font, spacing } from "../../lib/theme";
+import { isInternalAuthError } from "../../lib/utils";
 import { Screen, Card, Button, Field, Title, Subtitle } from "../../components/ui";
 
 export default function SignIn() {
@@ -35,6 +36,9 @@ export default function SignIn() {
         });
       }
 
+      if (isInternalAuthError(signInError)) {
+        return setError(t("auth.err.unexpected"));
+      }
       return setError(
         signInError.message === "Invalid login credentials"
           ? t("auth.signIn.badCredentials")

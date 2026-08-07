@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { MailCheck, HeartHandshake, User } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { signupSchema, type SignupValues } from "@/lib/validations/auth";
-import { cn } from "@/lib/utils";
+import { authErrorMessage, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
@@ -58,7 +58,7 @@ export function SignupForm() {
     });
 
     if (error) {
-      setServerError(error.message);
+      setServerError(authErrorMessage(error));
       return;
     }
 

@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { supabase } from "../../lib/supabase";
 import { useT } from "../../lib/i18n";
 import { colors, font, radius, spacing } from "../../lib/theme";
+import { isInternalAuthError } from "../../lib/utils";
 import { Screen, Card, Button, Field, Title, Subtitle } from "../../components/ui";
 import type { AccountType } from "../../lib/types";
 
@@ -79,7 +80,11 @@ export default function SignUp() {
 
     if (signUpError) {
       setBusy(false);
-      return setError(signUpError.message);
+      return setError(
+        isInternalAuthError(signUpError)
+          ? t("auth.err.unexpected")
+          : signUpError.message,
+      );
     }
 
     // No session means Supabase is set to confirm emails. Send them to the

@@ -10,6 +10,7 @@ import {
   forgotPasswordSchema,
   type ForgotPasswordValues,
 } from "@/lib/validations/auth";
+import { authErrorMessage } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
@@ -35,7 +36,7 @@ export function ForgotPasswordForm() {
     });
 
     if (error) {
-      setServerError(error.message);
+      setServerError(authErrorMessage(error));
       return;
     }
     setSent(true);

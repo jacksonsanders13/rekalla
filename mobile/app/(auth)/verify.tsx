@@ -4,6 +4,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { supabase } from "../../lib/supabase";
 import { useT } from "../../lib/i18n";
 import { colors, font, spacing } from "../../lib/theme";
+import { isInternalAuthError } from "../../lib/utils";
 import { Screen, Card, Button, Field, Title, Subtitle } from "../../components/ui";
 import type { AccountType } from "../../lib/types";
 
@@ -120,7 +121,12 @@ export default function Verify() {
     });
 
     setBusy(false);
-    if (resendError) return setError(resendError.message);
+    if (resendError)
+      return setError(
+        isInternalAuthError(resendError)
+          ? t("auth.err.unexpected")
+          : resendError.message,
+      );
     setNotice(t("auth.verify.resent"));
     setCooldown(RESEND_COOLDOWN);
   }

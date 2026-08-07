@@ -60,6 +60,8 @@ const en: Dict = {
   "auth.err.email": "Please enter a valid email.",
   "auth.err.password": "Your password needs at least 8 characters.",
   "auth.err.confirm": "Check your email for a confirmation link, then log in.",
+  "auth.err.unexpected":
+    "Something went wrong on our end. Please try again in a moment.",
 
   // email verification (emailed code)
   "auth.verify.title": "Check your email",
@@ -386,6 +388,8 @@ const es: Dict = {
   "auth.err.password": "Tu contraseña necesita al menos 8 caracteres.",
   "auth.err.confirm":
     "Revisa tu correo para el enlace de confirmación y luego inicia sesión.",
+  "auth.err.unexpected":
+    "Algo salió mal de nuestro lado. Vuelve a intentarlo en un momento.",
 
   "auth.verify.title": "Revisa tu correo",
   "auth.verify.subtitle":

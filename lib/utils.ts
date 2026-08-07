@@ -45,6 +45,27 @@ export function fromDateKey(key: string): Date {
   return new Date(y, m - 1, d);
 }
 
+/**
+ * What to show a person when Supabase auth returns an error.
+ *
+ * Most auth errors are written for humans ("Invalid login credentials"), so we
+ * pass them straight through. Internal failures are not: a 5xx comes back with
+ * raw Go/Postgres text, and one of them filled the sign-up form with
+ * `sql: Scan error on column index 3, name "confirmation_token"…`. Nobody can
+ * act on that, so show our own line instead.
+ */
+export function authErrorMessage(
+  error: { message: string; status?: number; code?: string } | null,
+): string {
+  if (!error) return "";
+  const internal =
+    (error.status !== undefined && error.status >= 500) ||
+    error.code === "unexpected_failure";
+  return internal
+    ? "Something went wrong on our end. Please try again in a moment."
+    : error.message;
+}
+
 /** Initials for avatar fallbacks ("Rose Alvarez" → "RA"). */
 export function initials(name: string | null | undefined): string {
   if (!name) return "?";

@@ -4,6 +4,7 @@ import { Link } from "expo-router";
 import { supabase } from "../../lib/supabase";
 import { useT } from "../../lib/i18n";
 import { colors, font } from "../../lib/theme";
+import { isInternalAuthError } from "../../lib/utils";
 import { Screen, Card, Button, Field, Title, Subtitle } from "../../components/ui";
 
 export default function ForgotPassword() {
@@ -21,7 +22,12 @@ export default function ForgotPassword() {
       email.trim(),
     );
     setBusy(false);
-    if (resetError) return setError(resetError.message);
+    if (resetError)
+      return setError(
+        isInternalAuthError(resetError)
+          ? t("auth.err.unexpected")
+          : resetError.message,
+      );
     setSent(true);
   }
 

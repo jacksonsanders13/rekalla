@@ -9,6 +9,7 @@ import {
   resetPasswordSchema,
   type ResetPasswordValues,
 } from "@/lib/validations/auth";
+import { authErrorMessage } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Field } from "@/components/ui/field";
@@ -37,7 +38,7 @@ export function ResetPasswordForm() {
       setServerError(
         error.message.includes("session")
           ? "This reset link has expired. Please request a new one."
-          : error.message,
+          : authErrorMessage(error),
       );
       return;
     }
