@@ -1,9 +1,5 @@
 import {
-  House,
-  BellRing,
-  Sunrise,
-  BookOpen,
-  HeartPulse,
+  Sun,
   Users,
   Settings,
   MessagesSquare,
@@ -18,18 +14,14 @@ export interface NavItem {
   icon: LucideIcon;
 }
 
-// v2: the assistant is the elder's home. The v1 self-care surfaces remain
-// available as the assistant's data layer.
-// NOTE (IA): this is now 7 tabs — above the ideal for 70+. A later pass should
-// consolidate reminders/routine/vault/wellness under one "My day" surface.
+// v2 is a single-user product for the older adult: just THREE calm tabs.
+// Rekalla (the assistant, the home) · My day (reminders/routine/vault/wellness,
+// reached from one hub) · Profile. The granular self-care screens survive as
+// the assistant's data layer and are reachable from /my-day.
 const PATIENT_TABS: NavItem[] = [
   { href: "/assistant", label: "Rekalla", icon: MessagesSquare },
-  { href: "/dashboard", label: "Summary", icon: House },
+  { href: "/my-day", label: "My day", icon: Sun },
   { href: "/profile", label: "Profile", icon: UserCircle },
-  { href: "/reminders", label: "Reminders", icon: BellRing },
-  { href: "/routine", label: "Routine", icon: Sunrise },
-  { href: "/vault", label: "Vault", icon: BookOpen },
-  { href: "/wellness", label: "Wellness", icon: HeartPulse },
 ];
 
 // Caregivers work through the people they care for.

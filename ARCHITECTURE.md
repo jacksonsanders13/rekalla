@@ -5,6 +5,14 @@ v1 caregiving data as its knowledge base. This document is the source of truth
 for the data model, the assistant's scoping/tier rules, the API surface, and how
 the two clients share one backend. Keep it current as you build.
 
+**Product framing (see PRODUCT.md):** v2 is a **single-user product for the
+older adult**. Family is optional support (phone numbers to call + an optional
+web dashboard), never a required second account. The elder's app is just three
+tabs — **Rekalla** (assistant/home), **My day** (a hub over the v1 self-care
+surfaces), **Profile**. Emergency contacts come from the profile first, so the
+whole product — assistant, tiers, escalation UI — works with zero caregivers
+connected.
+
 ---
 
 ## 1. System shape

@@ -277,3 +277,36 @@ Bake these into every component you build — retrofitting is expensive.
   escalation_events with timestamp + trigger, acknowledge action) on the
   caregiver side, and profile gap-filling (caregiver opens the elder's profile,
   sees empty sections, fills them — RLS + profile_edits already support this).
+
+## [2026-08-16T03:00Z] Pivot — single-user product for the older adult ("easier to market")
+- CONTEXT: Environment moved from the Linux sandbox (/home/user/rekalla) to the
+  real Windows checkout (c:\Users\dell\rekalla). All prior v2 work was on
+  origin/claude/rekalla-v2-assistant-d2u9fs; checked it out locally here. This
+  checkout HAS node_modules, so typecheck finally runs.
+- DECISION (product): Reframe v2 as a SINGLE-USER product for the elder. Family
+  = optional support (phone numbers + optional web dashboard), never a required
+  second account. Captured in PRODUCT.md. This is the "just for the old person,
+  easier to market" direction the user asked for.
+- DECISION (nav): Collapse the elder's navigation to THREE tabs on both clients:
+  Rekalla (assistant/home), My day (hub), Profile. The v1 self-care screens
+  (summary/reminders/routine/vault/wellness) stay routable but are hidden from
+  the tab bar and reached from the My Day hub — fixes the earlier 7-tab IA flag
+  and the Part D "<=2 nav levels" rule (home -> My day -> screen = 2 levels).
+- Mobile: added `app/(patient)/my-day.tsx` (BigButton hub); `_layout.tsx` now
+  shows 3 tabs and marks summary/reminders/routine/vault/wellness `href: null`.
+- Web: `components/layout/nav-items.ts` PATIENT_TABS = [assistant, my-day,
+  profile]; added `app/(app)/my-day/page.tsx` hub linking to the v1 routes.
+- Single-user safety: no code change needed — the Edge Function already prefers
+  profile `practical.emergency_contacts` (priority-ordered) and only notifies
+  caregivers if any are connected (rows.length check). Documented in PRODUCT.md.
+- VALIDATION: `npm run typecheck` (web root) PASSES clean. Added `supabase/
+  functions` and `mobile` to root tsconfig `exclude` so the Next tsc doesn't try
+  to compile the Deno Edge Function / the RN app. Mobile typecheck pending an
+  `npx expo install expo-speech` (was never installed; running now).
+- Files touched: PRODUCT.md (new), ARCHITECTURE.md, tsconfig.json,
+  mobile/app/(patient)/{my-day.tsx (new),_layout.tsx},
+  components/layout/nav-items.ts, app/(app)/my-day/page.tsx (new)
+- State: in-progress (web validated; mobile typecheck + expo-speech install pending)
+- Next: finish mobile typecheck; then (still open) Step 5 family dashboard is now
+  OPTIONAL per the single-user pivot — keep the escalation log for connected
+  families but it is no longer required for launch. Step 6 README still needed.

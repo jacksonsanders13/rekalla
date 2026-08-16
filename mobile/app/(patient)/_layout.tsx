@@ -43,12 +43,12 @@ export default function PatientTabs() {
         }}
       />
       <Tabs.Screen
-        name="summary"
+        name="my-day"
         options={{
-          title: t("tab.summary"),
+          title: "My day",
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <Ionicons name="home" size={TAB_ICON} color={color} />
+            <Ionicons name="sunny" size={TAB_ICON} color={color} />
           ),
         }}
       />
@@ -62,42 +62,13 @@ export default function PatientTabs() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="reminders"
-        options={{
-          title: t("tab.reminders"),
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="notifications" size={TAB_ICON} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="routine"
-        options={{
-          title: t("tab.routine"),
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="sunny" size={TAB_ICON} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="vault"
-        options={{
-          title: t("tab.vault"),
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="book" size={TAB_ICON} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="wellness"
-        options={{
-          title: t("tab.wellness"),
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="heart" size={TAB_ICON} color={color} />
-          ),
-        }}
-      />
+      {/* v2 single-user simplification: the granular screens stay routable
+          (reached from My Day) but are hidden from the 3-tab bar. */}
+      <Tabs.Screen name="summary" options={{ href: null, headerShown: false }} />
+      <Tabs.Screen name="reminders" options={{ href: null, title: t("tab.reminders") }} />
+      <Tabs.Screen name="routine" options={{ href: null, title: t("tab.routine") }} />
+      <Tabs.Screen name="vault" options={{ href: null, title: t("tab.vault") }} />
+      <Tabs.Screen name="wellness" options={{ href: null, title: t("tab.wellness") }} />
     </Tabs>
   );
 }
