@@ -231,3 +231,49 @@ Bake these into every component you build — retrofitting is expensive.
 - State: done (authored; install/typecheck pending in-container)
 - Next: Step 4 — Next.js web client: same assistant + profile + tier UI, calling
   the same Edge Function, WCAG AAA, keyboard-navigable, usable at 200% zoom.
+
+## [2026-08-16T02:15Z] Step 4 — Next.js web client
+- Decision: Reused the existing web design system (Tailwind tokens bg-base/
+  text-label/elev-*/tint-*, Button/Input/Textarea/Field) rather than a parallel
+  layer — v2 accessibility on web = larger type classes (text-xl≈20px body,
+  text-3xl headings), size="lg" buttons (min-h-14), and the app already ships a
+  skip-link + aria wiring. rem-based Tailwind => 200% browser zoom works.
+- Decision: Web gets REAL voice input via the Web Speech API
+  (SpeechRecognition/webkitSpeechRecognition) — better than the mobile interim.
+  `lib/assistant-client.ts` exposes askAssistant() (functions.invoke, NO key
+  client-side), speak()/stopSpeaking() (SpeechSynthesis), and
+  startDictation()/isVoiceInputSupported(). Mic button hidden when unsupported.
+- Assistant: `components/assistant/assistant-view.tsx` (client) + server page
+  `app/(app)/assistant/page.tsx` (requirePatient). Tier UI renders from the
+  server `tier` only: tier1 → role=alert + "Call 911" (tel:911) FIRST then top
+  emergency contact; tier2 → scam warning + "Call <family> now", NO transaction
+  help; tier3/4 → optional "Send <name> a note". Fix: tel: actions are styled
+  <a> (CallLink), never a <button> nested in an <a>.
+- Profile: `components/profile/profile-view.tsx` overview (progressbar aria +
+  per-section empty/partial/complete) → `app/(app)/profile/page.tsx`; editor
+  `components/profile/section-editor.tsx` → dynamic route
+  `app/(app)/profile/[section]/page.tsx` (validates section, 404s otherwise).
+  Two levels from home. Shares sectionState/overallProgress from lib/v2-types.ts.
+- Hooks: `hooks/use-assistant-v2.ts` (useAssistant, useProfileV2, useSaveSection)
+  mirror the mobile hooks; same untyped-cast approach for the v2 tables until
+  types/database.ts is regenerated. saveSection recomputes section_status +
+  writes profile_edits (attribution).
+- Nav: `components/layout/nav-items.ts` — added Assistant (first) + Profile to
+  PATIENT_TABS. Same IA note as mobile (now 7 tabs; consolidate later). Existing
+  TabBar already enforces min-h-16 targets + aria-current.
+- SHARED-LOGIC CHECK: both clients now call the same `assistant` Edge Function
+  and the same tables with identical section shapes (lib/v2-types.ts mirrors
+  mobile/lib/v2-types.ts). No assistant/tier logic duplicated — only thin UI.
+- PENDING: web has no node_modules in this container → `npm install` +
+  `npm run typecheck`/`next lint` not run here. Manually reviewed; fixed the
+  anchor/button nesting. Verified all tint-* tokens exist in tailwind.config.ts.
+- Files touched: lib/v2-types.ts, lib/assistant-client.ts,
+  hooks/use-assistant-v2.ts, components/assistant/assistant-view.tsx,
+  components/profile/{profile-view,section-editor}.tsx,
+  app/(app)/assistant/page.tsx, app/(app)/profile/page.tsx,
+  app/(app)/profile/[section]/page.tsx, components/layout/nav-items.ts
+- State: done (authored; install/typecheck pending in-container)
+- Next: Step 5 — family dashboard: escalation log (read tier1/tier2
+  escalation_events with timestamp + trigger, acknowledge action) on the
+  caregiver side, and profile gap-filling (caregiver opens the elder's profile,
+  sees empty sections, fills them — RLS + profile_edits already support this).

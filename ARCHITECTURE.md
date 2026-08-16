@@ -186,6 +186,8 @@ history, escalation log read + acknowledge, plus all inherited v1 tables.
 3. ✅ Expo client — assistant screen (mic + spoken output + tier UI), chunked/
    resumable profile flow with progress, v2 a11y layer. STT is interim
    (keyboard dictation); typecheck pending an `npm install` in `mobile/`.
-4. ⏳ Next.js web client (same, keyboard/zoom a11y)
+4. ✅ Next.js web client — assistant (real Web Speech voice in/out + tier UI),
+   chunked/resumable profile flow, same Edge Function, keyboard-navigable,
+   rem-based for 200% zoom. Install/typecheck pending in-container.
 5. ⏳ Family dashboard (escalation log, profile gap-filling)
 6. ⏳ README with local setup for both clients

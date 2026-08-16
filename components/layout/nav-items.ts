@@ -6,6 +6,8 @@ import {
   HeartPulse,
   Users,
   Settings,
+  MessagesSquare,
+  UserCircle,
   type LucideIcon,
 } from "lucide-react";
 import type { AccountType } from "@/types/database";
@@ -16,9 +18,14 @@ export interface NavItem {
   icon: LucideIcon;
 }
 
-// Patients get the full self-care experience.
+// v2: the assistant is the elder's home. The v1 self-care surfaces remain
+// available as the assistant's data layer.
+// NOTE (IA): this is now 7 tabs — above the ideal for 70+. A later pass should
+// consolidate reminders/routine/vault/wellness under one "My day" surface.
 const PATIENT_TABS: NavItem[] = [
+  { href: "/assistant", label: "Rekalla", icon: MessagesSquare },
   { href: "/dashboard", label: "Summary", icon: House },
+  { href: "/profile", label: "Profile", icon: UserCircle },
   { href: "/reminders", label: "Reminders", icon: BellRing },
   { href: "/routine", label: "Routine", icon: Sunrise },
   { href: "/vault", label: "Vault", icon: BookOpen },
