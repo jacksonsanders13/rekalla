@@ -53,6 +53,7 @@ function renderSection(key: SectionKey, draft: any, set: (v: any) => void) {
         <>
           {textField("Legal name", draft.legal_name, (v) => patch({ legal_name: v }))}
           {textField("Preferred name", draft.preferred_name, (v) => patch({ preferred_name: v }), "What should Rekalla call you?")}
+          {textField("Your birthday", draft.birthday, (v) => patch({ birthday: v }), "For example: March 4, 1946")}
           {textField("Hometown", draft.hometown, (v) => patch({ hometown: v }))}
           {textField("Career or work", draft.career, (v) => patch({ career: v }))}
           {textField("Faith (only if you'd like to share)", draft.faith, (v) => patch({ faith: v }))}
@@ -137,12 +138,24 @@ function renderSection(key: SectionKey, draft: any, set: (v: any) => void) {
       );
     case "people":
       return (
-        <RepeatList
-          value={draft}
-          onChange={set}
-          fields={[["name", "Name"], ["relationship", "Relationship"]]}
-          addLabel="Add a person or pet"
-        />
+        <>
+          <p className="text-lg text-label-2">
+            Add your family, friends, and pets — names, how they&apos;re related,
+            and their birthdays. Rekalla uses this to answer questions like
+            &ldquo;when&apos;s my son&apos;s birthday?&rdquo;
+          </p>
+          <RepeatList
+            value={draft}
+            onChange={set}
+            fields={[
+              ["name", "Name"],
+              ["relationship", "Relationship (e.g. son, friend, dog)"],
+              ["birthday", "Birthday (optional)"],
+              ["notes", "Anything to remember (optional)"],
+            ]}
+            addLabel="Add a person or pet"
+          />
+        </>
       );
     case "practical":
       return (

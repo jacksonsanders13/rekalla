@@ -310,3 +310,39 @@ Bake these into every component you build — retrofitting is expensive.
 - Next: finish mobile typecheck; then (still open) Step 5 family dashboard is now
   OPTIONAL per the single-user pivot — keep the escalation log for connected
   families but it is no longer required for launch. Step 6 README still needed.
+
+## [2026-08-16T04:00Z] Backend deployed + product pivot to "AI agent for elderly"
+- CONTEXT: User clarified the product — it is now an AI agent for older adults
+  grounded in a detailed personal profile ("when's my son's birthday?"). No
+  role options on sign-up; simple login; after sign-up a questionnaire builds
+  the profile; the chat is the home. The Rekalla caregiving framing is dropped
+  from the product surface (v1 tables remain as the data layer).
+- BACKEND DEPLOYED to Supabase project rekalla.v3 (id mhahpfcjxnoelcthdsss),
+  which is what .env.local points to (NEXT_PUBLIC_SUPABASE_URL). Applied both v2
+  migrations via MCP (personalization_profiles/profile_edits/escalation_events +
+  is_active_caregiver; messages/care_notes) — idempotent (drop policy if exists,
+  do-block enum guard). Deployed the `assistant` Edge Function (verify_jwt=false,
+  flattened imports: cors.ts/retrieval.ts/prompt.ts/index.ts as siblings).
+  Verified reachable: unauth POST returns my 401 "missing bearer token".
+- BLOCKER (user action): ANTHROPIC_API_KEY is NOT set. The MCP tools cannot set
+  Edge Function secrets, and I won't handle the key. Until the user runs
+  `supabase secrets set ANTHROPIC_API_KEY=sk-ant-... --project-ref mhahpfcjxnoelcthdsss`
+  (or sets it in Dashboard > Edge Functions > Manage secrets), the assistant
+  returns the "having trouble" fallback. SUPABASE_URL/ANON/SERVICE_ROLE are
+  auto-injected. Model defaults to claude-sonnet-5 (override via ANTHROPIC_MODEL).
+- WEB PRODUCT CHANGES:
+  * Sign-up: removed the Loved One/Caregiver selector entirely; everyone signs
+    up as the elder (account_type 'patient'); after sign-up routes to /profile
+    (the questionnaire). Files: app/(auth)/signup/signup-form.tsx.
+  * Login now routes existing users to /assistant (chat home), not /dashboard
+    (caregiver legacy accounts still go to /caregiver).
+    Files: app/(auth)/login/login-form.tsx.
+  * Profile questionnaire gained birthdays so the assistant can answer date
+    questions: identity.birthday, and per-person birthday + notes fields.
+    Files: components/profile/section-editor.tsx, lib/v2-types.ts.
+- Web typecheck passes. Dev server running on localhost:3000.
+- TODO (parity, not blocking localhost web): mirror the birthday fields in the
+  mobile section editor + mobile/lib/v2-types.ts. Data is identical JSONB so the
+  AI already answers; mobile just lacks the input until updated.
+- TODO: onboarding first-run nudge for existing users with an empty profile
+  (currently they land on chat with no data and must open Profile themselves).

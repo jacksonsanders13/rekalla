@@ -3,32 +3,17 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { MailCheck, HeartHandshake, User } from "lucide-react";
+import { MailCheck } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { signupSchema, type SignupValues } from "@/lib/validations/auth";
-import { authErrorMessage, cn } from "@/lib/utils";
+import { authErrorMessage } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Field } from "@/components/ui/field";
 import { AuthCard, AuthError } from "../auth-card";
-
-const ACCOUNT_OPTIONS = [
-  {
-    value: "patient" as const,
-    icon: User,
-    title: "Loved One",
-    detail: "Someone sets up reminders for me.",
-  },
-  {
-    value: "caregiver" as const,
-    icon: HeartHandshake,
-    title: "Caregiver",
-    detail: "I set up reminders for someone I care for.",
-  },
-];
 
 export function SignupForm() {
   const router = useRouter();
@@ -38,10 +23,10 @@ export function SignupForm() {
   const {
     register,
     handleSubmit,
-    control,
     formState: { errors, isSubmitting },
   } = useForm<SignupValues>({
     resolver: zodResolver(signupSchema),
+    // Single-user product: everyone who signs up is the older adult.
     defaultValues: { accountType: "patient" },
   });
 
@@ -52,7 +37,7 @@ export function SignupForm() {
       email: values.email,
       password: values.password,
       options: {
-        data: { full_name: values.fullName, account_type: values.accountType },
+        data: { full_name: values.fullName, account_type: "patient" },
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
@@ -62,23 +47,21 @@ export function SignupForm() {
       return;
     }
 
-    // When email confirmation is enabled, there's no session yet. The DB
-    // trigger records the chosen account type from signup metadata.
+    // When email confirmation is enabled, there's no session yet.
     if (!data.session) {
       setNeedsConfirmation(true);
       return;
     }
 
-    // Write the chosen role straight to the profile so it never depends on
-    // the trigger firing, then send the user to the matching home screen.
     if (data.user) {
       await supabase
         .from("profiles")
-        .update({ account_type: values.accountType })
+        .update({ account_type: "patient" })
         .eq("id", data.user.id);
     }
 
-    router.push(values.accountType === "caregiver" ? "/caregiver" : "/dashboard");
+    // Straight into the questionnaire so the assistant has data to draw on.
+    router.push("/profile");
     router.refresh();
   }
 
@@ -114,54 +97,6 @@ export function SignupForm() {
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
         <AuthError message={serverError} />
-
-        <Controller
-          control={control}
-          name="accountType"
-          render={({ field }) => (
-            <fieldset>
-              <legend className="mb-2 block text-base font-semibold text-label-2">
-                Who is this account for?
-              </legend>
-              <div className="grid gap-3">
-                {ACCOUNT_OPTIONS.map((option) => {
-                  const selected = field.value === option.value;
-                  return (
-                    <button
-                      key={option.value}
-                      type="button"
-                      aria-pressed={selected}
-                      onClick={() => field.onChange(option.value)}
-                      className={cn(
-                        "flex items-start gap-3.5 rounded-2xl border-2 p-4 text-left transition-colors",
-                        selected
-                          ? "border-white bg-white/10"
-                          : "border-transparent bg-elev-2 hover:bg-elev-3",
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          "flex size-11 shrink-0 items-center justify-center rounded-xl",
-                          selected ? "bg-white text-black" : "bg-elev-3 text-label-2",
-                        )}
-                      >
-                        <option.icon className="size-6" aria-hidden="true" />
-                      </span>
-                      <span>
-                        <span className="block text-base font-semibold text-label">
-                          {option.title}
-                        </span>
-                        <span className="mt-0.5 block text-sm text-label-3">
-                          {option.detail}
-                        </span>
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </fieldset>
-          )}
-        />
 
         <Field label="Your name" error={errors.fullName?.message}>
           {(fieldProps) => (

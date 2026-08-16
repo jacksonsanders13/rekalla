@@ -9,6 +9,7 @@ export type Tone = "chatty" | "brief";
 export interface ProfileIdentity {
   legal_name?: string;
   preferred_name?: string;
+  birthday?: string;
   hometown?: string;
   career?: string;
   faith?: string;
@@ -16,6 +17,7 @@ export interface ProfileIdentity {
 export interface ProfilePerson {
   name?: string;
   relationship?: string;
+  birthday?: string;
   kind?: "family" | "friend" | "grandkid" | "pet";
   notes?: string;
 }

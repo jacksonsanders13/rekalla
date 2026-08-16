@@ -44,8 +44,9 @@ export function LoginForm() {
 
     // Route by role directly so caregivers never get stranded on the
     // patient dashboard if a server-side redirect is cached.
+    // v2 single-user product: the chat is home for the older adult.
     const next = searchParams.get("next");
-    let destination = next && next.startsWith("/") ? next : "/dashboard";
+    let destination = next && next.startsWith("/") ? next : "/assistant";
     if (data.user) {
       const { data: profile } = await supabase
         .from("profiles")
