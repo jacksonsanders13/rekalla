@@ -183,7 +183,9 @@ history, escalation log read + acknowledge, plus all inherited v1 tables.
 ## 8. Build order & status
 1. ✅ Profile + escalation schema — `20260816000000_...sql` (authored, not applied)
 2. ✅ `assistant` Edge Function (scoping + tier) + `20260816000001` messages/care_notes
-3. ⏳ Expo client (profile flow, assistant, tier UI)
+3. ✅ Expo client — assistant screen (mic + spoken output + tier UI), chunked/
+   resumable profile flow with progress, v2 a11y layer. STT is interim
+   (keyboard dictation); typecheck pending an `npm install` in `mobile/`.
 4. ⏳ Next.js web client (same, keyboard/zoom a11y)
 5. ⏳ Family dashboard (escalation log, profile gap-filling)
 6. ⏳ README with local setup for both clients

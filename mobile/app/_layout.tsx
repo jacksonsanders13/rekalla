@@ -35,6 +35,7 @@ function AppStack() {
       <Stack.Screen name="connect" />
       <Stack.Screen name="settings" />
       <Stack.Screen name="patient/[id]" options={{ title: "" }} />
+      <Stack.Screen name="profile-section" options={{ title: "" }} />
     </Stack>
   );
 }

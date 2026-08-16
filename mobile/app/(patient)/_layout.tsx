@@ -33,12 +33,32 @@ export default function PatientTabs() {
       }}
     >
       <Tabs.Screen
+        name="assistant"
+        options={{
+          title: "Rekalla",
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="chatbubbles" size={TAB_ICON} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="summary"
         options={{
           title: t("tab.summary"),
           headerShown: false,
           tabBarIcon: ({ color }) => (
             <Ionicons name="home" size={TAB_ICON} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Profile",
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="person-circle" size={TAB_ICON} color={color} />
           ),
         }}
       />

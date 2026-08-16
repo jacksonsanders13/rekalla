@@ -22,5 +22,6 @@ export default function Index() {
     return <Redirect href="/(caregiver)/people" />;
   }
 
-  return <Redirect href="/(patient)/summary" />;
+  // v2: the assistant is the elder's home surface.
+  return <Redirect href="/(patient)/assistant" />;
 }

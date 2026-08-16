@@ -183,3 +183,51 @@ Bake these into every component you build — retrofitting is expensive.
 - Next: Step 3 — Expo client: profile flow (chunked, resumable, voice input,
   progress), assistant screen (large mic, spoken output), tier UI (911 button
   first for tier1, family contact for tier2). Enforce Part D a11y from the start.
+
+## [2026-08-16T01:30Z] Step 3 — Expo (mobile) client
+- Decision: v2 a11y is a SEPARATE token layer (`mobile/lib/a11y.ts`: body>=20pt,
+  tap>=60pt) instead of mutating the shared `theme.ts` (font.base=17, buttons 52)
+  — that keeps v1 screens untouched while every NEW v2 surface meets Part D.
+  New primitives in `mobile/components/big-ui.tsx` (BigButton>=60, BigField,
+  MicButton 112px, BodyText>=20) all take explicit accessibilityLabels; meaning
+  is icon+text, never color alone; 911 button min-height 84.
+- Decision: The ASSISTANT is the elder's home. `app/index.tsx` now redirects
+  patients to `/(patient)/assistant`; added Assistant (first) + Profile tabs in
+  `app/(patient)/_layout.tsx`. NOTE/IA-TODO: that makes 7 bottom tabs (Assistant,
+  Home, Profile, Reminders, Routine, Vault, Wellness) — above the ideal for 70+.
+  Recommend a future pass consolidating reminders/routine/vault/wellness under a
+  single "My day" surface so the elder sees ~3 tabs. Left v1 tabs intact for now.
+- Assistant screen (`app/(patient)/assistant.tsx`): calls the Edge Function via
+  `lib/assistant.ts` (supabase.functions.invoke — NO api key client-side), speaks
+  replies with expo-speech, renders TIER UI from the server's `tier` (never
+  re-derived): tier1 → "Call 911" FIRST then top emergency contact (by priority);
+  tier2 → warning + "Call <family> now", offers NO transaction help; tier3/4 →
+  calm, optional "Send <name> a note". Uses accessibilityLiveRegion assertive for
+  tier1/2, polite for the thinking indicator.
+- Profile flow: `app/(patient)/profile.tsx` overview = progress % + one card per
+  section with empty/partial/complete state (drives the "which sections are
+  empty" gap UI). Editor is a root-stack sibling `app/profile-section.tsx`
+  (param `section`) — reached in exactly 2 levels from home. Covers all 6
+  sections; identity/interests/preferences are free-text/CSV, people/practical use
+  repeatable rows, practical enforces "doctor name + specialty only" copy and
+  priority-ordered emergency contacts. Saving recomputes section_status and writes
+  a `profile_edits` row (attribution) via `hooks/v2.ts:useSaveSection`.
+- VOICE INPUT: interim path is the iOS keyboard dictation mic (works on every
+  free-text field today). The large in-app MicButton currently just stops TTS and
+  surfaces the keyboard; true on-device STT (expo-av record → transcribe endpoint)
+  is a TODO. Spoken OUTPUT is fully working via expo-speech.
+- DEP ADDED: `expo-speech@~14.0.7` in mobile/package.json. `mobile/` has no
+  node_modules in this container, so `npm install` + `npm run typecheck` are
+  PENDING — a handoff agent should run them. New v2 tables aren't in the generated
+  `database.types.ts`; `hooks/v2.ts` casts through an untyped handle and
+  `lib/v2-types.ts` holds hand-written types until types are regenerated.
+- suggested_action 'send_message' shows a "Send X a note" button but the compose/
+  confirm sheet is a TODO (elder must confirm before anything sends) — wire in a
+  later pass; the DB insert to `messages` is intentionally client-driven.
+- Files touched: mobile/lib/{a11y.ts,v2-types.ts,assistant.ts}, mobile/hooks/v2.ts,
+  mobile/components/big-ui.tsx, mobile/app/(patient)/{assistant,profile}.tsx,
+  mobile/app/profile-section.tsx, mobile/app/(patient)/_layout.tsx,
+  mobile/app/_layout.tsx, mobile/app/index.tsx, mobile/package.json
+- State: done (authored; install/typecheck pending in-container)
+- Next: Step 4 — Next.js web client: same assistant + profile + tier UI, calling
+  the same Edge Function, WCAG AAA, keyboard-navigable, usable at 200% zoom.
