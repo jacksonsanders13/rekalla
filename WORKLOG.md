@@ -129,3 +129,57 @@ Bake these into every component you build — retrofitting is expensive.
   + WORKLOG.md + Part A migration. Steps 2–6 remain.
 - State: in-progress (planning + Part A landed; Parts B/C-UI/D/clients pending)
 - Next: pick up at Step 2 (Edge Function) per ARCHITECTURE.md "Assistant" section.
+
+## [2026-08-16T00:40Z] Resolve messages/care_notes gap
+- Decision: Added `messages` (one logical thread per elder) + `care_notes`
+  (non-medical). Both keyed to the elder (user_id), attributed by sender/author.
+  Unblocks "What did Sarah say about Thanksgiving?" and "Help me write a message
+  to my daughter." RLS reuses is_active_caregiver(): elder + active caregivers
+  read/write; sender_id/author_id must equal auth.uid() (no impersonation).
+- Migration NOT applied to any DB yet (file only). Apply after 20260816000000.
+- Files touched: supabase/migrations/20260816000001_v2_messages_and_care_notes.sql
+- State: done (authored)
+
+## [2026-08-16T00:55Z] Step 2 — assistant Edge Function (Part B + Part C)
+- Decision: One Deno Edge Function `assistant`, called by BOTH clients. Flow:
+  verify JWT (getUser) → user-scoped Supabase client so ALL retrieval is
+  RLS-enforced → retrieve profile + contacts + this-week reminders + routine +
+  recent messages + care_notes → single model call with a FORCED `respond` tool
+  returning { tier, rationale, reply, suggested_action } → tier1/tier2 side
+  effects (log escalation_events + notify active caregivers) via service role.
+- Decision: Tier classification and reply happen in ONE model turn via forced
+  tool_use (structured JSON, no parsing fragility). Classify by MEANING — the
+  system prompt explicitly calls out "chest of drawers" ≠ "chest pain".
+- Decision: config.toml sets `verify_jwt = false` for the function so it can do
+  its own auth and return warm 401s / handle both clients; the function still
+  requires and validates a Bearer token.
+- SECURITY: ANTHROPIC_API_KEY is an Edge Function secret only. Documented in
+  .env.example (server-side section) + function README; .gitignore now ignores
+  supabase/functions/.env.local. NEVER NEXT_PUBLIC_/EXPO_PUBLIC_.
+- Model: default `claude-sonnet-5`, override via env `ANTHROPIC_MODEL`. If that
+  id is unavailable in the target account, set the env var to a valid current id.
+- Verified notifications insert columns (user_id, channel, title, body, status)
+  against 20260601000000 — they match; channel='push', status='pending' valid.
+- ENV NAMES (Edge Function secrets): ANTHROPIC_API_KEY, ANTHROPIC_MODEL,
+  SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY (last 3 platform-
+  injected except service role which you set).
+- NOT YET DONE / next-agent notes:
+  * Neither migration nor the function is deployed. Deploy order: apply
+    20260816000000 then 20260816000001, then `supabase functions deploy assistant`
+    and `supabase secrets set ANTHROPIC_API_KEY=...`.
+  * `conversation_id` is accepted but multi-turn history is not yet persisted —
+    each call is currently single-turn. Add a conversations/messages-per-turn
+    store if history is needed.
+  * suggested_action.type 'send_message' is surfaced to the client but the
+    function does not itself write to `messages` yet — the client confirms then
+    writes (keeps the elder in control). Wire this in Step 3/4.
+  * No automated tests yet. Consider a Deno test that mocks the Anthropic fetch
+    and asserts tier1/tier2 trigger the escalation insert.
+- Files touched: supabase/functions/_shared/cors.ts,
+  supabase/functions/assistant/{index,retrieval,prompt}.ts,
+  supabase/functions/assistant/README.md, supabase/config.toml,
+  .env.example, .gitignore
+- State: done (authored, not deployed)
+- Next: Step 3 — Expo client: profile flow (chunked, resumable, voice input,
+  progress), assistant screen (large mic, spoken output), tier UI (911 button
+  first for tier1, family contact for tier2). Enforce Part D a11y from the start.

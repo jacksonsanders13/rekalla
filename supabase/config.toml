@@ -1,0 +1,7 @@
+# Supabase local/CI config. Project ref is set via `supabase link` / secrets.
+project_id = "rekalla"
+
+[functions.assistant]
+# The assistant verifies the JWT itself and must accept calls from both clients.
+# verify_jwt = false lets us do our own auth (getUser) and return warm 401s.
+verify_jwt = false
