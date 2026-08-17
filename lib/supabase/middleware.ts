@@ -2,6 +2,9 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 const PROTECTED_PREFIXES = [
+  "/assistant",
+  "/my-day",
+  "/profile",
   "/dashboard",
   "/reminders",
   "/routine",
@@ -64,9 +67,12 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // v2: signed-in users land on the AI chat (the home), not the old
+  // reminder dashboard. Caregiver-only accounts get re-routed to /caregiver
+  // by requirePatient() on the server.
   if (user && (isAuthPage || pathname === "/")) {
     const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
+    url.pathname = "/assistant";
     url.search = "";
     return NextResponse.redirect(url);
   }

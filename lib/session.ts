@@ -34,11 +34,12 @@ export async function getSessionProfile() {
   return { user, profile: (profile ?? null) as Profile | null };
 }
 
-/** Patient-only pages call this; caregivers get sent to their own home. */
+/**
+ * v2 is a single-user product for the older adult — there are no roles. This
+ * just requires a signed-in user (getSessionProfile redirects to /login if
+ * not) and returns them. Legacy caregiver accounts get the elder experience
+ * too; the old /caregiver screens are no longer routed to.
+ */
 export async function requirePatient() {
-  const session = await getSessionProfile();
-  if (session.profile?.account_type === "caregiver") {
-    redirect("/caregiver");
-  }
-  return session;
+  return getSessionProfile();
 }

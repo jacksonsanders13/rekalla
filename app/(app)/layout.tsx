@@ -12,8 +12,9 @@ export const fetchCache = "force-no-store";
 export default async function AppLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const { profile } = await getSessionProfile();
-  const accountType: AccountType = profile?.account_type ?? "patient";
+  await getSessionProfile();
+  // v2 single-user product: everyone is the older adult. No caregiver shell.
+  const accountType: AccountType = "patient";
 
   return (
     <AppProviders>
