@@ -123,8 +123,8 @@ export function AssistantView() {
 
       {/* Composer — sticky above the tab bar */}
       <div className="sticky bottom-[calc(5rem+env(safe-area-inset-bottom))] z-30 -mx-4 px-4">
-        <div className="pointer-events-none absolute inset-x-0 -top-8 h-8 bg-gradient-to-t from-base to-transparent" />
-        <div className="rounded-[28px] border border-white/12 bg-elev-1 p-3 shadow-[0_8px_40px_rgba(0,0,0,0.45)]">
+        <div className="pointer-events-none absolute inset-x-0 -top-10 h-10 bg-gradient-to-t from-base to-transparent" />
+        <div className="rounded-[28px] border border-white/10 bg-elev-1/80 p-3 shadow-[0_8px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl">
           {image && (
             <div className="mb-3 flex items-center gap-3 px-1">
               <div className="relative">
@@ -198,8 +198,9 @@ export function AssistantView() {
               disabled={ask.isPending || (!input.trim() && !image)}
               aria-label="Send"
               className={cn(
-                "flex size-14 items-center justify-center rounded-full transition-colors",
-                "bg-white text-black hover:bg-white/90 disabled:bg-elev-3 disabled:text-label-4",
+                "flex size-14 items-center justify-center rounded-full transition-all",
+                "bg-gradient-to-br from-accent to-accent-2 text-white shadow-[0_4px_24px_rgba(139,124,255,0.5)] hover:brightness-110",
+                "disabled:from-elev-3 disabled:to-elev-3 disabled:text-label-4 disabled:shadow-none",
               )}
             >
               <ArrowUp className="size-7" strokeWidth={2.5} aria-hidden="true" />
@@ -224,17 +225,22 @@ function Welcome({
   suggestions: string[];
 }) {
   return (
-    <div className="flex flex-col items-center pt-8 text-center">
-      <div className="flex size-20 items-center justify-center rounded-3xl bg-elev-1 ring-1 ring-white/10">
+    <div className="relative flex animate-fade-up flex-col items-center pt-10 text-center">
+      {/* Ambient violet glow */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-10 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-accent/20 blur-[90px]"
+      />
+      <div className="relative flex size-20 items-center justify-center rounded-3xl bg-elev-1 ring-1 ring-white/10 shadow-[0_0_40px_rgba(139,124,255,0.25)]">
         <Image src="/logo.svg" alt="" width={56} height={56} className="rounded-2xl" priority />
       </div>
-      <h1 className="mt-6 text-4xl font-bold tracking-tight text-label">Hello there</h1>
-      <p className="mt-3 max-w-md text-xl leading-relaxed text-label-2">
+      <h1 className="relative mt-6 text-4xl font-bold tracking-tight text-label">Hello there</h1>
+      <p className="relative mt-3 max-w-md text-xl leading-relaxed text-label-2">
         I&apos;m Rekalla. Ask me about your week, your family, or your
         appointments — just talk or type.
       </p>
 
-      <div className="mt-10 grid w-full gap-3 text-left">
+      <div className="relative mt-10 grid w-full gap-3 text-left">
         {suggestions.map((s) => (
           <button
             key={s}
@@ -244,10 +250,10 @@ function Welcome({
               // let state flush, then send
               setTimeout(onPick, 0);
             }}
-            className="group flex min-h-[64px] items-center justify-between gap-3 rounded-2xl border border-white/10 bg-elev-1 px-5 py-4 text-left text-xl font-medium text-label transition-colors hover:border-white/20 hover:bg-elev-2 focus:outline-none focus:ring-[3px] focus:ring-white/40"
+            className="group flex min-h-[64px] items-center justify-between gap-3 rounded-2xl border border-white/10 bg-elev-1/70 px-5 py-4 text-left text-xl font-medium text-label backdrop-blur-sm transition-all hover:border-accent/40 hover:bg-elev-2 focus:outline-none focus:ring-[3px] focus:ring-accent/50"
           >
             <span>{s}</span>
-            <ArrowUp className="size-5 shrink-0 rotate-45 text-label-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+            <ArrowUp className="size-5 shrink-0 rotate-45 text-label-4 transition-all group-hover:translate-x-0.5 group-hover:text-accent" aria-hidden="true" />
           </button>
         ))}
       </div>
@@ -266,7 +272,7 @@ function Avatar() {
 function MessageRow({ turn }: { turn: Turn }) {
   if (turn.role === "me") {
     return (
-      <div className="flex flex-col items-end gap-2">
+      <div className="flex animate-fade-up flex-col items-end gap-2">
         {turn.image && (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={turn.image} alt="You shared a photo" className="max-h-64 rounded-2xl object-cover" />
@@ -280,7 +286,7 @@ function MessageRow({ turn }: { turn: Turn }) {
     );
   }
   return (
-    <div className="space-y-3">
+    <div className="animate-fade-up space-y-3">
       <div className="flex items-start gap-3">
         <Avatar />
         <div className="min-w-0 flex-1 pt-1 text-xl leading-relaxed text-label">

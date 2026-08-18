@@ -9,19 +9,24 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // iOS dark-mode surfaces (Apple HIG system grays).
-        base: "#000000",
+        // Premium near-black surfaces (Linear/Vercel-style), not pure black.
+        base: "#0a0a0c",
         elev: {
-          1: "#1c1c1e", // cards
-          2: "#2c2c2e", // nested / pressed surfaces
-          3: "#3a3a3c", // filled-control borders
+          1: "#161619", // cards
+          2: "#212127", // nested / pressed surfaces
+          3: "#2e2e36", // filled-control borders
         },
-        // Text hierarchy (Apple label colors on dark).
+        // Text hierarchy on dark.
         label: {
-          DEFAULT: "#ffffff",
-          2: "#d1d1d6",
-          3: "#8e8e93",
-          4: "#636366",
+          DEFAULT: "#f7f7f8",
+          2: "#c7c7cf",
+          3: "#8a8a94",
+          4: "#5c5c66",
+        },
+        // Brand accent — a soft violet→indigo, used for the send button + glow.
+        accent: {
+          DEFAULT: "#8b7cff",
+          2: "#6a5bff",
         },
         // iOS system tints, dark-mode variants.
         tint: {
@@ -36,8 +41,10 @@ const config: Config = {
         },
       },
       fontFamily: {
-        // SF Pro on Apple devices — matches the future iOS app.
+        // Geist (Vercel's typeface) first for a modern, premium feel; falls
+        // back to the platform system stack.
         sans: [
+          "var(--font-geist-sans)",
           "-apple-system",
           "BlinkMacSystemFont",
           "SF Pro Text",
