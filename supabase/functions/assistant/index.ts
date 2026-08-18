@@ -29,7 +29,28 @@ interface AssistantResult {
   suggested_action?: { type: string; contact_name?: string };
 }
 
-async function classifyAndReply(systemPrompt: string, userMessage: string) {
+// Split a data URL into the media type + base64 payload Anthropic expects.
+function parseDataUrl(dataUrl: string): { media_type: string; data: string } | null {
+  const m = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
+  if (!m) return null;
+  return { media_type: m[1], data: m[2] };
+}
+
+async function classifyAndReply(
+  systemPrompt: string,
+  userMessage: string,
+  imageDataUrl?: string,
+) {
+  // Vision: when a photo is attached, send it as an image content block
+  // alongside the text so the model can describe/read it.
+  const parsed = imageDataUrl ? parseDataUrl(imageDataUrl) : null;
+  const content = parsed
+    ? [
+        { type: "image", source: { type: "base64", ...parsed } },
+        { type: "text", text: userMessage },
+      ]
+    : userMessage;
+
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
@@ -43,7 +64,7 @@ async function classifyAndReply(systemPrompt: string, userMessage: string) {
       system: systemPrompt,
       tools: [RESPOND_TOOL],
       tool_choice: { type: "tool", name: "respond" },
-      messages: [{ role: "user", content: userMessage }],
+      messages: [{ role: "user", content }],
     }),
   });
 
@@ -128,13 +149,15 @@ Deno.serve(async (req) => {
 
     const body = await req.json().catch(() => ({}));
     const userMessage = (body.user_message ?? "").toString().trim();
-    if (!userMessage) {
+    const imageDataUrl =
+      typeof body.image_data_url === "string" ? body.image_data_url : undefined;
+    if (!userMessage && !imageDataUrl) {
       return jsonResponse({ error: "user_message is required" }, 400);
     }
 
     const ctx = await retrieveContext(db, elderId);
     const systemPrompt = buildSystemPrompt(ctx);
-    const result = await classifyAndReply(systemPrompt, userMessage);
+    const result = await classifyAndReply(systemPrompt, userMessage, imageDataUrl);
 
     if (result.tier === "tier1_medical" || result.tier === "tier2_financial") {
       // Best-effort: never let a logging failure swallow the user's reply.

@@ -75,6 +75,8 @@ export type Tier =
 export interface AssistantRequest {
   user_message: string;
   conversation_id?: string;
+  /** Optional attached photo as a data URL (data:image/...;base64,...). */
+  image_data_url?: string;
 }
 export interface EmergencyContact {
   name?: string;
