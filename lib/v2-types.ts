@@ -63,6 +63,7 @@ export interface PersonalizationProfile {
   preferences: ProfilePreferences;
   practical: ProfilePractical;
   section_status: Partial<Record<SectionKey, SectionState>>;
+  onboarded_at?: string | null;
   updated_at?: string;
 }
 

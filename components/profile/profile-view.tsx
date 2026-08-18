@@ -25,8 +25,8 @@ export function ProfileView({ userId }: { userId: string }) {
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-label">Your profile</h1>
       <p className="text-xl leading-relaxed text-label">
-        This helps Rekalla know you. Do a little at a time and come back whenever
-        you like. Nothing here is about your health.
+        The more Rekalla knows about you, the more it can help. Add a little at a
+        time and come back whenever you like.
       </p>
 
       <div

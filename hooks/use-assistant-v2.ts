@@ -6,11 +6,13 @@ import { askAssistant } from "@/lib/assistant-client";
 import {
   emptyProfile,
   sectionState,
+  SECTION_ORDER,
   type AssistantRequest,
   type AssistantResponse,
   type PersonalizationProfile,
   type ProposedAction,
   type SectionKey,
+  type SectionState,
 } from "@/lib/v2-types";
 
 // v2 tables aren't in the generated Database type yet; access untyped + cast.
@@ -61,6 +63,35 @@ export function useSaveSection(userId: string, editorId: string) {
         section: input.section,
         summary: `Updated ${input.section}`,
       });
+    },
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: ["personalization_profile", userId] }),
+  });
+}
+
+/**
+ * Saves the whole welcome survey in one write and stamps onboarded_at, so the
+ * survey never reappears. Works whether they filled everything in or skipped.
+ */
+export function useCompleteOnboarding(userId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (profile: PersonalizationProfile) => {
+      const status: Partial<Record<SectionKey, SectionState>> = {};
+      for (const key of SECTION_ORDER) status[key] = sectionState(profile, key);
+
+      const { error } = await untyped().from("personalization_profiles").upsert({
+        user_id: userId,
+        identity: profile.identity,
+        people: profile.people,
+        routine: profile.routine,
+        interests: profile.interests,
+        preferences: profile.preferences,
+        practical: profile.practical,
+        section_status: status,
+        onboarded_at: new Date().toISOString(),
+      });
+      if (error) throw error;
     },
     onSuccess: () =>
       qc.invalidateQueries({ queryKey: ["personalization_profile", userId] }),

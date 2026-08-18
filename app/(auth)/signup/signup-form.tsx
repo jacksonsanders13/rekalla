@@ -60,8 +60,8 @@ export function SignupForm() {
         .eq("id", data.user.id);
     }
 
-    // Straight into the questionnaire so the assistant has data to draw on.
-    router.push("/profile");
+    // Straight into the welcome survey so the assistant has data to draw on.
+    router.push("/welcome");
     router.refresh();
   }
 
