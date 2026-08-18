@@ -10,8 +10,8 @@ export default async function VaultPage() {
   return (
     <VaultView
       userId={user.id}
-      canManage={false}
-      description="People, doctors, medications, and important details — kept up to date by your caregiver."
+      canManage
+      description="People, doctors, medications, and important details — kept in one place. Add your own, or ask Rekalla to remember something."
     />
   );
 }

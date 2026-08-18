@@ -3,13 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { tabsFor } from "./nav-items";
-import type { AccountType } from "@/types/database";
+import { TABS } from "./nav-items";
 
 /** iOS-style bottom tab bar, shown at every screen size. */
-export function TabBar({ accountType }: { accountType: AccountType }) {
+export function TabBar() {
   const pathname = usePathname();
-  const tabs = tabsFor(accountType);
 
   return (
     <nav
@@ -17,11 +15,8 @@ export function TabBar({ accountType }: { accountType: AccountType }) {
       className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-base/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl"
     >
       <ul className="mx-auto flex max-w-xl items-stretch justify-around">
-        {tabs.map((item) => {
-          const active =
-            item.href === "/caregiver"
-              ? pathname === "/caregiver"
-              : pathname.startsWith(item.href);
+        {TABS.map((item) => {
+          const active = pathname.startsWith(item.href);
           return (
             <li key={item.href} className="flex-1">
               <Link

@@ -2,19 +2,17 @@ import { getSessionProfile } from "@/lib/session";
 import { AppProviders } from "./providers";
 import { AppHeader } from "@/components/layout/app-header";
 import { TabBar } from "@/components/layout/tab-bar";
-import type { AccountType } from "@/types/database";
 
 // Always render the signed-in app fresh and never cache the profile read —
-// account type / session must reflect the current user on every request.
+// the session must reflect the current user on every request.
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 
+// v2 single-user product: everyone is the older adult. No caregiver shell.
 export default async function AppLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   await getSessionProfile();
-  // v2 single-user product: everyone is the older adult. No caregiver shell.
-  const accountType: AccountType = "patient";
 
   return (
     <AppProviders>
@@ -25,11 +23,11 @@ export default async function AppLayout({
         >
           Skip to main content
         </a>
-        <AppHeader accountType={accountType} />
+        <AppHeader />
         <main id="main" className="mx-auto w-full max-w-xl px-4 pb-32 pt-6">
           {children}
         </main>
-        <TabBar accountType={accountType} />
+        <TabBar />
       </div>
     </AppProviders>
   );

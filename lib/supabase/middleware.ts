@@ -10,8 +10,6 @@ const PROTECTED_PREFIXES = [
   "/routine",
   "/vault",
   "/wellness",
-  "/caregiver",
-  "/connect",
   "/settings",
 ];
 
@@ -68,8 +66,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // v2: signed-in users land on the AI chat (the home), not the old
-  // reminder dashboard. Caregiver-only accounts get re-routed to /caregiver
-  // by requirePatient() on the server.
+  // reminder dashboard.
   if (user && (isAuthPage || pathname === "/")) {
     const url = request.nextUrl.clone();
     url.pathname = "/assistant";

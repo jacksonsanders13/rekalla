@@ -7,13 +7,12 @@ export const metadata: Metadata = { title: "Reminders" };
 export default async function RemindersPage() {
   const { user } = await requirePatient();
 
-  // Patients view and complete reminders; a caregiver adds and edits them.
   return (
     <RemindersView
       userId={user.id}
       actorId={user.id}
-      canManage={false}
-      description="Check things off as you go. Your caregiver keeps this list up to date."
+      canManage
+      description="Check things off as you go. Add anything you want to be reminded about — or just ask Rekalla."
     />
   );
 }
