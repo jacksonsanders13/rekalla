@@ -45,6 +45,52 @@ export const RESPOND_TOOL = {
         },
         required: ["type"],
       },
+      proposed_action: {
+        type: "object",
+        description:
+          "A CONFIRM-FIRST write the user seems to want. Propose it; the app shows a Yes/No button and only saves after the user confirms. Use kind 'none' if nothing should be saved.",
+        properties: {
+          kind: {
+            type: "string",
+            enum: ["none", "add_reminder", "add_vault_item"],
+          },
+          confirm_prompt: {
+            type: "string",
+            description:
+              "Short plain-language question shown on the confirm button's card, e.g. \"Add 'Doctor visit' on Thursday at 2:00 PM to your schedule?\"",
+          },
+          reminder: {
+            type: "object",
+            description: "For kind add_reminder.",
+            properties: {
+              title: { type: "string" },
+              date: { type: "string", description: "YYYY-MM-DD; the day it happens." },
+              time: { type: "string", description: "24-hour HH:MM." },
+              category: {
+                type: "string",
+                enum: ["medication", "meals", "appointments", "exercise", "family_calls", "custom"],
+              },
+              recurrence: { type: "string", enum: ["once", "daily", "weekly", "monthly"] },
+            },
+          },
+          vault_item: {
+            type: "object",
+            description: "For kind add_vault_item — a memory to keep.",
+            properties: {
+              category: {
+                type: "string",
+                enum: ["family", "contact", "doctor", "medication", "important_date", "emergency", "note"],
+              },
+              title: { type: "string" },
+              subtitle: { type: "string", description: "e.g. relationship, specialty." },
+              notes: { type: "string" },
+              date_value: { type: "string", description: "YYYY-MM-DD, for birthdays / important dates." },
+              phone: { type: "string" },
+            },
+          },
+        },
+        required: ["kind"],
+      },
     },
     required: ["tier", "rationale", "reply"],
   },
@@ -56,6 +102,7 @@ export function buildSystemPrompt(ctx: RetrievedContext): string {
   const avoid = Array.isArray(prefs.avoid_topics)
     ? (prefs.avoid_topics as string[])
     : [];
+  const today = new Date().toISOString().slice(0, 10);
 
   const dataBlock = JSON.stringify(
     {
@@ -65,6 +112,7 @@ export function buildSystemPrompt(ctx: RetrievedContext): string {
       routine: ctx.routine,
       recent_messages: ctx.recentMessages,
       recent_care_notes: ctx.recentCareNotes,
+      memory_vault: ctx.memoryVault,
     },
     null,
     2,
@@ -95,6 +143,18 @@ it out loud for them (a letter, a card, a sign, a bill's due date). This is
 allowed even though it is not in the DATA. Still refuse medical and financial
 advice — if the photo is a prescription or a medical document, you can read the
 plain words but never interpret a diagnosis, dosage, or symptom.
+
+# SAVING THINGS (confirm first — never save silently)
+Today's date is ${today}. When the person tells you something worth keeping,
+propose ONE proposed_action and ask them to confirm in your reply. Do NOT claim
+it is saved — the app shows a Yes button and only saves after they tap it.
+- An appointment, a task, or something to be reminded of → kind "add_reminder"
+  (work out the exact date from today's date, e.g. "this Thursday").
+- A fact to remember — a person, a birthday or important date, a phone number,
+  a note to self → kind "add_vault_item" (use category important_date for dates,
+  family for people, note for a general reminder-to-self).
+Only propose a save when they are clearly giving you something to keep. For plain
+questions, use kind "none". Keep confirm_prompt short and concrete.
 
 # SAFETY TIER (classify by MEANING, not keywords)
 Judge the actual meaning. "chest of drawers" is furniture, NOT chest pain.

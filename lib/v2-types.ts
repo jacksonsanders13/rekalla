@@ -84,10 +84,31 @@ export interface EmergencyContact {
   relationship?: string;
   priority?: number;
 }
+export interface ProposedAction {
+  kind: "none" | "add_reminder" | "add_vault_item";
+  confirm_prompt?: string;
+  reminder?: {
+    title?: string;
+    date?: string;
+    time?: string;
+    category?: string;
+    recurrence?: string;
+  };
+  vault_item?: {
+    category?: string;
+    title?: string;
+    subtitle?: string;
+    notes?: string;
+    date_value?: string;
+    phone?: string;
+  };
+}
+
 export interface AssistantResponse {
   reply: string;
   tier: Tier;
   suggested_action?: { type: "send_message" | "call_contact" | "none"; contact_name?: string };
+  proposed_action?: ProposedAction;
   emergency_contacts?: EmergencyContact[];
 }
 

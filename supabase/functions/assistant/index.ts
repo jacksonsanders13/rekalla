@@ -27,6 +27,7 @@ interface AssistantResult {
   rationale: string;
   reply: string;
   suggested_action?: { type: string; contact_name?: string };
+  proposed_action?: Record<string, unknown>;
 }
 
 // Split a data URL into the media type + base64 payload Anthropic expects.
@@ -172,6 +173,8 @@ Deno.serve(async (req) => {
       reply: result.reply,
       tier: result.tier,
       suggested_action: result.suggested_action ?? { type: "none" },
+      // Confirm-first write the client offers via a Yes/No card.
+      proposed_action: result.proposed_action ?? { kind: "none" },
       // The client renders tier UI (911 button / family contact) from `tier`
       // and this priority-ordered contact list — never re-derived client-side.
       emergency_contacts:

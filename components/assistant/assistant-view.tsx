@@ -18,6 +18,10 @@ import {
   PenLine,
   Image as ImageIcon,
   ShieldCheck,
+  Check,
+  CalendarPlus,
+  BookmarkPlus,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Dialog } from "@/components/ui/dialog";
@@ -27,8 +31,8 @@ import {
   startDictation,
   stopSpeaking,
 } from "@/lib/assistant-client";
-import { useAssistant } from "@/hooks/use-assistant-v2";
-import type { AssistantResponse, EmergencyContact } from "@/lib/v2-types";
+import { useAssistant, useConfirmProposedAction } from "@/hooks/use-assistant-v2";
+import type { AssistantResponse, EmergencyContact, ProposedAction } from "@/lib/v2-types";
 
 interface Turn {
   role: "me" | "rekalla";
@@ -307,6 +311,67 @@ function MessageRow({ turn }: { turn: Turn }) {
         </div>
       </div>
       {turn.meta && <TierUI res={turn.meta} />}
+      {turn.meta?.proposed_action && turn.meta.proposed_action.kind !== "none" && (
+        <ProposeCard action={turn.meta.proposed_action} />
+      )}
+    </div>
+  );
+}
+
+/** Confirm-first save card. The elder taps Yes; only then do we write. */
+function ProposeCard({ action }: { action: ProposedAction }) {
+  const confirm = useConfirmProposedAction();
+  const [state, setState] = useState<"idle" | "saved" | "dismissed">("idle");
+  const isReminder = action.kind === "add_reminder";
+  const Icon = isReminder ? CalendarPlus : BookmarkPlus;
+  const savedLabel = isReminder ? "Added to your schedule" : "Saved to your memory vault";
+
+  if (state === "dismissed") return null;
+
+  if (state === "saved") {
+    return (
+      <div className="ml-[52px] flex items-center gap-2.5 rounded-2xl bg-tint-green/10 px-5 py-3.5 text-lg font-semibold text-label">
+        <Check className="size-6 shrink-0 text-tint-green" aria-hidden="true" />
+        {savedLabel}
+      </div>
+    );
+  }
+
+  return (
+    <div className="ml-[52px] space-y-3 rounded-2xl border border-accent/30 bg-accent/[0.07] p-5">
+      <p className="flex items-start gap-2.5 text-xl font-semibold text-label">
+        <Icon className="mt-0.5 size-6 shrink-0 text-accent" aria-hidden="true" />
+        {action.confirm_prompt ??
+          (isReminder ? "Add this to your schedule?" : "Save this to remember it?")}
+      </p>
+      {confirm.isError && (
+        <p role="alert" className="text-lg text-tint-red">
+          Sorry, that didn&apos;t save. Please try again.
+        </p>
+      )}
+      <div className="flex flex-wrap gap-3">
+        <button
+          type="button"
+          disabled={confirm.isPending}
+          onClick={() => confirm.mutate(action, { onSuccess: () => setState("saved") })}
+          className="inline-flex min-h-[56px] items-center gap-2 rounded-2xl bg-gradient-to-br from-accent to-accent-2 px-6 text-lg font-bold text-white shadow-[0_4px_20px_rgba(139,124,255,0.4)] transition-all hover:brightness-110 disabled:opacity-70"
+        >
+          {confirm.isPending ? (
+            <Loader2 className="size-6 animate-spin" aria-hidden="true" />
+          ) : (
+            <Check className="size-6" aria-hidden="true" />
+          )}
+          Yes, save it
+        </button>
+        <button
+          type="button"
+          disabled={confirm.isPending}
+          onClick={() => setState("dismissed")}
+          className="inline-flex min-h-[56px] items-center rounded-2xl bg-elev-2 px-6 text-lg font-semibold text-label transition-colors hover:bg-elev-3"
+        >
+          No thanks
+        </button>
+      </div>
     </div>
   );
 }

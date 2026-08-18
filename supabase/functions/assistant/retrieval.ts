@@ -13,6 +13,7 @@ export interface RetrievedContext {
   routine: Array<Record<string, unknown>>;
   recentMessages: Array<Record<string, unknown>>;
   recentCareNotes: Array<Record<string, unknown>>;
+  memoryVault: Array<Record<string, unknown>>;
 }
 
 // 0 = Sunday ... 6 = Saturday, matching reminders.days_of_week convention.
@@ -34,6 +35,7 @@ export async function retrieveContext(
     routineRes,
     messagesRes,
     careNotesRes,
+    vaultRes,
   ] = await Promise.all([
     db
       .from("personalization_profiles")
@@ -74,6 +76,13 @@ export async function retrieveContext(
       .eq("user_id", elderId)
       .order("created_at", { ascending: false })
       .limit(20),
+    // Memory vault — notes, important dates, people, contacts the elder saved.
+    db
+      .from("vault_items")
+      .select("category, title, subtitle, notes, date_value, phone, email, address")
+      .eq("user_id", elderId)
+      .order("created_at", { ascending: false })
+      .limit(60),
   ]);
 
   return {
@@ -83,6 +92,7 @@ export async function retrieveContext(
     routine: routineRes.data ?? [],
     recentMessages: (messagesRes.data ?? []).reverse(), // oldest→newest for reading
     recentCareNotes: careNotesRes.data ?? [],
+    memoryVault: vaultRes.data ?? [],
   };
 }
 
