@@ -2,8 +2,25 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Mic, Square, ArrowUp, ImagePlus, Phone, ShieldAlert, Mail, X } from "lucide-react";
+import {
+  Mic,
+  Square,
+  ArrowUp,
+  ImagePlus,
+  Phone,
+  ShieldAlert,
+  Mail,
+  X,
+  Sparkles,
+  CalendarDays,
+  Users,
+  Car,
+  PenLine,
+  Image as ImageIcon,
+  ShieldCheck,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Dialog } from "@/components/ui/dialog";
 import {
   isVoiceInputSupported,
   speak,
@@ -20,11 +37,13 @@ interface Turn {
   meta?: AssistantResponse;
 }
 
-const SUGGESTIONS = [
-  "What's on my calendar this week?",
-  "When is my son's birthday?",
-  "Who can drive me on Thursday?",
-  "Help me write a note to my daughter.",
+const CAPABILITIES = [
+  { Icon: CalendarDays, text: "Tell you what's on your calendar this week" },
+  { Icon: Users, text: "Remember your family — names, birthdays, and details" },
+  { Icon: Car, text: "Tell you who's driving you or when your appointments are" },
+  { Icon: PenLine, text: "Help you write a note or message to your family" },
+  { Icon: ImageIcon, text: "Read a photo out loud — a letter, a card, or a bill" },
+  { Icon: ShieldCheck, text: "Help keep you safe from scams and emergencies" },
 ];
 
 export function AssistantView() {
@@ -107,9 +126,13 @@ export function AssistantView() {
   return (
     <div className="flex min-h-[calc(100dvh-13rem)] flex-col">
       {/* Conversation */}
-      <div className="flex-1" aria-live="polite" aria-label="Conversation with Rekalla">
+      <div
+        className={cn("flex-1", empty && "flex items-center justify-center")}
+        aria-live="polite"
+        aria-label="Conversation with Rekalla"
+      >
         {empty ? (
-          <Welcome onPick={send} setInput={setInput} suggestions={SUGGESTIONS} />
+          <Welcome />
         ) : (
           <div className="space-y-8 pb-6">
             {turns.map((turn, i) => (
@@ -215,48 +238,38 @@ export function AssistantView() {
   );
 }
 
-function Welcome({
-  onPick,
-  setInput,
-  suggestions,
-}: {
-  onPick: () => void;
-  setInput: (v: string) => void;
-  suggestions: string[];
-}) {
+function Welcome() {
+  const [showHelp, setShowHelp] = useState(false);
   return (
-    <div className="relative flex animate-fade-up flex-col items-center pt-10 text-center">
-      {/* Ambient violet glow */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-10 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-accent/20 blur-[90px]"
-      />
-      <div className="relative flex size-20 items-center justify-center rounded-3xl bg-elev-1 ring-1 ring-white/10 shadow-[0_0_40px_rgba(139,124,255,0.25)]">
-        <Image src="/logo.svg" alt="" width={56} height={56} className="rounded-2xl" priority />
-      </div>
-      <h1 className="relative mt-6 text-4xl font-bold tracking-tight text-label">Hello there</h1>
-      <p className="relative mt-3 max-w-md text-xl leading-relaxed text-label-2">
-        I&apos;m Rekalla. Ask me about your week, your family, or your
-        appointments — just talk or type.
-      </p>
+    <div className="flex animate-fade-up flex-col items-center text-center">
+      <h1 className="text-4xl font-semibold tracking-tight text-label">How can I help?</h1>
 
-      <div className="relative mt-10 grid w-full gap-3 text-left">
-        {suggestions.map((s) => (
-          <button
-            key={s}
-            type="button"
-            onClick={() => {
-              setInput(s);
-              // let state flush, then send
-              setTimeout(onPick, 0);
-            }}
-            className="group flex min-h-[64px] items-center justify-between gap-3 rounded-2xl border border-white/10 bg-elev-1/70 px-5 py-4 text-left text-xl font-medium text-label backdrop-blur-sm transition-all hover:border-accent/40 hover:bg-elev-2 focus:outline-none focus:ring-[3px] focus:ring-accent/50"
-          >
-            <span>{s}</span>
-            <ArrowUp className="size-5 shrink-0 rotate-45 text-label-4 transition-all group-hover:translate-x-0.5 group-hover:text-accent" aria-hidden="true" />
-          </button>
-        ))}
-      </div>
+      <button
+        type="button"
+        onClick={() => setShowHelp(true)}
+        className="mt-6 inline-flex items-center gap-2 rounded-full border border-white/12 bg-elev-1/70 px-5 py-2.5 text-lg font-medium text-label-2 backdrop-blur-sm transition-colors hover:border-accent/40 hover:text-label focus:outline-none focus:ring-[3px] focus:ring-accent/50"
+      >
+        <Sparkles className="size-5 text-accent" aria-hidden="true" />
+        What can you do?
+      </button>
+
+      <Dialog
+        open={showHelp}
+        onClose={() => setShowHelp(false)}
+        title="What Rekalla can do"
+        description="Just ask in your own words — by voice or typing."
+      >
+        <ul className="space-y-4">
+          {CAPABILITIES.map(({ Icon, text }) => (
+            <li key={text} className="flex items-start gap-4">
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-elev-2 text-accent">
+                <Icon className="size-6" aria-hidden="true" />
+              </span>
+              <span className="pt-1.5 text-xl leading-relaxed text-label">{text}</span>
+            </li>
+          ))}
+        </ul>
+      </Dialog>
     </div>
   );
 }
