@@ -18,5 +18,5 @@ export default async function AssistantPage() {
     .maybeSingle();
   if (!data?.onboarded_at) redirect("/welcome");
 
-  return <AssistantView />;
+  return <AssistantView userId={user.id} />;
 }

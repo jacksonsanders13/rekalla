@@ -11,6 +11,8 @@ import {
   ShieldAlert,
   Mail,
   X,
+  Menu,
+  SquarePen,
   Sparkles,
   CalendarDays,
   Users,
@@ -32,6 +34,12 @@ import {
   stopSpeaking,
 } from "@/lib/assistant-client";
 import { useAssistant, useConfirmProposedAction } from "@/hooks/use-assistant-v2";
+import {
+  useCreateConversation,
+  useAppendMessage,
+  loadMessages,
+} from "@/hooks/use-chats";
+import { ChatSidebar } from "./chat-sidebar";
 import type { AssistantResponse, EmergencyContact, ProposedAction } from "@/lib/v2-types";
 
 interface Turn {
@@ -50,12 +58,16 @@ const CAPABILITIES = [
   { Icon: ShieldCheck, text: "Help keep you safe from scams and emergencies" },
 ];
 
-export function AssistantView() {
+export function AssistantView({ userId }: { userId: string }) {
   const ask = useAssistant();
+  const createChat = useCreateConversation(userId);
+  const appendMsg = useAppendMessage(userId);
   const [input, setInput] = useState("");
   const [image, setImage] = useState<string | null>(null);
   const [turns, setTurns] = useState<Turn[]>([]);
   const [listening, setListening] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const recRef = useRef<{ stop: () => void } | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -74,19 +86,36 @@ export function AssistantView() {
     ta.style.height = `${Math.min(ta.scrollHeight, 200)}px`;
   }, [input]);
 
-  function send() {
+  async function send() {
     const message = input.trim();
     if ((!message && !image) || ask.isPending) return;
     const img = image ?? undefined;
     setTurns((t) => [...t, { role: "me", text: message, image: img }]);
     setInput("");
     setImage(null);
+
+    // Make sure this chat is saved, then record the person's message.
+    let convoId = activeId;
+    try {
+      if (!convoId) {
+        convoId = await createChat.mutateAsync(message || "Photo");
+        setActiveId(convoId);
+      }
+      appendMsg.mutate({ conversationId: convoId, role: "me", content: message, image_url: img ?? null });
+    } catch {
+      // If saving fails we still let the conversation happen in the moment.
+      convoId = null;
+    }
+
     ask.mutate(
       { user_message: message || "What is in this photo?", image_data_url: img },
       {
         onSuccess: (res) => {
           setTurns((t) => [...t, { role: "rekalla", text: res.reply, meta: res }]);
           speak(res.reply);
+          if (convoId) {
+            appendMsg.mutate({ conversationId: convoId, role: "rekalla", content: res.reply, meta: res });
+          }
         },
         onError: () =>
           setTurns((t) => [
@@ -95,6 +124,39 @@ export function AssistantView() {
           ]),
       },
     );
+  }
+
+  function newChat() {
+    stopSpeaking();
+    setTurns([]);
+    setActiveId(null);
+    setInput("");
+    setImage(null);
+    setSidebarOpen(false);
+    taRef.current?.focus();
+  }
+
+  async function openChat(id: string) {
+    stopSpeaking();
+    setSidebarOpen(false);
+    try {
+      const msgs = await loadMessages(id);
+      setTurns(
+        msgs.map((m) => ({
+          role: m.role,
+          text: m.content,
+          image: m.image_url ?? undefined,
+          meta: m.meta ?? undefined,
+        })),
+      );
+      setActiveId(id);
+    } catch {
+      // Leave the current chat in place if it couldn't load.
+    }
+  }
+
+  function onChatDeleted(id: string) {
+    if (id === activeId) newChat();
   }
 
   function onPickImage(e: React.ChangeEvent<HTMLInputElement>) {
@@ -129,6 +191,26 @@ export function AssistantView() {
 
   return (
     <div className="flex min-h-[calc(100dvh-13rem)] flex-col">
+      <ChatSidebar
+        userId={userId}
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        activeId={activeId}
+        onSelect={openChat}
+        onNewChat={newChat}
+        onDeleted={onChatDeleted}
+      />
+
+      {/* Top bar: history + new chat, like ChatGPT */}
+      <div className="mb-2 flex items-center justify-between">
+        <IconButton label="Your chats" onClick={() => setSidebarOpen(true)}>
+          <Menu className="size-6" aria-hidden="true" />
+        </IconButton>
+        <IconButton label="New chat" onClick={newChat}>
+          <SquarePen className="size-6" aria-hidden="true" />
+        </IconButton>
+      </div>
+
       {/* Conversation */}
       <div
         className={cn("flex-1", empty && "flex items-center justify-center")}

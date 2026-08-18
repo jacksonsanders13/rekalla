@@ -32,7 +32,7 @@ export function renderSection(
         <>
           {textField("Your name", draft.legal_name, (v) => patch({ legal_name: v }))}
           {textField("What should Rekalla call you?", draft.preferred_name, (v) => patch({ preferred_name: v }), "A nickname is fine")}
-          {textField("Your birthday", draft.birthday, (v) => patch({ birthday: v }), "For example: March 4, 1946")}
+          {dateField("Your birthday", draft.birthday, (v) => patch({ birthday: v }))}
           {textField("Where you're from", draft.hometown, (v) => patch({ hometown: v }))}
           {textField("What you did for work", draft.career, (v) => patch({ career: v }))}
           {textField("Religion or faith", draft.faith, (v) => patch({ faith: v }), "Only if you'd like to")}
@@ -70,7 +70,7 @@ export function renderSection(
               </button>
             ))}
           </div>
-          {textField("Things you like to talk about", csv(draft.enjoy_topics), (v) => patch({ enjoy_topics: toArr(v) }), "Separated by commas")}
+          {textField("Things you like to talk about", csv(draft.enjoy_topics), (v) => patch({ enjoy_topics: toArr(v) }))}
           {textField("Anything you'd rather not discuss", csv(draft.avoid_topics), (v) => patch({ avoid_topics: toArr(v) }), "Rekalla will steer clear of these")}
         </>
       );
@@ -119,7 +119,7 @@ export function renderSection(
             fields={[
               ["name", "Name"],
               ["relationship", "How you're related (son, friend, dog…)"],
-              ["birthday", "Their birthday (optional)"],
+              ["birthday", "Their birthday (optional)", "date"],
               ["notes", "Anything to remember (optional)"],
             ]}
             addLabel="Add a person or pet"
@@ -170,6 +170,30 @@ function textField(
   );
 }
 
+// A tap-to-open calendar (native date picker) instead of typing a date out.
+function dateField(
+  label: string,
+  value: string | undefined,
+  onChange: (v: string) => void,
+  hint?: string,
+) {
+  return (
+    <Field label={label} hint={hint}>
+      {(p) => (
+        <Input
+          {...p}
+          type="date"
+          className="text-xl"
+          value={value ?? ""}
+          onChange={(e) => onChange(e.target.value)}
+        />
+      )}
+    </Field>
+  );
+}
+
+type RepeatField = [string, string] | [string, string, "text" | "date" | "tel"];
+
 function RepeatList({
   value,
   onChange,
@@ -179,7 +203,7 @@ function RepeatList({
 }: {
   value?: any[];
   onChange: (v: any[]) => void;
-  fields: [string, string][];
+  fields: RepeatField[];
   addLabel: string;
   priority?: boolean;
 }) {
@@ -192,13 +216,14 @@ function RepeatList({
       {rows.map((row, i) => (
         <div key={i} className="space-y-3 rounded-2xl bg-elev-1 p-4">
           {priority && <span className="text-lg font-extrabold text-tint-blue">#{i + 1}</span>}
-          {fields.map(([k, label]) => (
+          {fields.map(([k, label, type]) => (
             <Field key={k} label={label}>
               {(p) => (
                 <Input
                   {...p}
+                  type={type === "date" ? "date" : "text"}
                   className="text-xl"
-                  inputMode={k === "phone" ? "tel" : undefined}
+                  inputMode={type === "tel" || k === "phone" ? "tel" : undefined}
                   value={row[k] ?? ""}
                   onChange={(e) => update(i, k, e.target.value)}
                 />
