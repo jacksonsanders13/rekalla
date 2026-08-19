@@ -316,9 +316,6 @@ export function AssistantView({ userId }: { userId: string }) {
             </button>
           </div>
         </div>
-        <p className="mt-2 text-center text-sm text-label-4">
-          Rekalla knows about your life and family. It won&apos;t give medical or money advice.
-        </p>
       </div>
     </div>
   );
