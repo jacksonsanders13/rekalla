@@ -224,7 +224,7 @@
       <a class="link" href="#demo">Demo</a>
       <a class="link" href="#how">How it works</a>
       <a class="link" href="/privacy">Privacy</a>
-      <a class="btn btn-primary" href="#join">Get early access</a>
+      <a class="btn btn-primary" href="#join" data-app>Use Rekalla now</a>
     </div>
   </div>
 </nav>
@@ -238,7 +238,7 @@
       people who love them a simple way to help from anywhere.
     </p>
     <div class="cta-row">
-      <a class="btn btn-primary" href="#join">Get early access</a>
+      <a class="btn btn-primary" href="#join" data-app>Use Rekalla now</a>
       <a class="btn btn-secondary" href="#features">See how it works</a>
     </div>
   </div>
@@ -441,6 +441,19 @@
     </p>
   </div>
 </footer>
+
+<script>
+  // Where the live web app is deployed. After you deploy (e.g. to Vercel),
+  // set APP_URL to your app's address and every "Use Rekalla now" button opens
+  // it. Until it's set, the buttons fall back to the email sign-up below.
+  (function () {
+    var APP_URL = "https://YOUR-REKALLA-APP-URL"; // <-- change after deploying
+    if (APP_URL.indexOf("YOUR-REKALLA") !== -1) return; // not set yet
+    document.querySelectorAll("[data-app]").forEach(function (a) {
+      a.setAttribute("href", APP_URL);
+    });
+  })();
+</script>
 
 <script>
   // Waitlist sign-up. Posts to a Supabase table that only allows inserts —
