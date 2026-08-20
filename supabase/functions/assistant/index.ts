@@ -21,6 +21,12 @@ const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY")!;
 // Overridable; defaults to a current, capable Claude model. Tier accuracy
 // (e.g. "chest of drawers" vs "chest pain") depends on model quality.
 const ANTHROPIC_MODEL = Deno.env.get("ANTHROPIC_MODEL") ?? "claude-sonnet-5";
+// Per-user monthly message cap. Protects API spend and guarantees margin once
+// priced: at ~1.5c/message, tune it to (price * target_margin) / 0.015.
+// e.g. $14.99 * 0.50 / 0.015 ~= 500. Set 0 to disable the cap.
+const MONTHLY_MESSAGE_LIMIT = Number(
+  Deno.env.get("MONTHLY_MESSAGE_LIMIT") ?? "500",
+);
 
 interface AssistantResult {
   tier: string;
@@ -79,7 +85,50 @@ async function classifyAndReply(
     (b: { type: string }) => b.type === "tool_use",
   );
   if (!toolUse) throw new Error("model did not return a tool call");
-  return toolUse.input as AssistantResult;
+  const usage = {
+    input_tokens: Number(data.usage?.input_tokens ?? 0),
+    output_tokens: Number(data.usage?.output_tokens ?? 0),
+  };
+  return { result: toolUse.input as AssistantResult, usage };
+}
+
+// --- Monthly usage cap ---------------------------------------------------
+type Admin = ReturnType<typeof createClient>;
+
+function startOfMonthISO(): string {
+  const now = new Date();
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString();
+}
+
+// How many messages this user has been answered this calendar month. Fails
+// OPEN (returns 0) so an infra hiccup never locks a paying user out.
+async function monthlyMessageCount(admin: Admin, elderId: string): Promise<number> {
+  try {
+    const { count, error } = await admin
+      .from("assistant_usage")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", elderId)
+      .gte("created_at", startOfMonthISO());
+    if (error) throw error;
+    return count ?? 0;
+  } catch (e) {
+    console.error("usage count failed (failing open)", e);
+    return 0;
+  }
+}
+
+async function logUsage(
+  admin: Admin,
+  elderId: string,
+  usage: { input_tokens: number; output_tokens: number },
+) {
+  await admin.from("assistant_usage").insert({
+    user_id: elderId,
+    input_tokens: usage.input_tokens,
+    output_tokens: usage.output_tokens,
+    // Sonnet 5: $3/1M in, $15/1M out -> micro-dollars.
+    est_cost_micros: usage.input_tokens * 3 + usage.output_tokens * 15,
+  });
 }
 
 // tier1/tier2 side effects run with the SERVICE ROLE so the log is always
@@ -156,9 +205,36 @@ Deno.serve(async (req) => {
       return jsonResponse({ error: "user_message is required" }, 400);
     }
 
+    // Service-role client: used for the usage meter and escalation logging.
+    const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+      auth: { persistSession: false },
+    });
+
+    // Monthly cap: refuse BEFORE calling the model so a blocked message is free.
+    if (MONTHLY_MESSAGE_LIMIT > 0) {
+      const used = await monthlyMessageCount(admin, elderId);
+      if (used >= MONTHLY_MESSAGE_LIMIT) {
+        return jsonResponse({
+          reply:
+            "You've used all of this month's messages with me. They'll refresh at the start of next month. If you need something now, please reach out to your family.",
+          tier: "tier4_out_of_scope",
+          suggested_action: { type: "none" },
+          proposed_action: { kind: "none" },
+          limit_reached: true,
+        });
+      }
+    }
+
     const ctx = await retrieveContext(db, elderId);
     const systemPrompt = buildSystemPrompt(ctx);
-    const result = await classifyAndReply(systemPrompt, userMessage, imageDataUrl);
+    const { result, usage } = await classifyAndReply(systemPrompt, userMessage, imageDataUrl);
+
+    // Meter this answered message (best-effort; never blocks the reply).
+    try {
+      await logUsage(admin, elderId, usage);
+    } catch (e) {
+      console.error("usage logging failed", e);
+    }
 
     if (result.tier === "tier1_medical" || result.tier === "tier2_financial") {
       // Best-effort: never let a logging failure swallow the user's reply.
