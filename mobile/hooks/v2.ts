@@ -5,6 +5,7 @@ import type {
   AssistantRequest,
   AssistantResponse,
   PersonalizationProfile,
+  ProposedAction,
   SectionKey,
   SectionState,
 } from "../lib/v2-types";
@@ -138,5 +139,53 @@ export function useCompleteOnboarding(userId: string) {
 export function useAssistant() {
   return useMutation<AssistantResponse, Error, AssistantRequest>({
     mutationFn: (req) => askAssistant(req),
+  });
+}
+
+/**
+ * Confirm-first capture: the elder taps "Yes" and we write the proposed item
+ * into their own schedule or memory vault. Runs as the signed-in user, so RLS
+ * only ever lets them write their own rows.
+ */
+export function useConfirmProposedAction() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (action: ProposedAction) => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not signed in");
+
+      if (action.kind === "add_reminder" && action.reminder) {
+        const r = action.reminder;
+        const time = (r.time ?? "09:00").slice(0, 5);
+        const { error } = await db.from("reminders").insert({
+          user_id: user.id,
+          title: r.title ?? "Reminder",
+          category: r.category ?? "custom",
+          time_of_day: `${time}:00`,
+          recurrence: r.recurrence ?? "once",
+          start_date: r.date ?? new Date().toISOString().slice(0, 10),
+          is_active: true,
+        });
+        if (error) throw error;
+      } else if (action.kind === "add_vault_item" && action.vault_item) {
+        const v = action.vault_item;
+        const { error } = await db.from("vault_items").insert({
+          user_id: user.id,
+          category: v.category ?? "note",
+          title: v.title ?? "Note",
+          subtitle: v.subtitle ?? null,
+          notes: v.notes ?? null,
+          date_value: v.date_value ?? null,
+          phone: v.phone ?? null,
+        });
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["reminders"] });
+      qc.invalidateQueries({ queryKey: ["vault"] });
+    },
   });
 }

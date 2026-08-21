@@ -13,7 +13,12 @@ import { useSession } from "../../lib/session";
 import { colors, radius } from "../../lib/theme";
 import { a11y, a11yFont } from "../../lib/a11y";
 import { speak, stopSpeaking } from "../../lib/assistant";
-import { useAssistant, useProfile, useCompleteOnboarding } from "../../hooks/v2";
+import {
+  useAssistant,
+  useProfile,
+  useCompleteOnboarding,
+  useConfirmProposedAction,
+} from "../../hooks/v2";
 import {
   ONBOARDING_INTRO,
   ONBOARDING_DONE,
@@ -24,6 +29,7 @@ import type {
   AssistantResponse,
   EmergencyContact,
   PersonalizationProfile,
+  ProposedAction,
 } from "../../lib/v2-types";
 
 interface Turn {
@@ -205,12 +211,57 @@ export default function AssistantScreen() {
 
 function TurnBubble({ turn }: { turn: Turn }) {
   const mine = turn.role === "me";
+  const proposal = turn.meta?.proposed_action;
   return (
     <View style={[styles.bubbleRow, mine ? styles.rowMine : styles.rowTheirs]}>
       <View style={[styles.bubble, mine ? styles.bubbleMine : styles.bubbleTheirs]}>
         <Text style={[styles.bubbleText, mine && { color: "#000" }]}>{turn.text}</Text>
       </View>
       {turn.meta ? <TierUI res={turn.meta} /> : null}
+      {proposal && proposal.kind !== "none" ? <ProposeCard action={proposal} /> : null}
+    </View>
+  );
+}
+
+/** Confirm-first save card. The elder taps Yes; only then do we write. */
+function ProposeCard({ action }: { action: ProposedAction }) {
+  const confirm = useConfirmProposedAction();
+  const [state, setState] = useState<"idle" | "saved" | "dismissed">("idle");
+  const isReminder = action.kind === "add_reminder";
+
+  if (state === "dismissed") return null;
+
+  if (state === "saved") {
+    return (
+      <View style={styles.savedCard}>
+        <Ionicons name="checkmark-circle" size={a11yFont.body} color={colors.green} />
+        <Text style={styles.savedText}>
+          {isReminder ? "Added to your schedule" : "Saved to your memory vault"}
+        </Text>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.proposeCard}>
+      <Text style={styles.proposeText}>
+        {action.confirm_prompt ??
+          (isReminder ? "Add this to your schedule?" : "Save this to remember it?")}
+      </Text>
+      <View style={styles.proposeButtons}>
+        <BigButton
+          label={confirm.isPending ? "Saving…" : "Yes, save it"}
+          icon="checkmark"
+          onPress={() => confirm.mutate(action, { onSuccess: () => setState("saved") })}
+          disabled={confirm.isPending}
+        />
+        <BigButton
+          label="No thanks"
+          icon="close"
+          variant="secondary"
+          onPress={() => setState("dismissed")}
+        />
+      </View>
     </View>
   );
 }
@@ -337,6 +388,32 @@ const styles = StyleSheet.create({
     lineHeight: a11y.lineHeight(a11yFont.body),
   },
   calmAction: { width: "100%" },
+  proposeCard: {
+    width: "100%",
+    backgroundColor: colors.elev1,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.blue,
+    padding: a11y.space(4),
+    gap: a11y.space(3),
+  },
+  proposeText: {
+    color: colors.label,
+    fontSize: a11yFont.body,
+    fontWeight: "700",
+    lineHeight: a11y.lineHeight(a11yFont.body),
+  },
+  proposeButtons: { gap: a11y.space(3) },
+  savedCard: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: a11y.space(2),
+    backgroundColor: colors.elev1,
+    borderRadius: radius.lg,
+    padding: a11y.space(4),
+  },
+  savedText: { color: colors.label, fontSize: a11yFont.body, fontWeight: "700" },
   composer: {
     borderTopWidth: 1,
     borderTopColor: "rgba(255,255,255,0.12)",
