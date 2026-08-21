@@ -24,7 +24,13 @@ import {
   ONBOARDING_DONE,
   ONBOARDING_STEPS,
 } from "../../lib/onboarding";
+import {
+  useCreateConversation,
+  useAppendMessage,
+  loadMessages,
+} from "../../hooks/chats";
 import { BigButton, BigField, MicButton } from "../../components/big-ui";
+import { ChatHistory } from "../../components/chat-history";
 import type {
   AssistantResponse,
   EmergencyContact,
@@ -44,8 +50,12 @@ export default function AssistantScreen() {
   const ask = useAssistant();
   const { data: profile } = useProfile(userId);
   const complete = useCompleteOnboarding(userId);
+  const createChat = useCreateConversation(userId);
+  const appendMsg = useAppendMessage(userId);
   const [input, setInput] = useState("");
   const [turns, setTurns] = useState<Turn[]>([]);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [activeId, setActiveId] = useState<string | null>(null);
   // Onboarding: obStep is the current question index, -1 once finished.
   const [obStep, setObStep] = useState(0);
   const [obDraft, setObDraft] = useState<PersonalizationProfile | null>(null);
@@ -76,7 +86,7 @@ export default function AssistantScreen() {
     requestAnimationFrame(() => scroller.current?.scrollToEnd({ animated: true }));
   }
 
-  function send(text: string) {
+  async function send(text: string) {
     const message = text.trim();
 
     // First-run onboarding intercepts the composer (typed answers only).
@@ -100,12 +110,28 @@ export default function AssistantScreen() {
     if (!message || ask.isPending) return;
     setTurns((t) => [...t, { role: "me", text: message }]);
     setInput("");
+
+    // Make sure this chat is saved, then record the person's message.
+    let convoId = activeId;
+    try {
+      if (!convoId) {
+        convoId = await createChat.mutateAsync(message);
+        setActiveId(convoId);
+      }
+      appendMsg.mutate({ conversationId: convoId, role: "me", content: message });
+    } catch {
+      convoId = null;
+    }
+
     ask.mutate(
       { user_message: message },
       {
         onSuccess: (res) => {
           setTurns((t) => [...t, { role: "rekalla", text: res.reply, meta: res }]);
           speak(res.reply);
+          if (convoId) {
+            appendMsg.mutate({ conversationId: convoId, role: "rekalla", content: res.reply, meta: res });
+          }
           requestAnimationFrame(() => scroller.current?.scrollToEnd({ animated: true }));
         },
         onError: () => {
@@ -121,13 +147,71 @@ export default function AssistantScreen() {
     );
   }
 
+  function newChat() {
+    stopSpeaking();
+    setTurns([]);
+    setActiveId(null);
+    setInput("");
+    setHistoryOpen(false);
+  }
+
+  async function openChat(id: string) {
+    stopSpeaking();
+    setHistoryOpen(false);
+    try {
+      const msgs = await loadMessages(id);
+      setTurns(msgs.map((m) => ({ role: m.role, text: m.content, meta: m.meta ?? undefined })));
+      setActiveId(id);
+    } catch {
+      // Leave the current chat in place if it couldn't load.
+    }
+  }
+
+  function onChatDeleted(id: string) {
+    if (id === activeId) newChat();
+  }
+
   return (
     <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
       <View style={styles.header}>
+        {!onboarding ? (
+          <Pressable
+            onPress={() => setHistoryOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel="Your chats"
+            style={styles.headerBtn}
+          >
+            <Ionicons name="menu" size={30} color={colors.label} />
+          </Pressable>
+        ) : (
+          <View style={styles.headerBtn} />
+        )}
         <Text style={styles.headerTitle} accessibilityRole="header">
-          Ask Rekalla
+          Rekalla
         </Text>
+        {!onboarding ? (
+          <Pressable
+            onPress={newChat}
+            accessibilityRole="button"
+            accessibilityLabel="Start a new chat"
+            style={styles.headerBtn}
+          >
+            <Ionicons name="create-outline" size={28} color={colors.label} />
+          </Pressable>
+        ) : (
+          <View style={styles.headerBtn} />
+        )}
       </View>
+
+      <ChatHistory
+        userId={userId}
+        visible={historyOpen}
+        onClose={() => setHistoryOpen(false)}
+        activeId={activeId}
+        onSelect={openChat}
+        onNewChat={newChat}
+        onDeleted={onChatDeleted}
+      />
 
       <ScrollView
         ref={scroller}
@@ -349,7 +433,14 @@ function topContact(list?: EmergencyContact[]): EmergencyContact | undefined {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.base },
-  header: { paddingHorizontal: a11y.space(4), paddingVertical: a11y.space(3) },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: a11y.space(3),
+    paddingVertical: a11y.space(2),
+  },
+  headerBtn: { width: 48, height: 48, alignItems: "center", justifyContent: "center" },
   headerTitle: { color: colors.label, fontSize: a11yFont.title, fontWeight: "700" },
   thread: { padding: a11y.space(4), gap: a11y.space(4), paddingBottom: a11y.space(8) },
   welcome: { gap: a11y.space(5) },
