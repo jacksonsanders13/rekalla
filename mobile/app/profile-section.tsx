@@ -78,22 +78,23 @@ function renderSection(
     case "identity":
       return (
         <>
-          <BigField label="Legal name" value={draft.legal_name ?? ""} onChangeText={(v) => patch({ legal_name: v })} />
-          <BigField label="Preferred name" hint="What should Rekalla call you?" value={draft.preferred_name ?? ""} onChangeText={(v) => patch({ preferred_name: v })} />
-          <BigField label="Hometown" value={draft.hometown ?? ""} onChangeText={(v) => patch({ hometown: v })} />
-          <BigField label="Career or work" value={draft.career ?? ""} onChangeText={(v) => patch({ career: v })} />
-          <BigField label="Faith (only if you'd like to share)" value={draft.faith ?? ""} onChangeText={(v) => patch({ faith: v })} />
+          <BigField label="Your name" value={draft.legal_name ?? ""} onChangeText={(v) => patch({ legal_name: v })} />
+          <BigField label="What should Rekalla call you?" hint="A nickname is fine" value={draft.preferred_name ?? ""} onChangeText={(v) => patch({ preferred_name: v })} />
+          <BigField label="Your birthday" hint="For example: March 4, 1946" value={draft.birthday ?? ""} onChangeText={(v) => patch({ birthday: v })} />
+          <BigField label="Where you're from" value={draft.hometown ?? ""} onChangeText={(v) => patch({ hometown: v })} />
+          <BigField label="What you did for work" value={draft.career ?? ""} onChangeText={(v) => patch({ career: v })} />
+          <BigField label="Religion or faith" hint="Only if you'd like to" value={draft.faith ?? ""} onChangeText={(v) => patch({ faith: v })} />
         </>
       );
     case "interests":
       return (
         <>
-          <BodyText>Separate items with commas.</BodyText>
+          <BodyText>Add a few, separated by commas.</BodyText>
           <BigField label="Hobbies" value={csv(draft.hobbies)} onChangeText={(v) => patch({ hobbies: toArr(v) })} />
-          <BigField label="Music" value={csv(draft.music)} onChangeText={(v) => patch({ music: toArr(v) })} />
-          <BigField label="Teams" value={csv(draft.teams)} onChangeText={(v) => patch({ teams: toArr(v) })} />
-          <BigField label="Shows" value={csv(draft.shows)} onChangeText={(v) => patch({ shows: toArr(v) })} />
-          <BigField label="Books" value={csv(draft.books)} onChangeText={(v) => patch({ books: toArr(v) })} />
+          <BigField label="Music you love" value={csv(draft.music)} onChangeText={(v) => patch({ music: toArr(v) })} />
+          <BigField label="Teams you follow" value={csv(draft.teams)} onChangeText={(v) => patch({ teams: toArr(v) })} />
+          <BigField label="Shows you watch" value={csv(draft.shows)} onChangeText={(v) => patch({ shows: toArr(v) })} />
+          <BigField label="Books you enjoy" value={csv(draft.books)} onChangeText={(v) => patch({ books: toArr(v) })} />
         </>
       );
     case "preferences":
@@ -116,23 +117,23 @@ function renderSection(
               </Pressable>
             ))}
           </View>
-          <BigField label="Topics you enjoy" hint="Comma separated" value={csv(draft.enjoy_topics)} onChangeText={(v) => patch({ enjoy_topics: toArr(v) })} />
-          <BigField label="Topics to avoid" hint="Rekalla will never bring these up" value={csv(draft.avoid_topics)} onChangeText={(v) => patch({ avoid_topics: toArr(v) })} />
+          <BigField label="Things you like to talk about" value={csv(draft.enjoy_topics)} onChangeText={(v) => patch({ enjoy_topics: toArr(v) })} />
+          <BigField label="Anything you'd rather not discuss" hint="Rekalla will steer clear of these" value={csv(draft.avoid_topics)} onChangeText={(v) => patch({ avoid_topics: toArr(v) })} />
         </>
       );
     case "routine":
       return (
         <>
           <BigField
-            label="A typical week"
-            hint="One thing per line (e.g. Church on Sunday)"
+            label="What a normal week looks like"
+            hint="One thing per line — like Church on Sunday"
             multiline
             value={(draft.typical_week ?? []).join("\n")}
             onChangeText={(v) => set({ ...draft, typical_week: v.split("\n").map((x: string) => x.trim()).filter(Boolean) })}
           />
           <BigField
-            label="Standing commitments"
-            hint="Logistics only, one per line (e.g. Bridge club Tuesday 2pm). Not health details."
+            label="Regular plans"
+            hint="One per line — like Bridge club Tuesdays or Sunday dinner with family"
             multiline
             value={(draft.standing_commitments ?? []).map((c: any) => c.label ?? "").join("\n")}
             onChangeText={(v) =>
@@ -145,15 +146,36 @@ function renderSection(
         </>
       );
     case "people":
-      return <RepeatRows draft={draft} set={set} fields={[["name", "Name"], ["relationship", "Relationship"]]} addLabel="Add a person or pet" />;
+      return (
+        <>
+          <BodyText>
+            Add your family, friends, and pets. Then you can ask things like
+            "when's my son's birthday?" and Rekalla will know.
+          </BodyText>
+          <RepeatRows
+            draft={draft}
+            set={set}
+            fields={[
+              ["name", "Name"],
+              ["relationship", "How you're related (son, friend, dog…)"],
+              ["birthday", "Their birthday (optional)"],
+              ["notes", "Anything to remember (optional)"],
+            ]}
+            addLabel="Add a person or pet"
+          />
+        </>
+      );
     case "practical":
       return (
         <>
-          <BodyText>Doctor names and specialty only — never conditions.</BodyText>
-          <RepeatList value={draft.doctors} onChange={(doctors) => set({ ...draft, doctors })} fields={[["name", "Doctor's name"], ["specialty", "Specialty"]]} addLabel="Add a doctor" />
-          <BigField label="Pharmacy" value={draft.pharmacy ?? ""} onChangeText={(v) => set({ ...draft, pharmacy: v })} />
-          <Text style={styles.label}>Emergency contacts (in priority order)</Text>
-          <RepeatList value={draft.emergency_contacts} onChange={(emergency_contacts) => set({ ...draft, emergency_contacts })} fields={[["name", "Name"], ["phone", "Phone"], ["relationship", "Relationship"]]} addLabel="Add an emergency contact" priority />
+          <BodyText>
+            A few details worth keeping handy — like your doctors, pharmacy, and
+            who to call if something comes up.
+          </BodyText>
+          <RepeatList value={draft.doctors} onChange={(doctors) => set({ ...draft, doctors })} fields={[["name", "Doctor's name"], ["specialty", "What they help with"]]} addLabel="Add a doctor" />
+          <BigField label="Your pharmacy" value={draft.pharmacy ?? ""} onChangeText={(v) => set({ ...draft, pharmacy: v })} />
+          <Text style={styles.label}>Who to call in an emergency</Text>
+          <RepeatList value={draft.emergency_contacts} onChange={(emergency_contacts) => set({ ...draft, emergency_contacts })} fields={[["name", "Name"], ["phone", "Phone"], ["relationship", "How you're related"]]} addLabel="Add someone to call" priority />
         </>
       );
     default:

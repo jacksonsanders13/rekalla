@@ -4,7 +4,7 @@ import { Screen, Loading } from "../components/ui";
 
 /** Entry gate: route to the right home for the signed-in role. */
 export default function Index() {
-  const { session, profile, loading } = useSession();
+  const { session, loading } = useSession();
 
   if (loading) {
     return (
@@ -18,10 +18,6 @@ export default function Index() {
     return <Redirect href="/(auth)/sign-up" />;
   }
 
-  if (profile?.account_type === "caregiver") {
-    return <Redirect href="/(caregiver)/people" />;
-  }
-
-  // v2: the assistant is the elder's home surface.
+  // v2 single-user product: everyone is the older adult; the assistant is home.
   return <Redirect href="/(patient)/assistant" />;
 }

@@ -8,13 +8,10 @@ import { colors, font } from "../../lib/theme";
 const TAB_ICON = 30;
 
 export default function PatientTabs() {
-  const { session, profile, loading } = useSession();
+  const { session, loading } = useSession();
   const t = useT();
 
   if (!loading && !session) return <Redirect href="/(auth)/sign-in" />;
-  if (!loading && profile?.account_type === "caregiver") {
-    return <Redirect href="/(caregiver)/people" />;
-  }
 
   return (
     <Tabs
