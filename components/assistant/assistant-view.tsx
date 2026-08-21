@@ -33,14 +33,29 @@ import {
   startDictation,
   stopSpeaking,
 } from "@/lib/assistant-client";
-import { useAssistant, useConfirmProposedAction } from "@/hooks/use-assistant-v2";
+import {
+  useAssistant,
+  useConfirmProposedAction,
+  useProfileV2,
+  useCompleteOnboarding,
+} from "@/hooks/use-assistant-v2";
 import {
   useCreateConversation,
   useAppendMessage,
   loadMessages,
 } from "@/hooks/use-chats";
 import { ChatSidebar } from "./chat-sidebar";
-import type { AssistantResponse, EmergencyContact, ProposedAction } from "@/lib/v2-types";
+import {
+  ONBOARDING_INTRO,
+  ONBOARDING_DONE,
+  ONBOARDING_STEPS,
+} from "@/lib/onboarding";
+import type {
+  AssistantResponse,
+  EmergencyContact,
+  PersonalizationProfile,
+  ProposedAction,
+} from "@/lib/v2-types";
 
 interface Turn {
   role: "me" | "rekalla";
@@ -58,21 +73,45 @@ const CAPABILITIES = [
   { Icon: ShieldCheck, text: "Help keep you safe from scams and emergencies" },
 ];
 
-export function AssistantView({ userId }: { userId: string }) {
+export function AssistantView({
+  userId,
+  onboarded,
+}: {
+  userId: string;
+  onboarded: boolean;
+}) {
   const ask = useAssistant();
   const createChat = useCreateConversation(userId);
   const appendMsg = useAppendMessage(userId);
+  const { data: profile } = useProfileV2(userId);
+  const completeOnboarding = useCompleteOnboarding(userId);
   const [input, setInput] = useState("");
   const [image, setImage] = useState<string | null>(null);
   const [turns, setTurns] = useState<Turn[]>([]);
   const [listening, setListening] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
+  // Onboarding: obStep is the current question index, or -1 once finished.
+  const [obStep, setObStep] = useState(onboarded ? -1 : 0);
+  const [obDraft, setObDraft] = useState<PersonalizationProfile | null>(null);
+  const seededRef = useRef(false);
   const recRef = useRef<{ stop: () => void } | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const taRef = useRef<HTMLTextAreaElement>(null);
   const voiceSupported = isVoiceInputSupported();
+  const onboarding = obStep >= 0;
+
+  // First run: open the chat with Rekalla's greeting + the first question.
+  useEffect(() => {
+    if (onboarded || seededRef.current || !profile) return;
+    seededRef.current = true;
+    setObDraft(profile);
+    setTurns([
+      { role: "rekalla", text: ONBOARDING_INTRO },
+      { role: "rekalla", text: ONBOARDING_STEPS[0].ask },
+    ]);
+  }, [profile, onboarded]);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -86,8 +125,40 @@ export function AssistantView({ userId }: { userId: string }) {
     ta.style.height = `${Math.min(ta.scrollHeight, 200)}px`;
   }, [input]);
 
+  // Fold the person's answer into the profile draft and ask the next question;
+  // no model call, so onboarding always works.
+  function onboardingReply(message: string) {
+    if (!obDraft) return;
+    setTurns((t) => [...t, { role: "me", text: message }]);
+    setInput("");
+    const nextDraft = ONBOARDING_STEPS[obStep].apply(obDraft, message);
+    setObDraft(nextDraft);
+    const next = obStep + 1;
+    if (next < ONBOARDING_STEPS.length) {
+      setObStep(next);
+      setTurns((t) => [...t, { role: "rekalla", text: ONBOARDING_STEPS[next].ask }]);
+    } else {
+      finishOnboarding(nextDraft);
+    }
+  }
+
+  function finishOnboarding(draft: PersonalizationProfile | null) {
+    setObStep(-1);
+    if (draft) completeOnboarding.mutate(draft);
+    setTurns((t) => [...t, { role: "rekalla", text: ONBOARDING_DONE }]);
+    speak(ONBOARDING_DONE);
+  }
+
   async function send() {
     const message = input.trim();
+
+    // First-run onboarding intercepts the composer (typed answers only).
+    if (onboarding) {
+      if (!message) return;
+      onboardingReply(message);
+      return;
+    }
+
     if ((!message && !image) || ask.isPending) return;
     const img = image ?? undefined;
     setTurns((t) => [...t, { role: "me", text: message, image: img }]);
@@ -201,15 +272,17 @@ export function AssistantView({ userId }: { userId: string }) {
         onDeleted={onChatDeleted}
       />
 
-      {/* Top bar: history + new chat, like ChatGPT */}
-      <div className="mb-2 flex items-center justify-between">
-        <IconButton label="Your chats" onClick={() => setSidebarOpen(true)}>
-          <Menu className="size-6" aria-hidden="true" />
-        </IconButton>
-        <IconButton label="New chat" onClick={newChat}>
-          <SquarePen className="size-6" aria-hidden="true" />
-        </IconButton>
-      </div>
+      {/* Top bar: history + new chat, like ChatGPT (hidden during setup) */}
+      {!onboarding && (
+        <div className="mb-2 flex items-center justify-between">
+          <IconButton label="Your chats" onClick={() => setSidebarOpen(true)}>
+            <Menu className="size-6" aria-hidden="true" />
+          </IconButton>
+          <IconButton label="New chat" onClick={newChat}>
+            <SquarePen className="size-6" aria-hidden="true" />
+          </IconButton>
+        </div>
+      )}
 
       {/* Conversation */}
       <div
@@ -267,7 +340,7 @@ export function AssistantView({ userId }: { userId: string }) {
               }
             }}
             rows={1}
-            placeholder="Ask Rekalla anything…"
+            placeholder={onboarding ? "Type your answer…" : "Ask Rekalla anything…"}
             className="block max-h-52 w-full resize-none bg-transparent px-3 py-2 text-xl leading-relaxed text-label placeholder:text-label-4 focus:outline-none"
           />
 
@@ -316,6 +389,17 @@ export function AssistantView({ userId }: { userId: string }) {
             </button>
           </div>
         </div>
+        {onboarding && (
+          <p className="mt-2 text-center text-sm text-label-4">
+            <button
+              type="button"
+              onClick={() => finishOnboarding(obDraft)}
+              className="underline underline-offset-4 hover:text-label-2"
+            >
+              Skip setup for now
+            </button>
+          </p>
+        )}
       </div>
     </div>
   );

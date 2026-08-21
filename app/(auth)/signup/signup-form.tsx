@@ -60,8 +60,8 @@ export function SignupForm() {
         .eq("id", data.user.id);
     }
 
-    // Straight into the welcome survey so the assistant has data to draw on.
-    router.push("/welcome");
+    // Straight into the chat — Rekalla runs the first-time setup there.
+    router.push("/assistant");
     router.refresh();
   }
 

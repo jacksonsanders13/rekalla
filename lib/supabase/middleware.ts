@@ -3,7 +3,6 @@ import { NextResponse, type NextRequest } from "next/server";
 
 const PROTECTED_PREFIXES = [
   "/assistant",
-  "/welcome",
   "/my-day",
   "/profile",
   "/dashboard",
