@@ -1,58 +1,15 @@
 import { useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Link, router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
 import { supabase } from "../../lib/supabase";
 import { useT } from "../../lib/i18n";
-import { colors, font, radius, spacing } from "../../lib/theme";
+import { colors, font, spacing } from "../../lib/theme";
 import { isInternalAuthError } from "../../lib/utils";
 import { Screen, Card, Button, Field, Title, Subtitle } from "../../components/ui";
-import type { AccountType } from "../../lib/types";
 
-const OPTIONS: {
-  value: AccountType;
-  icon: keyof typeof Ionicons.glyphMap;
-  titleKey: string;
-  detailKey: string;
-}[] = [
-  {
-    value: "patient",
-    icon: "person",
-    titleKey: "auth.signUp.patient",
-    detailKey: "auth.signUp.patientDetail",
-  },
-  {
-    value: "caregiver",
-    icon: "heart",
-    titleKey: "auth.signUp.caregiver",
-    detailKey: "auth.signUp.caregiverDetail",
-  },
-];
-
-const MANAGE_OPTIONS: {
-  value: boolean;
-  icon: keyof typeof Ionicons.glyphMap;
-  titleKey: string;
-  detailKey: string;
-}[] = [
-  {
-    value: true,
-    icon: "person-circle",
-    titleKey: "auth.signUp.self",
-    detailKey: "auth.signUp.selfDetail",
-  },
-  {
-    value: false,
-    icon: "people",
-    titleKey: "auth.signUp.helped",
-    detailKey: "auth.signUp.helpedDetail",
-  },
-];
-
+// v2 is a single-user product for the older adult — no account-type choice.
 export default function SignUp() {
   const t = useT();
-  const [accountType, setAccountType] = useState<AccountType>("patient");
-  const [selfManaged, setSelfManaged] = useState(true);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -70,51 +27,35 @@ export default function SignUp() {
       email: email.trim(),
       password,
       options: {
-        data: {
-          full_name: fullName.trim(),
-          account_type: accountType,
-          self_managed: accountType === "patient" ? selfManaged : false,
-        },
+        data: { full_name: fullName.trim(), account_type: "patient", self_managed: true },
       },
     });
 
     if (signUpError) {
       setBusy(false);
       return setError(
-        isInternalAuthError(signUpError)
-          ? t("auth.err.unexpected")
-          : signUpError.message,
+        isInternalAuthError(signUpError) ? t("auth.err.unexpected") : signUpError.message,
       );
     }
 
-    // No session means Supabase is set to confirm emails. Send them to the
-    // code screen rather than dead-ending on an error they can't act on.
+    // No session means "Confirm email" is on. Send them to the code screen.
     if (!data.session) {
       setBusy(false);
       return router.push({
         pathname: "/(auth)/verify",
-        params: {
-          email: email.trim(),
-          accountType,
-          selfManaged:
-            accountType === "patient" && selfManaged ? "1" : "0",
-        },
+        params: { email: email.trim() },
       });
     }
 
     if (data.user) {
       await supabase
         .from("profiles")
-        .update({
-          account_type: accountType,
-          self_managed: accountType === "patient" ? selfManaged : false,
-        })
+        .update({ account_type: "patient", self_managed: true })
         .eq("id", data.user.id);
     }
 
-    router.replace(
-      accountType === "caregiver" ? "/(caregiver)/people" : "/(patient)/summary",
-    );
+    // Into the chat — Rekalla runs the first-time setup there.
+    router.replace("/(patient)/assistant");
   }
 
   return (
@@ -133,70 +74,6 @@ export default function SignUp() {
         <Subtitle>{t("auth.signUp.subtitle")}</Subtitle>
 
         {error && <Text style={styles.error}>{error}</Text>}
-
-        <Text style={styles.legend}>{t("auth.signUp.who")}</Text>
-        <View style={{ gap: spacing(3) }}>
-          {OPTIONS.map((option) => {
-            const selected = accountType === option.value;
-            return (
-              <Pressable
-                key={option.value}
-                accessibilityRole="button"
-                accessibilityState={{ selected }}
-                onPress={() => setAccountType(option.value)}
-                style={[styles.option, selected && styles.optionSelected]}
-              >
-                <View
-                  style={[styles.optionIcon, selected && styles.optionIconSelected]}
-                >
-                  <Ionicons
-                    name={option.icon}
-                    size={22}
-                    color={selected ? "#000" : colors.label2}
-                  />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.optionTitle}>{t(option.titleKey)}</Text>
-                  <Text style={styles.optionDetail}>{t(option.detailKey)}</Text>
-                </View>
-              </Pressable>
-            );
-          })}
-        </View>
-
-        {accountType === "patient" && (
-          <>
-            <Text style={styles.legend}>{t("auth.signUp.manageQ")}</Text>
-            <View style={{ gap: spacing(3) }}>
-              {MANAGE_OPTIONS.map((option) => {
-                const selected = selfManaged === option.value;
-                return (
-                  <Pressable
-                    key={String(option.value)}
-                    accessibilityRole="button"
-                    accessibilityState={{ selected }}
-                    onPress={() => setSelfManaged(option.value)}
-                    style={[styles.option, selected && styles.optionSelected]}
-                  >
-                    <View
-                      style={[styles.optionIcon, selected && styles.optionIconSelected]}
-                    >
-                      <Ionicons
-                        name={option.icon}
-                        size={22}
-                        color={selected ? "#000" : colors.label2}
-                      />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.optionTitle}>{t(option.titleKey)}</Text>
-                      <Text style={styles.optionDetail}>{t(option.detailKey)}</Text>
-                    </View>
-                  </Pressable>
-                );
-              })}
-            </View>
-          </>
-        )}
 
         <Field
           label={t("auth.field.name")}
@@ -243,32 +120,6 @@ const styles = StyleSheet.create({
   logo: { width: 84, height: 84, borderRadius: 20 },
   wordmark: { color: colors.label, fontSize: font.x2, fontWeight: "700" },
   error: { color: colors.red, fontSize: font.base, fontWeight: "600" },
-  legend: { color: colors.label2, fontSize: font.base, fontWeight: "600" },
-  option: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing(3),
-    backgroundColor: colors.elev2,
-    borderRadius: radius.lg,
-    borderWidth: 2,
-    borderColor: "transparent",
-    padding: spacing(4),
-  },
-  optionSelected: {
-    borderColor: colors.label,
-    backgroundColor: "rgba(255,255,255,0.10)",
-  },
-  optionIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    backgroundColor: colors.elev3,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  optionIconSelected: { backgroundColor: colors.label },
-  optionTitle: { color: colors.label, fontSize: font.base, fontWeight: "700" },
-  optionDetail: { color: colors.label3, fontSize: font.sm, marginTop: 2 },
   switchLink: { minHeight: 44, alignItems: "center", justifyContent: "center" },
   switchText: { color: colors.label3, fontSize: font.base },
   switchStrong: { color: colors.label, fontWeight: "700" },

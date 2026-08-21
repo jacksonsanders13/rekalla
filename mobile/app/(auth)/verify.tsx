@@ -6,7 +6,6 @@ import { useT } from "../../lib/i18n";
 import { colors, font, spacing } from "../../lib/theme";
 import { isInternalAuthError } from "../../lib/utils";
 import { Screen, Card, Button, Field, Title, Subtitle } from "../../components/ui";
-import type { AccountType } from "../../lib/types";
 
 const RESEND_COOLDOWN = 60;
 
@@ -25,22 +24,8 @@ const MAX_CODE = 10;
  */
 export default function Verify() {
   const t = useT();
-  const params = useLocalSearchParams<{
-    email?: string;
-    accountType?: string;
-    selfManaged?: string;
-  }>();
-
+  const params = useLocalSearchParams<{ email?: string }>();
   const email = (params.email ?? "").trim();
-  // Only present when we came from sign-up. Arriving from sign-in (an account
-  // that was never verified) carries no choices to re-assert, and must not
-  // guess — defaulting would overwrite a caregiver's profile to "patient".
-  const signUpChoice: { accountType: AccountType; selfManaged: boolean } | null =
-    params.accountType === "caregiver"
-      ? { accountType: "caregiver", selfManaged: false }
-      : params.accountType === "patient"
-        ? { accountType: "patient", selfManaged: params.selfManaged === "1" }
-        : null;
 
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -80,33 +65,9 @@ export default function Verify() {
       return setError(t("auth.verify.err.invalid"));
     }
 
-    // Coming from sign-up: the handle_new_user trigger already wrote these
-    // from the sign-up metadata; re-assert them now that we have a session,
-    // exactly as the sign-up path does.
-    let accountType: AccountType = "patient";
-    if (signUpChoice && data.user) {
-      accountType = signUpChoice.accountType;
-      await supabase
-        .from("profiles")
-        .update({
-          account_type: accountType,
-          self_managed:
-            accountType === "patient" ? signUpChoice.selfManaged : false,
-        })
-        .eq("id", data.user.id);
-    } else if (data.user) {
-      // Coming from sign-in: read what the account already is, change nothing.
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("account_type")
-        .eq("id", data.user.id)
-        .single();
-      if (profile?.account_type === "caregiver") accountType = "caregiver";
-    }
-
-    router.replace(
-      accountType === "caregiver" ? "/(caregiver)/people" : "/(patient)/summary",
-    );
+    // v2 single-user product: everyone lands on the assistant chat, where
+    // Rekalla runs the first-time setup.
+    router.replace("/(patient)/assistant");
   }
 
   async function handleResend() {

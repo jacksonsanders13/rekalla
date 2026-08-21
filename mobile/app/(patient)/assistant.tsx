@@ -1,6 +1,7 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Linking,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -12,9 +13,18 @@ import { useSession } from "../../lib/session";
 import { colors, radius } from "../../lib/theme";
 import { a11y, a11yFont } from "../../lib/a11y";
 import { speak, stopSpeaking } from "../../lib/assistant";
-import { useAssistant } from "../../hooks/v2";
+import { useAssistant, useProfile, useCompleteOnboarding } from "../../hooks/v2";
+import {
+  ONBOARDING_INTRO,
+  ONBOARDING_DONE,
+  ONBOARDING_STEPS,
+} from "../../lib/onboarding";
 import { BigButton, BigField, MicButton } from "../../components/big-ui";
-import type { AssistantResponse, EmergencyContact } from "../../lib/v2-types";
+import type {
+  AssistantResponse,
+  EmergencyContact,
+  PersonalizationProfile,
+} from "../../lib/v2-types";
 
 interface Turn {
   role: "me" | "rekalla";
@@ -24,13 +34,63 @@ interface Turn {
 
 export default function AssistantScreen() {
   const { session } = useSession();
+  const userId = session?.user.id ?? "";
   const ask = useAssistant();
+  const { data: profile } = useProfile(userId);
+  const complete = useCompleteOnboarding(userId);
   const [input, setInput] = useState("");
   const [turns, setTurns] = useState<Turn[]>([]);
+  // Onboarding: obStep is the current question index, -1 once finished.
+  const [obStep, setObStep] = useState(0);
+  const [obDraft, setObDraft] = useState<PersonalizationProfile | null>(null);
+  const seededRef = useRef(false);
   const scroller = useRef<ScrollView>(null);
+  const onboarding = obStep >= 0 && !!obDraft;
+
+  // First run: open the chat with Rekalla's greeting + the first question.
+  useEffect(() => {
+    if (seededRef.current || !profile) return;
+    seededRef.current = true;
+    if (profile.onboarded_at) {
+      setObStep(-1);
+      return;
+    }
+    setObDraft(profile);
+    setTurns([
+      { role: "rekalla", text: ONBOARDING_INTRO },
+      { role: "rekalla", text: ONBOARDING_STEPS[0].ask },
+    ]);
+  }, [profile]);
+
+  function finishOnboarding(draft: PersonalizationProfile | null) {
+    setObStep(-1);
+    if (draft) complete.mutate(draft);
+    setTurns((t) => [...t, { role: "rekalla", text: ONBOARDING_DONE }]);
+    speak(ONBOARDING_DONE);
+    requestAnimationFrame(() => scroller.current?.scrollToEnd({ animated: true }));
+  }
 
   function send(text: string) {
     const message = text.trim();
+
+    // First-run onboarding intercepts the composer (typed answers only).
+    if (onboarding) {
+      if (!message || !obDraft) return;
+      setTurns((t) => [...t, { role: "me", text: message }]);
+      setInput("");
+      const nextDraft = ONBOARDING_STEPS[obStep].apply(obDraft, message);
+      setObDraft(nextDraft);
+      const next = obStep + 1;
+      if (next < ONBOARDING_STEPS.length) {
+        setObStep(next);
+        setTurns((t) => [...t, { role: "rekalla", text: ONBOARDING_STEPS[next].ask }]);
+        requestAnimationFrame(() => scroller.current?.scrollToEnd({ animated: true }));
+      } else {
+        finishOnboarding(nextDraft);
+      }
+      return;
+    }
+
     if (!message || ask.isPending) return;
     setTurns((t) => [...t, { role: "me", text: message }]);
     setInput("");
@@ -68,11 +128,11 @@ export default function AssistantScreen() {
         contentContainerStyle={styles.thread}
         keyboardShouldPersistTaps="handled"
       >
-        {turns.length === 0 ? (
+        {turns.length === 0 && obStep < 0 ? (
           <View style={styles.welcome}>
             <Text style={styles.welcomeText}>
-              Hello{session ? "" : ""}. Ask me about your week, your family, or
-              your appointments. Tap the microphone and talk, or type below.
+              Hello. Ask me about your week, your family, or your appointments.
+              Tap the microphone and talk, or type below.
             </Text>
             <View style={styles.suggestions}>
               {[
@@ -116,7 +176,7 @@ export default function AssistantScreen() {
               label="Type your question"
               value={input}
               onChangeText={setInput}
-              placeholder="Type or use the mic…"
+              placeholder={onboarding ? "Type your answer…" : "Type or use the mic…"}
               multiline
               onSubmitEditing={() => send(input)}
             />
@@ -125,10 +185,19 @@ export default function AssistantScreen() {
             label="Send"
             icon="send"
             onPress={() => send(input)}
-            accessibilityLabel="Send your question to Rekalla"
+            accessibilityLabel="Send your answer to Rekalla"
             disabled={ask.isPending}
           />
         </View>
+        {onboarding ? (
+          <Pressable
+            onPress={() => finishOnboarding(obDraft)}
+            accessibilityRole="button"
+            style={styles.skip}
+          >
+            <Text style={styles.skipText}>Skip setup for now</Text>
+          </Pressable>
+        ) : null}
       </View>
     </SafeAreaView>
   );
@@ -275,4 +344,6 @@ const styles = StyleSheet.create({
     gap: a11y.space(3),
   },
   inputRow: { flexDirection: "row", gap: a11y.space(3), alignItems: "flex-end" },
+  skip: { alignSelf: "center", paddingVertical: a11y.space(2) },
+  skipText: { color: colors.label3, fontSize: a11yFont.body - 4, fontWeight: "600" },
 });

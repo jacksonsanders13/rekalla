@@ -46,18 +46,8 @@ export default function SignIn() {
       );
     }
 
-    let destination = "/(patient)/summary";
-    if (data.user) {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("account_type")
-        .eq("id", data.user.id)
-        .single();
-      if (profile?.account_type === "caregiver") {
-        destination = "/(caregiver)/people";
-      }
-    }
-    router.replace(destination as never);
+    // v2 single-user product: everyone lands on the assistant chat.
+    router.replace("/(patient)/assistant");
   }
 
   return (
