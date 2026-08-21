@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import {
+  KeyboardAvoidingView,
   Linking,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -29,7 +32,7 @@ import {
   useAppendMessage,
   loadMessages,
 } from "../../hooks/chats";
-import { BigButton, BigField, MicButton } from "../../components/big-ui";
+import { BigButton } from "../../components/big-ui";
 import { ChatHistory } from "../../components/chat-history";
 import type {
   AssistantResponse,
@@ -213,8 +216,13 @@ export default function AssistantScreen() {
         onDeleted={onChatDeleted}
       />
 
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
       <ScrollView
         ref={scroller}
+        style={styles.flex}
         contentContainerStyle={styles.thread}
         keyboardShouldPersistTaps="handled"
       >
@@ -251,33 +259,38 @@ export default function AssistantScreen() {
         ) : null}
       </ScrollView>
 
-      <View style={styles.composer}>
-        <MicButton
-          onPress={() => {
-            // Interim: focus the field so the iOS keyboard dictation mic is one
-            // tap away. On-device STT (expo-av record + transcribe) is a TODO.
-            stopSpeaking();
-          }}
-          accessibilityLabel="Talk to Rekalla. Opens the keyboard so you can dictate."
-        />
-        <View style={styles.inputRow}>
-          <View style={{ flex: 1 }}>
-            <BigField
-              label="Type your question"
-              value={input}
-              onChangeText={setInput}
-              placeholder={onboarding ? "Type your answer…" : "Type or use the mic…"}
-              multiline
-              onSubmitEditing={() => send(input)}
-            />
-          </View>
-          <BigButton
-            label="Send"
-            icon="send"
-            onPress={() => send(input)}
-            accessibilityLabel="Send your answer to Rekalla"
-            disabled={ask.isPending}
+      <View style={styles.composerWrap}>
+        <View style={styles.composer}>
+          <Pressable
+            onPress={() => stopSpeaking()}
+            accessibilityRole="button"
+            accessibilityLabel="Voice input — opens the keyboard so you can dictate"
+            style={styles.micBtn}
+          >
+            <Ionicons name="mic-outline" size={24} color={colors.label2} />
+          </Pressable>
+          <TextInput
+            style={styles.input}
+            value={input}
+            onChangeText={setInput}
+            placeholder={onboarding ? "Type your answer…" : "Ask Rekalla anything…"}
+            placeholderTextColor={colors.label4}
+            multiline
+            accessibilityLabel="Type your message to Rekalla"
           />
+          <Pressable
+            onPress={() => send(input)}
+            disabled={ask.isPending || !input.trim()}
+            accessibilityRole="button"
+            accessibilityLabel="Send"
+            style={[styles.sendBtn, (ask.isPending || !input.trim()) && styles.sendBtnOff]}
+          >
+            <Ionicons
+              name="arrow-up"
+              size={26}
+              color={input.trim() ? "#ffffff" : colors.label4}
+            />
+          </Pressable>
         </View>
         {onboarding ? (
           <Pressable
@@ -289,6 +302,7 @@ export default function AssistantScreen() {
           </Pressable>
         ) : null}
       </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -299,7 +313,7 @@ function TurnBubble({ turn }: { turn: Turn }) {
   return (
     <View style={[styles.bubbleRow, mine ? styles.rowMine : styles.rowTheirs]}>
       <View style={[styles.bubble, mine ? styles.bubbleMine : styles.bubbleTheirs]}>
-        <Text style={[styles.bubbleText, mine && { color: "#000" }]}>{turn.text}</Text>
+        <Text style={styles.bubbleText}>{turn.text}</Text>
       </View>
       {turn.meta ? <TierUI res={turn.meta} /> : null}
       {proposal && proposal.kind !== "none" ? <ProposeCard action={proposal} /> : null}
@@ -433,6 +447,7 @@ function topContact(list?: EmergencyContact[]): EmergencyContact | undefined {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.base },
+  flex: { flex: 1 },
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -441,27 +456,33 @@ const styles = StyleSheet.create({
     paddingVertical: a11y.space(2),
   },
   headerBtn: { width: 48, height: 48, alignItems: "center", justifyContent: "center" },
-  headerTitle: { color: colors.label, fontSize: a11yFont.title, fontWeight: "700" },
-  thread: { padding: a11y.space(4), gap: a11y.space(4), paddingBottom: a11y.space(8) },
-  welcome: { gap: a11y.space(5) },
+  headerTitle: { color: colors.label, fontSize: a11yFont.bodyLg, fontWeight: "700" },
+  thread: { padding: a11y.space(4), gap: a11y.space(3), paddingBottom: a11y.space(6) },
+  welcome: { gap: a11y.space(5), paddingTop: a11y.space(6) },
   welcomeText: {
-    color: colors.label,
-    fontSize: a11yFont.bodyLg,
-    lineHeight: a11y.lineHeight(a11yFont.bodyLg),
+    color: colors.label2,
+    fontSize: a11yFont.body,
+    lineHeight: a11y.lineHeight(a11yFont.body),
+    textAlign: "center",
   },
   suggestions: { gap: a11y.space(3) },
   suggestion: { justifyContent: "flex-start" },
   thinking: { color: colors.label3, fontSize: a11yFont.body, fontStyle: "italic" },
-  bubbleRow: { gap: a11y.space(3) },
+  bubbleRow: { gap: a11y.space(2) },
   rowMine: { alignItems: "flex-end" },
   rowTheirs: { alignItems: "flex-start" },
-  bubble: { maxWidth: "92%", borderRadius: radius.lg, padding: a11y.space(4) },
-  bubbleMine: { backgroundColor: colors.label },
-  bubbleTheirs: { backgroundColor: colors.elev1 },
+  bubble: {
+    maxWidth: "84%",
+    borderRadius: 22,
+    paddingHorizontal: a11y.space(4),
+    paddingVertical: a11y.space(3),
+  },
+  bubbleMine: { backgroundColor: colors.blue, borderBottomRightRadius: 6 },
+  bubbleTheirs: { backgroundColor: colors.elev2, borderBottomLeftRadius: 6 },
   bubbleText: {
     color: colors.label,
-    fontSize: a11yFont.bodyLg,
-    lineHeight: a11y.lineHeight(a11yFont.bodyLg),
+    fontSize: a11yFont.body,
+    lineHeight: a11y.lineHeight(a11yFont.body),
   },
   tierBox: {
     width: "100%",
@@ -505,13 +526,48 @@ const styles = StyleSheet.create({
     padding: a11y.space(4),
   },
   savedText: { color: colors.label, fontSize: a11yFont.body, fontWeight: "700" },
-  composer: {
-    borderTopWidth: 1,
-    borderTopColor: "rgba(255,255,255,0.12)",
-    padding: a11y.space(4),
-    gap: a11y.space(3),
+  composerWrap: {
+    paddingHorizontal: a11y.space(3),
+    paddingTop: a11y.space(2),
+    paddingBottom: a11y.space(2),
   },
-  inputRow: { flexDirection: "row", gap: a11y.space(3), alignItems: "flex-end" },
+  composer: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    gap: a11y.space(2),
+    backgroundColor: colors.elev1,
+    borderRadius: 28,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.10)",
+    paddingLeft: a11y.space(2),
+    paddingRight: a11y.space(2),
+    paddingVertical: a11y.space(2),
+  },
+  micBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  input: {
+    flex: 1,
+    color: colors.label,
+    fontSize: a11yFont.body,
+    lineHeight: a11y.lineHeight(a11yFont.body),
+    maxHeight: 130,
+    paddingTop: a11y.space(2),
+    paddingBottom: a11y.space(2),
+  },
+  sendBtn: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: colors.blue,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  sendBtnOff: { backgroundColor: colors.elev3 },
   skip: { alignSelf: "center", paddingVertical: a11y.space(2) },
   skipText: { color: colors.label3, fontSize: a11yFont.body - 4, fontWeight: "600" },
 });
