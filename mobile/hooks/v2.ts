@@ -106,6 +106,35 @@ export function useSaveSection(userId: string, editorId: string) {
   });
 }
 
+/**
+ * Save the whole welcome survey in one write and stamp onboarded_at, so the
+ * survey is only ever asked once. Works whether they filled it in or skipped.
+ */
+export function useCompleteOnboarding(userId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (profile: PersonalizationProfile) => {
+      const status: Partial<Record<SectionKey, SectionState>> = {};
+      for (const key of SECTION_ORDER) status[key] = sectionState(profile, key);
+
+      const { error } = await db.from("personalization_profiles").upsert({
+        user_id: userId,
+        identity: profile.identity,
+        people: profile.people,
+        routine: profile.routine,
+        interests: profile.interests,
+        preferences: profile.preferences,
+        practical: profile.practical,
+        section_status: status,
+        onboarded_at: new Date().toISOString(),
+      });
+      if (error) throw error;
+    },
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: ["personalization_profile", userId] }),
+  });
+}
+
 export function useAssistant() {
   return useMutation<AssistantResponse, Error, AssistantRequest>({
     mutationFn: (req) => askAssistant(req),
