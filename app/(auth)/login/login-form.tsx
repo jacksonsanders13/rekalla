@@ -46,7 +46,7 @@ export function LoginForm() {
     // patient dashboard if a server-side redirect is cached.
     // v2 single-user product: the chat is home for everyone. No role routing.
     const next = searchParams.get("next");
-    const destination = next && next.startsWith("/") ? next : "/assistant";
+    const destination = next && next.startsWith("/") ? next : "/home";
 
     router.push(destination);
     router.refresh();

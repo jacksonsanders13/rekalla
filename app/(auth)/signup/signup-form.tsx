@@ -60,8 +60,8 @@ export function SignupForm() {
         .eq("id", data.user.id);
     }
 
-    // Straight into the chat — Rekalla runs the first-time setup there.
-    router.push("/assistant");
+    // Straight to Home — the scan flow is the first thing they do.
+    router.push("/home");
     router.refresh();
   }
 

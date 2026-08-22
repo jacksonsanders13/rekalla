@@ -2,6 +2,9 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 const PROTECTED_PREFIXES = [
+  "/home",
+  "/calendar",
+  "/scan",
   "/assistant",
   "/my-day",
   "/profile",
@@ -65,11 +68,10 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // v2: signed-in users land on the AI chat (the home), not the old
-  // reminder dashboard.
+  // v3: signed-in users land on Home (Scan + what's coming up).
   if (user && (isAuthPage || pathname === "/")) {
     const url = request.nextUrl.clone();
-    url.pathname = "/assistant";
+    url.pathname = "/home";
     url.search = "";
     return NextResponse.redirect(url);
   }
