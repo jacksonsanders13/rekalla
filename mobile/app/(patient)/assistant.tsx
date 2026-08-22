@@ -66,19 +66,11 @@ export default function AssistantScreen() {
   const scroller = useRef<ScrollView>(null);
   const onboarding = obStep >= 0 && !!obDraft;
 
-  // First run: open the chat with Rekalla's greeting + the first question.
+  // v3: first-time setup moved to the Home scan flow — Ask is just a chat.
   useEffect(() => {
     if (seededRef.current || !profile) return;
     seededRef.current = true;
-    if (profile.onboarded_at) {
-      setObStep(-1);
-      return;
-    }
-    setObDraft(profile);
-    setTurns([
-      { role: "rekalla", text: ONBOARDING_INTRO },
-      { role: "rekalla", text: ONBOARDING_STEPS[0].ask },
-    ]);
+    setObStep(-1);
   }, [profile]);
 
   function finishOnboarding(draft: PersonalizationProfile | null) {

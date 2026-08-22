@@ -18,6 +18,6 @@ export default function Index() {
     return <Redirect href="/(auth)/sign-up" />;
   }
 
-  // v2 single-user product: everyone is the older adult; the assistant is home.
-  return <Redirect href="/(patient)/assistant" />;
+  // v3: Home (Scan + what's coming up) is the front door.
+  return <Redirect href="/(patient)/home" />;
 }

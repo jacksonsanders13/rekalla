@@ -34,6 +34,29 @@ export async function pickPhoto(): Promise<PickedPhoto | null> {
 }
 
 /**
+ * Opens the camera to photograph a paper document, or null if cancelled/denied.
+ */
+export async function takePhoto(): Promise<PickedPhoto | null> {
+  const permission = await ImagePicker.requestCameraPermissionsAsync();
+  if (!permission.granted) return null;
+
+  const result = await ImagePicker.launchCameraAsync({
+    allowsEditing: true,
+    quality: 0.6,
+    base64: true,
+  });
+  if (result.canceled) return null;
+
+  const asset = result.assets[0];
+  if (!asset?.base64) return null;
+  return {
+    base64: asset.base64,
+    mimeType: asset.mimeType ?? "image/jpeg",
+    previewUri: asset.uri,
+  };
+}
+
+/**
  * Uploads a picked photo to the vault-photos bucket (under the uploader's
  * own folder, which is what the storage policies require) and returns the
  * storage path to save on the vault item. The bucket is private, so the path
@@ -51,6 +74,32 @@ export async function uploadVaultPhoto(
         ? "webp"
         : "jpg";
   const path = `${uploaderId}/${Date.now()}.${ext}`;
+
+  const { error } = await supabase.storage
+    .from("vault-photos")
+    .upload(path, bytes.buffer as ArrayBuffer, { contentType: photo.mimeType });
+  if (error) throw error;
+
+  return path;
+}
+
+/**
+ * Uploads a scanned document image to the private vault-photos bucket, under
+ * the owner's `scans/` folder, and returns the storage path to save on the
+ * scan row. Resolved to a signed URL at display time.
+ */
+export async function uploadScanImage(
+  userId: string,
+  photo: PickedPhoto,
+): Promise<string> {
+  const bytes = base64ToBytes(photo.base64);
+  const ext =
+    photo.mimeType === "image/png"
+      ? "png"
+      : photo.mimeType === "image/webp"
+        ? "webp"
+        : "jpg";
+  const path = `${userId}/scans/${Date.now()}.${ext}`;
 
   const { error } = await supabase.storage
     .from("vault-photos")

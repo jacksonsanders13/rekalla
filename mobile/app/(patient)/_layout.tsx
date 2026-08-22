@@ -30,22 +30,22 @@ export default function PatientTabs() {
       }}
     >
       <Tabs.Screen
-        name="assistant"
+        name="home"
         options={{
-          title: "Rekalla",
+          title: "Home",
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <Ionicons name="chatbubbles" size={TAB_ICON} color={color} />
+            <Ionicons name="home" size={TAB_ICON} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="my-day"
+        name="calendar"
         options={{
-          title: "My day",
+          title: "Calendar",
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <Ionicons name="sunny" size={TAB_ICON} color={color} />
+            <Ionicons name="calendar" size={TAB_ICON} color={color} />
           ),
         }}
       />
@@ -59,8 +59,10 @@ export default function PatientTabs() {
           ),
         }}
       />
-      {/* v2 single-user simplification: the granular screens stay routable
-          (reached from My Day) but are hidden from the 3-tab bar. */}
+      {/* v3: kept routable but hidden from the tab bar. "assistant" is the
+          Ask Rekalla screen (reached from Home); the rest are legacy. */}
+      <Tabs.Screen name="assistant" options={{ href: null, headerShown: false }} />
+      <Tabs.Screen name="my-day" options={{ href: null, headerShown: false }} />
       <Tabs.Screen name="summary" options={{ href: null, headerShown: false }} />
       <Tabs.Screen name="reminders" options={{ href: null, title: t("tab.reminders") }} />
       <Tabs.Screen name="routine" options={{ href: null, title: t("tab.routine") }} />
