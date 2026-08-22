@@ -62,6 +62,7 @@ export function useSaveScan(userId: string) {
 
       const rows = input.items.map((it) => ({
         user_id: user.id,
+        created_by: user.id, // required by the reminders insert policy
         title: it.title || "Reminder",
         category: scanCategory(it.type),
         start_date: it.date,
