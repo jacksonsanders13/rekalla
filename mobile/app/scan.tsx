@@ -63,8 +63,11 @@ export default function ScanScreen() {
       await save.mutateAsync({ photo, docType, items });
       await scheduleScanReminders(items);
       router.replace("/(patient)/home");
-    } catch {
-      setError("Sorry, that didn't save. Please try again.");
+    } catch (e) {
+      const msg =
+        (e as { message?: string })?.message ??
+        (typeof e === "string" ? e : JSON.stringify(e));
+      setError(`Didn't save: ${msg}`);
       setPhase("review");
     }
   }
