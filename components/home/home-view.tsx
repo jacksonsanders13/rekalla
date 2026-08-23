@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Camera, MessageCircle, CalendarDays, Receipt, Stethoscope } from "lucide-react";
+import { Camera, CalendarDays, Receipt, Stethoscope } from "lucide-react";
+import { AskBox } from "@/components/home/ask-box";
 import { useUpcomingReminders, type Reminder } from "@/hooks/use-scans";
 import { formatDay, formatTime, isToday } from "@/lib/format";
 
@@ -21,12 +22,7 @@ export function HomeView({ userId }: { userId: string }) {
         <span className="text-base text-white/90">A calendar, an appointment card, or a bill</span>
       </Link>
 
-      <Link
-        href="/assistant"
-        className="flex min-h-[56px] items-center justify-center gap-2.5 rounded-2xl bg-elev-1 text-xl font-bold text-label hover:bg-elev-2"
-      >
-        <MessageCircle className="size-6 text-label-2" aria-hidden="true" /> Ask Rekalla
-      </Link>
+      <AskBox />
 
       <h2 className="pt-2 text-2xl font-bold text-label">What&apos;s coming up</h2>
       {isLoading ? (

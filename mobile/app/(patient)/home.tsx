@@ -7,6 +7,7 @@ import { useSession } from "../../lib/session";
 import { colors, radius } from "../../lib/theme";
 import { a11y, a11yFont } from "../../lib/a11y";
 import { BodyText } from "../../components/big-ui";
+import { AskBox } from "../../components/ask-box";
 import { useUpcomingReminders, type Reminder } from "../../hooks/scans";
 import { formatDay, formatTime, isToday } from "../../lib/format";
 
@@ -33,15 +34,8 @@ export default function Home() {
           <Text style={styles.scanSub}>A calendar, an appointment card, or a bill</Text>
         </Pressable>
 
-        <Pressable
-          onPress={() => router.push("/(patient)/assistant")}
-          accessibilityRole="button"
-          accessibilityLabel="Ask Rekalla a question"
-          style={styles.ask}
-        >
-          <Ionicons name="chatbubble-ellipses" size={a11yFont.bodyLg} color={colors.label2} />
-          <Text style={styles.askText}>Ask Rekalla</Text>
-        </Pressable>
+        {/* Basic chat: ask about your calendar */}
+        <AskBox />
 
         {/* What's coming up */}
         <Text style={styles.section}>What's coming up</Text>
