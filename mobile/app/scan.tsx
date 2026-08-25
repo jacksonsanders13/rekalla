@@ -14,7 +14,7 @@ import { BigButton, BigField, BodyText } from "../components/big-ui";
 import { takePhoto, pickPhoto, type PickedPhoto } from "../lib/photos";
 import { scanPhoto, type ScanItem } from "../lib/scan";
 import { useSaveScan } from "../hooks/scans";
-import { scheduleScanReminders } from "../lib/notify";
+import { syncReminderNotifications } from "../lib/notify";
 import { formatDay, formatTime } from "../lib/format";
 
 type Phase = "choose" | "scanning" | "review" | "saving";
@@ -60,8 +60,8 @@ export default function ScanScreen() {
     setPhase("saving");
     setError(null);
     try {
-      await save.mutateAsync({ photo, docType, items });
-      await scheduleScanReminders(items);
+      const { saved } = await save.mutateAsync({ photo, docType, items });
+      await syncReminderNotifications(saved);
       router.replace("/(patient)/home");
     } catch (e) {
       const msg =

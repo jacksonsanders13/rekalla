@@ -33,6 +33,7 @@ function AppStack() {
       <Stack.Screen name="(patient)" options={{ headerShown: false }} />
       <Stack.Screen name="(caregiver)" options={{ headerShown: false }} />
       <Stack.Screen name="scan" options={{ presentation: "modal", headerShown: false }} />
+      <Stack.Screen name="event/[id]" options={{ presentation: "modal", headerShown: false }} />
       <Stack.Screen name="connect" />
       <Stack.Screen name="settings" />
       <Stack.Screen name="patient/[id]" options={{ title: "" }} />

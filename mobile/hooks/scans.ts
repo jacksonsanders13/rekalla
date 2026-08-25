@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../lib/supabase";
 import { uploadScanImage, type PickedPhoto } from "../lib/photos";
+import { cancelReminderNotification, syncReminderNotification } from "../lib/notify";
 import type { ScanItem } from "../lib/scan";
 
 const db = supabase as unknown as { from: (t: string) => any };
@@ -14,6 +15,8 @@ export interface Reminder {
   description: string | null;
   scan_id: string | null;
 }
+
+const COLUMNS = "id, title, category, start_date, time_of_day, description, scan_id";
 
 const key = (userId: string) => ["reminders", userId];
 
@@ -72,11 +75,16 @@ export function useSaveScan(userId: string) {
         is_active: true,
         scan_id: scan.id,
       }));
+      let saved: Reminder[] = [];
       if (rows.length) {
-        const { error } = await db.from("reminders").insert(rows);
+        const { data, error } = await db
+          .from("reminders")
+          .insert(rows)
+          .select(COLUMNS);
         if (error) throw error;
+        saved = (data ?? []) as Reminder[];
       }
-      return { scanId: scan.id as string, count: rows.length };
+      return { scanId: scan.id as string, count: rows.length, saved };
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: key(userId) }),
   });
@@ -89,7 +97,7 @@ export function useUpcomingReminders(userId: string) {
     queryFn: async (): Promise<Reminder[]> => {
       const { data, error } = await db
         .from("reminders")
-        .select("id, title, category, start_date, time_of_day, description, scan_id")
+        .select(COLUMNS)
         .eq("user_id", userId)
         .eq("is_active", true)
         .gte("start_date", todayISO())
@@ -108,13 +116,78 @@ export function useReminders(userId: string) {
     queryFn: async (): Promise<Reminder[]> => {
       const { data, error } = await db
         .from("reminders")
-        .select("id, title, category, start_date, time_of_day, description, scan_id")
+        .select(COLUMNS)
         .eq("user_id", userId)
         .eq("is_active", true)
         .order("start_date", { ascending: true })
         .order("time_of_day", { ascending: true, nullsFirst: true });
       if (error) throw error;
       return (data ?? []) as Reminder[];
+    },
+  });
+}
+
+/** One reminder by id — what the edit screen loads. */
+export function useReminder(id: string) {
+  return useQuery({
+    queryKey: ["reminder", id],
+    enabled: !!id,
+    queryFn: async (): Promise<Reminder | null> => {
+      const { data, error } = await db
+        .from("reminders")
+        .select(COLUMNS)
+        .eq("id", id)
+        .maybeSingle();
+      if (error) throw error;
+      return (data ?? null) as Reminder | null;
+    },
+  });
+}
+
+/** The fields someone can change on an event they scanned (or typed in). */
+export interface ReminderEdits {
+  title: string;
+  start_date: string; // YYYY-MM-DD
+  time_of_day: string | null; // HH:MM:SS, or null for all-day
+  description: string | null;
+}
+
+/** Save edits and move the device notification to match. */
+export function useUpdateReminder(userId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { id: string; edits: ReminderEdits }): Promise<Reminder> => {
+      const { data, error } = await db
+        .from("reminders")
+        .update(input.edits)
+        .eq("id", input.id)
+        .select(COLUMNS)
+        .single();
+      if (error) throw error;
+      const row = data as Reminder;
+      await syncReminderNotification(row);
+      return row;
+    },
+    onSuccess: (row) => {
+      qc.invalidateQueries({ queryKey: key(userId) });
+      qc.invalidateQueries({ queryKey: ["reminder", row.id] });
+    },
+  });
+}
+
+/** Remove an event for good, and cancel its notification. */
+export function useDeleteReminder(userId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await db.from("reminders").delete().eq("id", id);
+      if (error) throw error;
+      await cancelReminderNotification(id);
+      return id;
+    },
+    onSuccess: (id) => {
+      qc.invalidateQueries({ queryKey: key(userId) });
+      qc.removeQueries({ queryKey: ["reminder", id] });
     },
   });
 }

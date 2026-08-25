@@ -8,6 +8,7 @@ import { colors, radius } from "../../lib/theme";
 import { a11y, a11yFont } from "../../lib/a11y";
 import { BodyText } from "../../components/big-ui";
 import { AskBox } from "../../components/ask-box";
+import { LogoMark } from "../../components/logo-mark";
 import { useUpcomingReminders, type Reminder } from "../../hooks/scans";
 import { formatDay, formatTime, isToday } from "../../lib/format";
 
@@ -20,7 +21,9 @@ export default function Home() {
   return (
     <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
       <ScrollView contentContainerStyle={styles.body}>
-        <Text style={styles.title} accessibilityRole="header">Rekalla</Text>
+        <View style={styles.brand} accessibilityRole="header">
+          <LogoMark size={76} />
+        </View>
 
         {/* The hero: Scan */}
         <Pressable
@@ -60,10 +63,17 @@ export default function Home() {
   );
 }
 
+/** One event in a list. Tapping it opens the editor. */
 export function ReminderRow({ r }: { r: Reminder }) {
+  const router = useRouter();
   const time = r.time_of_day ? formatTime(r.time_of_day) : "All day";
   return (
-    <View style={styles.row}>
+    <Pressable
+      onPress={() => router.push(`/event/${r.id}`)}
+      accessibilityRole="button"
+      accessibilityLabel={`${r.title}, ${formatDay(r.start_date)}, ${time}. Tap to edit`}
+      style={({ pressed }) => [styles.row, pressed && { opacity: 0.85 }]}
+    >
       <View style={[styles.rowMark, isToday(r.start_date) && { backgroundColor: colors.blue }]} />
       <View style={{ flex: 1 }}>
         <Text style={styles.rowTitle}>{r.title}</Text>
@@ -73,7 +83,8 @@ export function ReminderRow({ r }: { r: Reminder }) {
         </Text>
       </View>
       <Ionicons name={iconFor(r.category)} size={a11yFont.body} color={colors.label3} />
-    </View>
+      <Ionicons name="chevron-forward" size={a11yFont.body} color={colors.label4} />
+    </Pressable>
   );
 }
 
@@ -86,7 +97,7 @@ function iconFor(category: string): keyof typeof Ionicons.glyphMap {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.base },
   body: { padding: a11y.space(4), gap: a11y.space(4), paddingBottom: a11y.space(10) },
-  title: { color: colors.label, fontSize: a11yFont.title, fontWeight: "700", textAlign: "center" },
+  brand: { alignItems: "center", paddingTop: a11y.space(1) },
   scan: {
     backgroundColor: colors.blue,
     borderRadius: radius.xl,
