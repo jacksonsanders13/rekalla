@@ -312,24 +312,15 @@ const en: Dict = {
   "tour.skip": "Skip",
   "tour.next": "Next",
   "tour.start": "Get started",
-  "tour.p1.title": "Welcome to Rekalla",
+  "tour.p1.title": "Bring your paper life online",
   "tour.p1.body":
-    "A calm, simple place to keep track of your day — reminders, a daily routine, and the people who matter.",
-  "tour.p2.title": "Your day at a glance",
+    "Take a photo of a paper calendar, an appointment card, or a bill. That's the whole job — no typing.",
+  "tour.p2.title": "Rekalla reads the dates",
   "tour.p2.body":
-    "The Summary screen shows what's coming up and how your day is going. Tap Done on a reminder once you've handled it.",
-  "tour.p3.title": "Let family help",
+    "You'll see everything it found before anything is saved. Fix a name or a time if it got one wrong.",
+  "tour.p3.title": "Then it reminds you",
   "tour.p3.body":
-    "Tap the heart icon at the top to see your connect code. Share it with a family member so they can help set things up for you.",
-  "tour.c1.title": "Welcome to Rekalla",
-  "tour.c1.body":
-    "Help someone you care for stay on top of their day — right from your own phone.",
-  "tour.c2.title": "Connect with a code",
-  "tour.c2.body":
-    "Ask your loved one to open Rekalla and read you their 6-letter connect code. Enter it on the People screen — no shared passwords.",
-  "tour.c3.title": "Set up their day",
-  "tour.c3.body":
-    "Add reminders, build a daily routine, and fill their Memory Vault with people and photos. It appears on their phone instantly.",
+    "What you keep goes on your calendar, and your phone lets you know when the day comes. Tap anything to change it later.",
 
   // schedule descriptions
   "sched.everyDay": "Every day at {time}",
@@ -634,24 +625,15 @@ const es: Dict = {
   "tour.skip": "Saltar",
   "tour.next": "Siguiente",
   "tour.start": "Empezar",
-  "tour.p1.title": "Bienvenido a Rekalla",
+  "tour.p1.title": "Tu vida en papel, en el teléfono",
   "tour.p1.body":
-    "Un lugar tranquilo y sencillo para organizar tu día — recordatorios, una rutina diaria y las personas que importan.",
-  "tour.p2.title": "Tu día de un vistazo",
+    "Toma una foto de un calendario de papel, una tarjeta de cita o una factura. Eso es todo — no hay que escribir nada.",
+  "tour.p2.title": "Rekalla lee las fechas",
   "tour.p2.body":
-    "La pantalla de Resumen muestra lo que viene y cómo va tu día. Toca Hecho en un recordatorio cuando lo hayas atendido.",
-  "tour.p3.title": "Deja que la familia ayude",
+    "Verás todo lo que encontró antes de guardar nada. Corrige un nombre o una hora si se equivocó.",
+  "tour.p3.title": "Y te lo recuerda",
   "tour.p3.body":
-    "Toca el ícono del corazón arriba para ver tu código de conexión. Compártelo con un familiar para que pueda ayudarte a configurar todo.",
-  "tour.c1.title": "Bienvenido a Rekalla",
-  "tour.c1.body":
-    "Ayuda a alguien a quien cuidas a organizar su día — desde tu propio teléfono.",
-  "tour.c2.title": "Conéctate con un código",
-  "tour.c2.body":
-    "Pídele a tu ser querido que abra Rekalla y te lea su código de conexión de 6 letras. Escríbelo en la pantalla de Personas — sin compartir contraseñas.",
-  "tour.c3.title": "Organiza su día",
-  "tour.c3.body":
-    "Añade recordatorios, crea una rutina diaria y llena sus Recuerdos con personas y fotos. Aparece en su teléfono al instante.",
+    "Lo que guardes aparece en tu calendario, y tu teléfono te avisa cuando llega el día. Toca cualquier cosa para cambiarla después.",
 
   "sched.everyDay": "Todos los días a las {time}",
   "sched.every": "Cada {days} a las {time}",

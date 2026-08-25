@@ -67,7 +67,7 @@ export default function Verify() {
 
     // v2 single-user product: everyone lands on the assistant chat, where
     // Rekalla runs the first-time setup.
-    router.replace("/(patient)/assistant");
+    router.replace("/(patient)/home");
   }
 
   async function handleResend() {

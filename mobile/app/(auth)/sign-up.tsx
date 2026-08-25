@@ -55,7 +55,7 @@ export default function SignUp() {
     }
 
     // Into the chat — Rekalla runs the first-time setup there.
-    router.replace("/(patient)/assistant");
+    router.replace("/(patient)/home");
   }
 
   return (

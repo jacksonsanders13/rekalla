@@ -7,7 +7,7 @@ import { useSession } from "../lib/session";
 import { useT } from "../lib/i18n";
 import { colors, font, radius, spacing } from "../lib/theme";
 
-const VERSION = "v1";
+const VERSION = "v3";
 const keyFor = (userId: string) => `rekalla:welcome-seen:${VERSION}:${userId}`;
 
 interface Slide {
@@ -16,20 +16,19 @@ interface Slide {
   bodyKey: string;
 }
 
-const PATIENT_SLIDES: Slide[] = [
-  { icon: "sunny-outline", titleKey: "tour.p1.title", bodyKey: "tour.p1.body" },
+/** The v3 loop, in three screens: photograph it, check it, get reminded. */
+const SLIDES: Slide[] = [
+  { icon: "camera-outline", titleKey: "tour.p1.title", bodyKey: "tour.p1.body" },
   {
-    icon: "checkmark-circle-outline",
+    icon: "sparkles-outline",
     titleKey: "tour.p2.title",
     bodyKey: "tour.p2.body",
   },
-  { icon: "heart-outline", titleKey: "tour.p3.title", bodyKey: "tour.p3.body" },
-];
-
-const CAREGIVER_SLIDES: Slide[] = [
-  { icon: "people-outline", titleKey: "tour.c1.title", bodyKey: "tour.c1.body" },
-  { icon: "key-outline", titleKey: "tour.c2.title", bodyKey: "tour.c2.body" },
-  { icon: "create-outline", titleKey: "tour.c3.title", bodyKey: "tour.c3.body" },
+  {
+    icon: "notifications-outline",
+    titleKey: "tour.p3.title",
+    bodyKey: "tour.p3.body",
+  },
 ];
 
 /**
@@ -38,7 +37,7 @@ const CAREGIVER_SLIDES: Slide[] = [
  * competes with the terms screen for the foreground.
  */
 export function WelcomeTour({ enabled }: { enabled: boolean }) {
-  const { session, profile, loading } = useSession();
+  const { session, loading } = useSession();
   const t = useT();
   const userId = session?.user.id;
 
@@ -64,10 +63,8 @@ export function WelcomeTour({ enabled }: { enabled: boolean }) {
     };
   }, [userId, loading]);
 
-  const slides =
-    profile?.account_type === "caregiver" ? CAREGIVER_SLIDES : PATIENT_SLIDES;
-  const isLast = step >= slides.length - 1;
-  const slide = slides[step];
+  const isLast = step >= SLIDES.length - 1;
+  const slide = SLIDES[step];
 
   async function finish() {
     if (userId) await AsyncStorage.setItem(keyFor(userId), "1");
@@ -98,7 +95,7 @@ export function WelcomeTour({ enabled }: { enabled: boolean }) {
 
           <View style={styles.footer}>
             <View style={styles.dots}>
-              {slides.map((_, i) => (
+              {SLIDES.map((_, i) => (
                 <View
                   key={i}
                   style={[styles.dot, i === step && styles.dotActive]}

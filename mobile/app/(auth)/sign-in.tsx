@@ -47,7 +47,7 @@ export default function SignIn() {
     }
 
     // v2 single-user product: everyone lands on the assistant chat.
-    router.replace("/(patient)/assistant");
+    router.replace("/(patient)/home");
   }
 
   return (

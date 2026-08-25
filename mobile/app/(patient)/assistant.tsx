@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
   Linking,
@@ -16,17 +16,7 @@ import { useSession } from "../../lib/session";
 import { colors, radius } from "../../lib/theme";
 import { a11y, a11yFont } from "../../lib/a11y";
 import { speak, stopSpeaking } from "../../lib/assistant";
-import {
-  useAssistant,
-  useProfile,
-  useCompleteOnboarding,
-  useConfirmProposedAction,
-} from "../../hooks/v2";
-import {
-  ONBOARDING_INTRO,
-  ONBOARDING_DONE,
-  ONBOARDING_STEPS,
-} from "../../lib/onboarding";
+import { useAssistant, useConfirmProposedAction } from "../../hooks/v2";
 import {
   useCreateConversation,
   useAppendMessage,
@@ -37,7 +27,6 @@ import { ChatHistory } from "../../components/chat-history";
 import type {
   AssistantResponse,
   EmergencyContact,
-  PersonalizationProfile,
   ProposedAction,
 } from "../../lib/v2-types";
 
@@ -51,57 +40,16 @@ export default function AssistantScreen() {
   const { session } = useSession();
   const userId = session?.user.id ?? "";
   const ask = useAssistant();
-  const { data: profile } = useProfile(userId);
-  const complete = useCompleteOnboarding(userId);
   const createChat = useCreateConversation(userId);
   const appendMsg = useAppendMessage(userId);
   const [input, setInput] = useState("");
   const [turns, setTurns] = useState<Turn[]>([]);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
-  // Onboarding: obStep is the current question index, -1 once finished.
-  const [obStep, setObStep] = useState(0);
-  const [obDraft, setObDraft] = useState<PersonalizationProfile | null>(null);
-  const seededRef = useRef(false);
   const scroller = useRef<ScrollView>(null);
-  const onboarding = obStep >= 0 && !!obDraft;
-
-  // v3: first-time setup moved to the Home scan flow — Ask is just a chat.
-  useEffect(() => {
-    if (seededRef.current || !profile) return;
-    seededRef.current = true;
-    setObStep(-1);
-  }, [profile]);
-
-  function finishOnboarding(draft: PersonalizationProfile | null) {
-    setObStep(-1);
-    if (draft) complete.mutate(draft);
-    setTurns((t) => [...t, { role: "rekalla", text: ONBOARDING_DONE }]);
-    speak(ONBOARDING_DONE);
-    requestAnimationFrame(() => scroller.current?.scrollToEnd({ animated: true }));
-  }
 
   async function send(text: string) {
     const message = text.trim();
-
-    // First-run onboarding intercepts the composer (typed answers only).
-    if (onboarding) {
-      if (!message || !obDraft) return;
-      setTurns((t) => [...t, { role: "me", text: message }]);
-      setInput("");
-      const nextDraft = ONBOARDING_STEPS[obStep].apply(obDraft, message);
-      setObDraft(nextDraft);
-      const next = obStep + 1;
-      if (next < ONBOARDING_STEPS.length) {
-        setObStep(next);
-        setTurns((t) => [...t, { role: "rekalla", text: ONBOARDING_STEPS[next].ask }]);
-        requestAnimationFrame(() => scroller.current?.scrollToEnd({ animated: true }));
-      } else {
-        finishOnboarding(nextDraft);
-      }
-      return;
-    }
-
     if (!message || ask.isPending) return;
     setTurns((t) => [...t, { role: "me", text: message }]);
     setInput("");
@@ -169,33 +117,25 @@ export default function AssistantScreen() {
   return (
     <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
       <View style={styles.header}>
-        {!onboarding ? (
-          <Pressable
-            onPress={() => setHistoryOpen(true)}
-            accessibilityRole="button"
-            accessibilityLabel="Your chats"
-            style={styles.headerBtn}
-          >
-            <Ionicons name="menu" size={30} color={colors.label} />
-          </Pressable>
-        ) : (
-          <View style={styles.headerBtn} />
-        )}
+        <Pressable
+          onPress={() => setHistoryOpen(true)}
+          accessibilityRole="button"
+          accessibilityLabel="Your chats"
+          style={styles.headerBtn}
+        >
+          <Ionicons name="menu" size={30} color={colors.label} />
+        </Pressable>
         <Text style={styles.headerTitle} accessibilityRole="header">
           Rekalla
         </Text>
-        {!onboarding ? (
-          <Pressable
-            onPress={newChat}
-            accessibilityRole="button"
-            accessibilityLabel="Start a new chat"
-            style={styles.headerBtn}
-          >
-            <Ionicons name="create-outline" size={28} color={colors.label} />
-          </Pressable>
-        ) : (
-          <View style={styles.headerBtn} />
-        )}
+        <Pressable
+          onPress={newChat}
+          accessibilityRole="button"
+          accessibilityLabel="Start a new chat"
+          style={styles.headerBtn}
+        >
+          <Ionicons name="create-outline" size={28} color={colors.label} />
+        </Pressable>
       </View>
 
       <ChatHistory
@@ -218,17 +158,17 @@ export default function AssistantScreen() {
         contentContainerStyle={styles.thread}
         keyboardShouldPersistTaps="handled"
       >
-        {turns.length === 0 && obStep < 0 ? (
+        {turns.length === 0 ? (
           <View style={styles.welcome}>
             <Text style={styles.welcomeText}>
-              Hello. Ask me about your week, your family, or your appointments.
-              Tap the microphone and talk, or type below.
+              Ask me about anything you've scanned — your appointments, your
+              bills, what's coming up this week.
             </Text>
             <View style={styles.suggestions}>
               {[
                 "What's on my calendar this week?",
-                "Who's driving me Thursday?",
-                "Who's my cardiologist again?",
+                "What's my next appointment?",
+                "When is my next bill due?",
               ].map((s) => (
                 <BigButton
                   key={s}
@@ -265,7 +205,7 @@ export default function AssistantScreen() {
             style={styles.input}
             value={input}
             onChangeText={setInput}
-            placeholder={onboarding ? "Type your answer…" : "Ask Rekalla anything…"}
+            placeholder="Ask Rekalla anything…"
             placeholderTextColor={colors.label4}
             multiline
             accessibilityLabel="Type your message to Rekalla"
@@ -284,15 +224,6 @@ export default function AssistantScreen() {
             />
           </Pressable>
         </View>
-        {onboarding ? (
-          <Pressable
-            onPress={() => finishOnboarding(obDraft)}
-            accessibilityRole="button"
-            style={styles.skip}
-          >
-            <Text style={styles.skipText}>Skip setup for now</Text>
-          </Pressable>
-        ) : null}
       </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -560,6 +491,4 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   sendBtnOff: { backgroundColor: colors.elev3 },
-  skip: { alignSelf: "center", paddingVertical: a11y.space(2) },
-  skipText: { color: colors.label3, fontSize: a11yFont.body - 4, fontWeight: "600" },
 });
