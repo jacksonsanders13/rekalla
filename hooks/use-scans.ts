@@ -111,3 +111,40 @@ export function useReminders(userId: string) {
     },
   });
 }
+
+/** The fields someone can change on an event they scanned (or typed in). */
+export interface ReminderEdits {
+  title: string;
+  start_date: string; // YYYY-MM-DD
+  time_of_day: string | null; // HH:MM:SS, or null for all-day
+  description: string | null;
+}
+
+export function useUpdateReminder(userId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { id: string; edits: ReminderEdits }): Promise<Reminder> => {
+      const { data, error } = await untyped()
+        .from("reminders")
+        .update(input.edits)
+        .eq("id", input.id)
+        .select("id, title, category, start_date, time_of_day, description, scan_id")
+        .single();
+      if (error) throw error;
+      return data as Reminder;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: key(userId) }),
+  });
+}
+
+export function useDeleteReminder(userId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await untyped().from("reminders").delete().eq("id", id);
+      if (error) throw error;
+      return id;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: key(userId) }),
+  });
+}

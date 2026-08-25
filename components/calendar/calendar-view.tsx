@@ -94,7 +94,7 @@ export function CalendarView({ userId }: { userId: string }) {
         <ul className="space-y-3">
           {dayItems.map((r) => (
             <li key={r.id}>
-              <ReminderRow r={r} />
+              <ReminderRow r={r} userId={userId} />
             </li>
           ))}
         </ul>

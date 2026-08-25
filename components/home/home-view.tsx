@@ -1,8 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { Camera, CalendarDays, Receipt, Stethoscope } from "lucide-react";
+import Image from "next/image";
+import { Camera, CalendarDays, ChevronRight, Receipt, Stethoscope } from "lucide-react";
 import { AskBox } from "@/components/home/ask-box";
+import { EventEditor } from "@/components/calendar/event-editor";
 import { useUpcomingReminders, type Reminder } from "@/hooks/use-scans";
 import { formatDay, formatTime, isToday } from "@/lib/format";
 
@@ -11,7 +14,9 @@ export function HomeView({ userId }: { userId: string }) {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-center text-3xl font-bold text-label">Rekalla</h1>
+      <h1 className="flex justify-center">
+        <Image src="/logo.svg" alt="Rekalla" width={76} height={76} priority />
+      </h1>
 
       <Link
         href="/scan"
@@ -38,7 +43,7 @@ export function HomeView({ userId }: { userId: string }) {
         <ul className="space-y-3">
           {upcoming.map((r) => (
             <li key={r.id}>
-              <ReminderRow r={r} />
+              <ReminderRow r={r} userId={userId} />
             </li>
           ))}
         </ul>
@@ -47,20 +52,36 @@ export function HomeView({ userId }: { userId: string }) {
   );
 }
 
-export function ReminderRow({ r }: { r: Reminder }) {
+/** One event in a list. Clicking it opens the editor. */
+export function ReminderRow({ r, userId }: { r: Reminder; userId: string }) {
+  const [editing, setEditing] = useState(false);
   const time = r.time_of_day ? formatTime(r.time_of_day) : "All day";
   return (
-    <div className="flex items-center gap-3 rounded-2xl bg-elev-1 p-4">
-      <span className={`h-11 w-2 shrink-0 rounded-full ${isToday(r.start_date) ? "bg-accent" : "bg-elev-3"}`} />
-      <div className="min-w-0 flex-1">
-        <p className="text-lg font-bold text-label">{r.title}</p>
-        <p className="text-sm text-label-3">
-          {formatDay(r.start_date)} · {time}
-          {r.description ? ` · ${r.description}` : ""}
-        </p>
-      </div>
-      <ItemIcon category={r.category} />
-    </div>
+    <>
+      <button
+        type="button"
+        onClick={() => setEditing(true)}
+        aria-label={`${r.title}, ${formatDay(r.start_date)}, ${time}. Click to edit`}
+        className="flex w-full items-center gap-3 rounded-2xl bg-elev-1 p-4 text-left transition-colors hover:bg-elev-2"
+      >
+        <span className={`h-11 w-2 shrink-0 rounded-full ${isToday(r.start_date) ? "bg-accent" : "bg-elev-3"}`} />
+        <div className="min-w-0 flex-1">
+          <p className="text-lg font-bold text-label">{r.title}</p>
+          <p className="text-sm text-label-3">
+            {formatDay(r.start_date)} · {time}
+            {r.description ? ` · ${r.description}` : ""}
+          </p>
+        </div>
+        <ItemIcon category={r.category} />
+        <ChevronRight className="size-5 shrink-0 text-label-4" aria-hidden="true" />
+      </button>
+      <EventEditor
+        reminder={r}
+        userId={userId}
+        open={editing}
+        onClose={() => setEditing(false)}
+      />
+    </>
   );
 }
 
