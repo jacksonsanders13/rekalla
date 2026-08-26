@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ArrowUp } from "lucide-react";
 import { useAssistant } from "@/hooks/use-assistant-v2";
-import { RekallaAvatar } from "@/components/ui/rekalla-avatar";
+import { RekallaAvatar, SpeechBubble } from "@/components/ui/rekalla-avatar";
 
 const EXAMPLES = [
   "What's my next appointment?",
@@ -34,8 +34,18 @@ export function AskBox() {
     );
   }
 
+  // He waves while he waits on you, thinks while he waits on the model, then
+  // hands the answer back in the bubble.
+  const thinking = ask.isPending;
+  const bubble = answer ?? "What can I do for you today?";
+
   return (
     <div className="space-y-3">
+      <div className="flex min-h-[92px] items-center gap-2">
+        <RekallaAvatar size={84} pose={thinking ? "think" : "wave"} className="shrink-0" />
+        {!thinking && <SpeechBubble>{bubble}</SpeechBubble>}
+      </div>
+
       <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-elev-1 py-2 pl-5 pr-2">
         <input
           value={input}
@@ -71,21 +81,7 @@ export function AskBox() {
         </div>
       )}
 
-      {asked && <p className="text-base font-semibold text-label-3">{asked}</p>}
-      {ask.isPending && (
-        <div className="flex items-start gap-3">
-          <RekallaAvatar size={40} className="shrink-0" />
-          <p className="pt-2 text-lg text-label-3">Thinking…</p>
-        </div>
-      )}
-      {answer && !ask.isPending && (
-        <div className="flex items-start gap-3">
-          <RekallaAvatar size={40} className="shrink-0" />
-          <p className="flex-1 rounded-2xl bg-elev-1 p-4 text-lg leading-relaxed text-label">
-            {answer}
-          </p>
-        </div>
-      )}
+      {asked && <p className="text-base text-label-3">You asked: {asked}</p>}
     </div>
   );
 }

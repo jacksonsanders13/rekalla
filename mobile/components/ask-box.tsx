@@ -6,6 +6,7 @@ import { colors, radius } from "../lib/theme";
 import { a11y, a11yFont } from "../lib/a11y";
 import { useAssistant } from "../hooks/v2";
 import { RekallaAvatar } from "./rekalla-avatar";
+import { SpeechBubble } from "./speech-bubble";
 
 const EXAMPLES = [
   "What's my next appointment?",
@@ -36,8 +37,18 @@ export function AskBox() {
     );
   }
 
+  // He waves while he waits on you, thinks while he waits on the model, then
+  // hands the answer back in the bubble.
+  const thinking = ask.isPending;
+  const bubble = answer ?? "What can I do for you today?";
+
   return (
     <View style={styles.wrap}>
+      <View style={styles.greeting}>
+        <RekallaAvatar size={84} pose={thinking ? "think" : "wave"} />
+        {thinking ? null : <SpeechBubble>{bubble}</SpeechBubble>}
+      </View>
+
       <View style={styles.inputRow}>
         <TextInput
           style={styles.input}
@@ -70,25 +81,19 @@ export function AskBox() {
         </View>
       ) : null}
 
-      {asked ? <Text style={styles.q}>{asked}</Text> : null}
-      {ask.isPending ? (
-        <View style={styles.replyRow}>
-          <RekallaAvatar size={40} />
-          <Text style={styles.thinking}>Thinking…</Text>
-        </View>
-      ) : null}
-      {answer && !ask.isPending ? (
-        <View style={styles.replyRow}>
-          <RekallaAvatar size={40} />
-          <Text style={styles.a}>{answer}</Text>
-        </View>
-      ) : null}
+      {asked ? <Text style={styles.q}>You asked: {asked}</Text> : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   wrap: { gap: a11y.space(3) },
+  greeting: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: a11y.space(2),
+    minHeight: 92,
+  },
   inputRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -119,16 +124,5 @@ const styles = StyleSheet.create({
     paddingVertical: a11y.space(2),
   },
   chipText: { color: colors.label2, fontSize: a11yFont.body - 3 },
-  q: { color: colors.label3, fontSize: a11yFont.body - 2, fontWeight: "600" },
-  replyRow: { flexDirection: "row", alignItems: "flex-start", gap: a11y.space(3) },
-  thinking: { flex: 1, color: colors.label3, fontSize: a11yFont.body, paddingTop: a11y.space(2) },
-  a: {
-    flex: 1,
-    color: colors.label,
-    fontSize: a11yFont.body,
-    lineHeight: a11y.lineHeight(a11yFont.body),
-    backgroundColor: colors.elev1,
-    borderRadius: radius.lg,
-    padding: a11y.space(4),
-  },
+  q: { color: colors.label3, fontSize: a11yFont.body - 3 },
 });

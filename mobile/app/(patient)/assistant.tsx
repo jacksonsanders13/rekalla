@@ -183,9 +183,9 @@ export default function AssistantScreen() {
           turns.map((turn, i) => <TurnBubble key={i} turn={turn} />)
         )}
         {ask.isPending ? (
-          <Text style={styles.thinking} accessibilityLiveRegion="polite">
-            Rekalla is thinking…
-          </Text>
+          <View style={styles.bubbleLine} accessibilityLiveRegion="polite">
+            <RekallaAvatar size={36} pose="think" />
+          </View>
         ) : null}
       </ScrollView>
 

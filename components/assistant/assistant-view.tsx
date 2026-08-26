@@ -316,7 +316,7 @@ function Welcome() {
   const [showHelp, setShowHelp] = useState(false);
   return (
     <div className="flex animate-fade-up flex-col items-center text-center">
-      <RekallaAvatar size={104} />
+      <RekallaAvatar size={104} pose="wave" />
       <h1 className="mt-5 text-4xl font-semibold tracking-tight text-label">How can I help?</h1>
 
       <button
@@ -446,16 +446,7 @@ function ProposeCard({ action }: { action: ProposedAction }) {
 function ThinkingRow() {
   return (
     <div className="flex items-center gap-3">
-      <Avatar />
-      <div className="flex items-center gap-1.5 pt-1" aria-label="Rekalla is thinking">
-        {[0, 1, 2].map((i) => (
-          <span
-            key={i}
-            className="size-2.5 animate-bounce rounded-full bg-label-3"
-            style={{ animationDelay: `${i * 0.15}s` }}
-          />
-        ))}
-      </div>
+      <RekallaAvatar size={40} pose="think" className="shrink-0" />
     </div>
   );
 }
