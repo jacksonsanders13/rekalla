@@ -147,7 +147,7 @@ const TERMS_SECTIONS = [
   },
   {
     heading: "2. Rekalla is not a medical app",
-    body: "Rekalla is a simple reminder and organization app that helps aging adults, and the family members who care for them, keep up with everyday things as memory naturally changes with age. It is not a medical or healthcare app, not a medical device, and is not intended to diagnose, treat, cure, prevent, or monitor any disease or health condition, including any memory-related condition. It does not provide medical advice and does not replace professional care. Always talk to a qualified professional about health decisions, and in an emergency call your local emergency number — do not rely on Rekalla.",
+    body: "Rekalla is a simple reminder and organization app that helps aging adults, and the family members who care for them, keep up with everyday things as memory naturally changes with age. It is not a medical or healthcare app, not a medical device, and is not intended to diagnose, treat, cure, prevent, or monitor any disease or health condition, including any memory-related condition. It does not provide medical advice and does not replace professional care. Always talk to a qualified professional about health decisions, and in an emergency call your local emergency number. Do not rely on Rekalla.",
   },
   {
     heading: "3. Reminders are not guaranteed",
@@ -171,7 +171,7 @@ const TERMS_SECTIONS = [
   },
   {
     heading: "8. Privacy",
-    body: "Our Privacy Policy explains what information we collect, how it is used, how it is stored with our provider Supabase, and your choices — including deleting your account and all its data from Settings. By using Rekalla you agree to the Privacy Policy at rekalla.app/privacy.",
+    body: "Our Privacy Policy explains what information we collect, how it is used, how it is stored with our provider Supabase, and your choices, including deleting your account and all its data from Settings. By using Rekalla you agree to the Privacy Policy at rekalla.app/privacy.",
   },
   {
     heading: "9. Provided \"as is\"",
@@ -179,7 +179,7 @@ const TERMS_SECTIONS = [
   },
   {
     heading: "10. Limitation of liability",
-    body: "To the fullest extent permitted by law, Rekalla LLC and its owners will not be liable for any indirect, incidental, special, or consequential damages, or for any harm, loss, or injury arising from your use of or reliance on Rekalla — including missed or late reminders or loss of data. Some places do not allow certain limitations, so parts of this may not apply to you.",
+    body: "To the fullest extent permitted by law, Rekalla LLC and its owners will not be liable for any indirect, incidental, special, or consequential damages, or for any harm, loss, or injury arising from your use of or reliance on Rekalla, including missed or late reminders or loss of data. Some places do not allow certain limitations, so parts of this may not apply to you.",
   },
   {
     heading: "11. Changes to these terms",

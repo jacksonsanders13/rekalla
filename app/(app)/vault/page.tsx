@@ -11,7 +11,7 @@ export default async function VaultPage() {
     <VaultView
       userId={user.id}
       canManage
-      description="People, doctors, medications, and important details — kept in one place. Add your own, or ask Rekalla to remember something."
+      description="People, doctors, medications, and important details, kept in one place. Add your own, or ask Rekalla to remember something."
     />
   );
 }

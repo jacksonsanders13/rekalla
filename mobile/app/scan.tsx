@@ -43,7 +43,7 @@ export default function ScanScreen() {
       setItems(res.items);
       setPhase("review");
     } catch {
-      setError("I couldn't read that one. Try again with good lighting and the page flat.");
+      setError("I couldn't read that one. Lay the page flat in good light and try again.");
       setPhase("choose");
     }
   }
@@ -87,7 +87,7 @@ export default function ScanScreen() {
         <ScrollView contentContainerStyle={styles.body}>
           <BodyText>
             Take a photo of a paper calendar, an appointment card, or a bill.
-            Rekalla will pull out the dates and remind you.
+            I'll pull out the dates and remind you.
           </BodyText>
           {error ? <Text style={styles.error}>{error}</Text> : null}
           <BigButton label="Take a photo" icon="camera" onPress={() => capture("camera")} />
@@ -108,13 +108,13 @@ export default function ScanScreen() {
           {items.length === 0 ? (
             <>
               <BodyText>
-                I didn't find any dates on that one. You can try another photo.
+                I didn't find any dates on that one. Try another photo.
               </BodyText>
               <BigButton label="Try another photo" icon="camera" onPress={() => setPhase("choose")} />
             </>
           ) : (
             <>
-              <BodyText>Check these over, then add them to your calendar.</BodyText>
+              <BodyText>Check these before I save them.</BodyText>
               {items.map((it, i) => (
                 <View key={i} style={styles.card}>
                   <View style={styles.cardTop}>

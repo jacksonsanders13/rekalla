@@ -13,8 +13,8 @@ import {
 } from "@/hooks/use-scans";
 
 /**
- * Edit one event. Anything Rekalla read off a photo can be corrected here —
- * what it is, which day, what time, and any note — or removed altogether.
+ * Edit one event. Anything Rekalla read off a photo can be corrected here:
+ * what it is, which day, what time, and any note. Or removed altogether.
  */
 export function EventEditor({
   reminder,

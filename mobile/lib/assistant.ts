@@ -1,7 +1,7 @@
 /**
  * Client wrapper for the `assistant` Edge Function.
  *
- * The model API key is NEVER here — this only calls our own Edge Function via
+ * The model API key is NEVER here. This only calls our own Edge Function via
  * supabase.functions.invoke, which forwards the user's JWT. All scoping, tier
  * classification, and escalation happen server-side.
  */

@@ -9,7 +9,7 @@ import { RekallaAvatar } from "./rekalla-avatar";
 
 const EXAMPLES = [
   "What's my next appointment?",
-  "Whose birthday is coming up?",
+  "When is my next bill due?",
   "What's on my calendar this week?",
 ];
 

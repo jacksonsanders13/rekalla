@@ -50,7 +50,7 @@ const CAPABILITIES = [
   { Icon: CalendarDays, text: "Tell you what's on your calendar this week" },
   { Icon: Stethoscope, text: "Tell you when your next appointment is" },
   { Icon: Receipt, text: "Tell you when a bill is due, and how much" },
-  { Icon: ImageIcon, text: "Read a photo out loud — a letter, a card, or a bill" },
+  { Icon: ImageIcon, text: "Read a photo out loud, like a letter or a bill" },
 ];
 
 export function AssistantView({ userId }: { userId: string }) {
@@ -221,7 +221,7 @@ export function AssistantView({ userId }: { userId: string }) {
         <div ref={endRef} />
       </div>
 
-      {/* Composer — sticky above the tab bar */}
+      {/* Composer, sticky above the tab bar */}
       <div className="sticky bottom-[calc(5rem+env(safe-area-inset-bottom))] z-30 -mx-4 px-4">
         <div className="pointer-events-none absolute inset-x-0 -top-10 h-10 bg-gradient-to-t from-base to-transparent" />
         <div className="rounded-[28px] border border-white/10 bg-elev-1/80 p-3 shadow-[0_8px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl">
@@ -332,7 +332,7 @@ function Welcome() {
         open={showHelp}
         onClose={() => setShowHelp(false)}
         title="What Rekalla can do"
-        description="Just ask in your own words — by voice or typing."
+        description="Ask in your own words, by voice or typing."
       >
         <ul className="space-y-4">
           {CAPABILITIES.map(({ Icon, text }) => (

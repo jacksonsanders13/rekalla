@@ -35,8 +35,8 @@ export function HomeView({ userId }: { userId: string }) {
       ) : !upcoming || upcoming.length === 0 ? (
         <div className="rounded-2xl bg-elev-1 p-5">
           <p className="text-xl leading-relaxed text-label-2">
-            Nothing yet. Tap “Scan something” to add your paper calendar,
-            appointments, or bills — Rekalla will remind you.
+            Nothing here yet. Scan a paper calendar, an appointment card, or a
+            bill, and it will show up here.
           </p>
         </div>
       ) : (

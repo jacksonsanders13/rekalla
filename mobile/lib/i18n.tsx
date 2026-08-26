@@ -71,7 +71,7 @@ const en: Dict = {
   "auth.verify.codePlaceholder": "12345678",
   "auth.verify.button": "Verify and continue",
   "auth.verify.junkHint":
-    "Don't see it? Check your junk or spam folder — it often lands there.",
+    "Don't see it? Check your junk or spam folder. It often lands there.",
   "auth.verify.resend": "Send a new code",
   "auth.verify.resendIn": "You can ask for a new code in {seconds}s",
   "auth.verify.resent": "Sent. Check your email again.",
@@ -292,7 +292,7 @@ const en: Dict = {
   "delete.open": "Delete my account",
   "delete.title": "Delete this account?",
   "delete.body":
-    "This permanently erases your account and everything in it — reminders, routine, memory bank, wellness history, and caregiver connections. It cannot be undone.",
+    "This permanently erases your account and everything in it, including your scans and everything on your calendar. It cannot be undone.",
   "delete.confirmPrompt": "To continue, type DELETE below.",
   "delete.placeholder": "Type DELETE",
   "delete.button": "Permanently delete my account",
@@ -312,15 +312,15 @@ const en: Dict = {
   "tour.skip": "Skip",
   "tour.next": "Next",
   "tour.start": "Get started",
-  "tour.p1.title": "Bring your paper life online",
+  "tour.p1.title": "Hi, I'm Rekalla",
   "tour.p1.body":
-    "Take a photo of a paper calendar, an appointment card, or a bill. That's the whole job — no typing.",
-  "tour.p2.title": "Rekalla reads the dates",
+    "Take a photo of a paper calendar, an appointment card, or a bill. I'll do the typing.",
+  "tour.p2.title": "I read the dates",
   "tour.p2.body":
-    "You'll see everything it found before anything is saved. Fix a name or a time if it got one wrong.",
-  "tour.p3.title": "Then it reminds you",
+    "You see everything I found before it's saved. Change anything I got wrong.",
+  "tour.p3.title": "Then I remind you",
   "tour.p3.body":
-    "What you keep goes on your calendar, and your phone lets you know when the day comes. Tap anything to change it later.",
+    "It goes on your calendar, and your phone tells you when the day comes.",
 
   // schedule descriptions
   "sched.everyDay": "Every day at {time}",
@@ -389,7 +389,7 @@ const es: Dict = {
   "auth.verify.codePlaceholder": "12345678",
   "auth.verify.button": "Verificar y continuar",
   "auth.verify.junkHint":
-    "¿No lo ves? Revisa tu carpeta de correo no deseado — suele llegar ahí.",
+    "¿No lo ves? Revisa tu carpeta de correo no deseado. Suele llegar ahí.",
   "auth.verify.resend": "Enviar un código nuevo",
   "auth.verify.resendIn": "Puedes pedir un código nuevo en {seconds}s",
   "auth.verify.resent": "Enviado. Revisa tu correo otra vez.",
@@ -606,7 +606,7 @@ const es: Dict = {
   "delete.open": "Eliminar mi cuenta",
   "delete.title": "¿Eliminar esta cuenta?",
   "delete.body":
-    "Esto borra permanentemente tu cuenta y todo lo que contiene — recordatorios, rutina, recuerdos, historial de bienestar y conexiones con cuidadores. No se puede deshacer.",
+    "Esto borra permanentemente tu cuenta y todo lo que contiene, incluidas tus fotos y todo lo que está en tu calendario. No se puede deshacer.",
   "delete.confirmPrompt": "Para continuar, escribe DELETE abajo.",
   "delete.placeholder": "Escribe DELETE",
   "delete.button": "Eliminar mi cuenta permanentemente",
@@ -625,15 +625,15 @@ const es: Dict = {
   "tour.skip": "Saltar",
   "tour.next": "Siguiente",
   "tour.start": "Empezar",
-  "tour.p1.title": "Tu vida en papel, en el teléfono",
+  "tour.p1.title": "Hola, soy Rekalla",
   "tour.p1.body":
-    "Toma una foto de un calendario de papel, una tarjeta de cita o una factura. Eso es todo — no hay que escribir nada.",
-  "tour.p2.title": "Rekalla lee las fechas",
+    "Toma una foto de un calendario de papel, una tarjeta de cita o una factura. Yo escribo lo demás.",
+  "tour.p2.title": "Leo las fechas",
   "tour.p2.body":
-    "Verás todo lo que encontró antes de guardar nada. Corrige un nombre o una hora si se equivocó.",
-  "tour.p3.title": "Y te lo recuerda",
+    "Ves todo lo que encontré antes de guardarlo. Corrige lo que no esté bien.",
+  "tour.p3.title": "Y te aviso",
   "tour.p3.body":
-    "Lo que guardes aparece en tu calendario, y tu teléfono te avisa cuando llega el día. Toca cualquier cosa para cambiarla después.",
+    "Va a tu calendario, y tu teléfono te avisa cuando llega el día.",
 
   "sched.everyDay": "Todos los días a las {time}",
   "sched.every": "Cada {days} a las {time}",

@@ -47,7 +47,7 @@ export function ScanView({ userId }: { userId: string }) {
       setItems(res.items);
       setPhase("review");
     } catch {
-      setError("I couldn't read that one. Try again with good lighting and the page flat.");
+      setError("I couldn't read that one. Lay the page flat in good light and try again.");
       setPhase("choose");
     }
   }
@@ -120,7 +120,7 @@ export function ScanView({ userId }: { userId: string }) {
             </>
           ) : (
             <>
-              <p className="text-xl text-label-2">Check these over, then add them to your calendar.</p>
+              <p className="text-xl text-label-2">Check these before I save them.</p>
               {items.map((it, i) => (
                 <div key={i} className="space-y-3 rounded-2xl bg-elev-1 p-4">
                   <div className="flex items-center gap-2.5 text-lg font-bold text-label">

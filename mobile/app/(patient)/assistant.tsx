@@ -160,8 +160,7 @@ export default function AssistantScreen() {
           <View style={styles.welcome}>
             <RekallaAvatar size={104} />
             <Text style={styles.welcomeText}>
-              Ask me about anything you've scanned — your appointments, your
-              bills, what's coming up this week.
+              Ask me about anything you've scanned.
             </Text>
             <View style={styles.suggestions}>
               {[

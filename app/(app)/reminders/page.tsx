@@ -12,7 +12,7 @@ export default async function RemindersPage() {
       userId={user.id}
       actorId={user.id}
       canManage
-      description="Check things off as you go. Add anything you want to be reminded about — or just ask Rekalla."
+      description="Check things off as you go. Add anything you want to be reminded about, or ask Rekalla."
     />
   );
 }

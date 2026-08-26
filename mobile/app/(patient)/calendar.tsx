@@ -6,6 +6,7 @@ import { useSession } from "../../lib/session";
 import { colors } from "../../lib/theme";
 import { a11y, a11yFont } from "../../lib/a11y";
 import { BodyText } from "../../components/big-ui";
+import { ListGroup } from "../../components/list-group";
 import { MonthGrid } from "../../components/month-grid";
 import { useReminders, type Reminder } from "../../hooks/scans";
 import { ReminderRow } from "./home";
@@ -44,11 +45,11 @@ export default function CalendarScreen() {
         {dayItems.length === 0 ? (
           <BodyText>Nothing on this day.</BodyText>
         ) : (
-          <View style={{ gap: a11y.space(3) }}>
+          <ListGroup>
             {dayItems.map((r) => (
               <ReminderRow key={r.id} r={r} />
             ))}
-          </View>
+          </ListGroup>
         )}
       </ScrollView>
     </SafeAreaView>
@@ -58,6 +59,6 @@ export default function CalendarScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.base },
   body: { padding: a11y.space(4), gap: a11y.space(3), paddingBottom: a11y.space(10) },
-  title: { color: colors.label, fontSize: a11yFont.title, fontWeight: "700", textAlign: "center" },
-  section: { color: colors.label, fontSize: a11yFont.bodyLg, fontWeight: "700", marginTop: a11y.space(3) },
+  title: { color: colors.label, fontSize: a11yFont.title, fontWeight: "600", textAlign: "center", letterSpacing: -0.5 },
+  section: { color: colors.label, fontSize: a11yFont.bodyLg, fontWeight: "600", marginTop: a11y.space(3) },
 });

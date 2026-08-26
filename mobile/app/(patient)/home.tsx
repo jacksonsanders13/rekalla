@@ -7,6 +7,7 @@ import { useSession } from "../../lib/session";
 import { colors, radius } from "../../lib/theme";
 import { a11y, a11yFont } from "../../lib/a11y";
 import { BodyText } from "../../components/big-ui";
+import { ListGroup } from "../../components/list-group";
 import { AskBox } from "../../components/ask-box";
 import { LogoMark } from "../../components/logo-mark";
 import { useUpcomingReminders, type Reminder } from "../../hooks/scans";
@@ -32,7 +33,7 @@ export default function Home() {
           accessibilityLabel="Scan a paper document"
           style={({ pressed }) => [styles.scan, pressed && { opacity: 0.85 }]}
         >
-          <Ionicons name="camera" size={64} color="#ffffff" />
+          <Ionicons name="camera" size={44} color="#ffffff" />
           <Text style={styles.scanLabel}>Scan something</Text>
           <Text style={styles.scanSub}>A calendar, an appointment card, or a bill</Text>
         </Pressable>
@@ -47,16 +48,16 @@ export default function Home() {
         ) : !upcoming || upcoming.length === 0 ? (
           <View style={styles.empty}>
             <BodyText>
-              Nothing yet. Tap “Scan something” to add your paper calendar,
-              appointments, or bills — Rekalla will remind you.
+              Nothing here yet. Scan a paper calendar, an appointment card, or a
+              bill, and it will show up here.
             </BodyText>
           </View>
         ) : (
-          <View style={{ gap: a11y.space(3) }}>
+          <ListGroup>
             {upcoming.map((r) => (
               <ReminderRow key={r.id} r={r} />
             ))}
-          </View>
+          </ListGroup>
         )}
       </ScrollView>
     </SafeAreaView>
@@ -74,7 +75,7 @@ export function ReminderRow({ r }: { r: Reminder }) {
       accessibilityLabel={`${r.title}, ${formatDay(r.start_date)}, ${time}. Tap to edit`}
       style={({ pressed }) => [styles.row, pressed && { opacity: 0.85 }]}
     >
-      <View style={[styles.rowMark, isToday(r.start_date) && { backgroundColor: colors.blue }]} />
+      <Ionicons name={iconFor(r.category)} size={a11yFont.body} color={colors.label3} />
       <View style={{ flex: 1 }}>
         <Text style={styles.rowTitle}>{r.title}</Text>
         <Text style={styles.rowWhen}>
@@ -82,7 +83,7 @@ export function ReminderRow({ r }: { r: Reminder }) {
           {r.description ? ` · ${r.description}` : ""}
         </Text>
       </View>
-      <Ionicons name={iconFor(r.category)} size={a11yFont.body} color={colors.label3} />
+      {isToday(r.start_date) ? <View style={styles.todayDot} /> : null}
       <Ionicons name="chevron-forward" size={a11yFont.body} color={colors.label4} />
     </Pressable>
   );
@@ -100,14 +101,14 @@ const styles = StyleSheet.create({
   brand: { alignItems: "center", paddingTop: a11y.space(1) },
   scan: {
     backgroundColor: colors.blue,
-    borderRadius: radius.xl,
-    paddingVertical: a11y.space(8),
+    borderRadius: radius.lg,
+    paddingVertical: a11y.space(7),
     paddingHorizontal: a11y.space(4),
     alignItems: "center",
     gap: a11y.space(2),
   },
-  scanLabel: { color: "#ffffff", fontSize: a11yFont.title, fontWeight: "800" },
-  scanSub: { color: "rgba(255,255,255,0.9)", fontSize: a11yFont.body - 2, textAlign: "center" },
+  scanLabel: { color: "#ffffff", fontSize: a11yFont.bodyLg, fontWeight: "600" },
+  scanSub: { color: "rgba(255,255,255,0.85)", fontSize: a11yFont.body - 3, textAlign: "center" },
   ask: {
     flexDirection: "row",
     alignItems: "center",
@@ -118,17 +119,17 @@ const styles = StyleSheet.create({
     backgroundColor: colors.elev1,
   },
   askText: { color: colors.label, fontSize: a11yFont.body, fontWeight: "700" },
-  section: { color: colors.label, fontSize: a11yFont.bodyLg, fontWeight: "700", marginTop: a11y.space(2) },
-  empty: { backgroundColor: colors.elev1, borderRadius: radius.lg, padding: a11y.space(4) },
+  section: { color: colors.label, fontSize: a11yFont.bodyLg, fontWeight: "600", marginTop: a11y.space(2) },
+  empty: { backgroundColor: colors.elev1, borderRadius: radius.md, padding: a11y.space(4) },
   row: {
     flexDirection: "row",
     alignItems: "center",
     gap: a11y.space(3),
-    backgroundColor: colors.elev1,
-    borderRadius: radius.lg,
-    padding: a11y.space(4),
+    paddingHorizontal: a11y.space(4),
+    paddingVertical: a11y.space(4),
+    minHeight: a11y.tapMin,
   },
-  rowMark: { width: 8, height: 44, borderRadius: 4, backgroundColor: colors.elev3 },
-  rowTitle: { color: colors.label, fontSize: a11yFont.body, fontWeight: "700" },
+  todayDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.blue },
+  rowTitle: { color: colors.label, fontSize: a11yFont.body, fontWeight: "600" },
   rowWhen: { color: colors.label3, fontSize: a11yFont.body - 4, marginTop: 2 },
 });

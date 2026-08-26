@@ -1,6 +1,6 @@
 /**
- * Edit one event. Anything Rekalla read off a photo can be corrected here —
- * what it is, which day, what time, and any note — or removed altogether.
+ * Edit one event. Anything Rekalla read off a photo can be corrected here:
+ * what it is, which day, what time, and any note. Or removed altogether.
  * Saving moves the device reminder to match.
  */
 import { useEffect, useState } from "react";
@@ -110,7 +110,7 @@ export default function EditEventScreen() {
       {isLoading ? (
         <View style={styles.body}><BodyText>Loading…</BodyText></View>
       ) : !reminder ? (
-        <View style={styles.body}><BodyText>That event is no longer here.</BodyText></View>
+        <View style={styles.body}><BodyText>That event is gone.</BodyText></View>
       ) : (
         <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
           <BigField label="What is it?" value={title} onChangeText={setTitle} />
