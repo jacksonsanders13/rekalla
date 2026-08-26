@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ArrowUp } from "lucide-react";
 import { useAssistant } from "@/hooks/use-assistant-v2";
-import { speak } from "@/lib/assistant-client";
+import { RekallaAvatar } from "@/components/ui/rekalla-avatar";
 
 const EXAMPLES = [
   "What's my next appointment?",
@@ -28,7 +28,6 @@ export function AskBox() {
       {
         onSuccess: (res) => {
           setAnswer(res.reply);
-          speak(res.reply);
         },
         onError: () => setAnswer("Sorry, I had trouble just now. Please try again."),
       },
@@ -73,9 +72,19 @@ export function AskBox() {
       )}
 
       {asked && <p className="text-base font-semibold text-label-3">{asked}</p>}
-      {ask.isPending && <p className="text-lg italic text-label-3">Thinking…</p>}
-      {answer && (
-        <p className="rounded-2xl bg-elev-1 p-4 text-lg leading-relaxed text-label">{answer}</p>
+      {ask.isPending && (
+        <div className="flex items-start gap-3">
+          <RekallaAvatar size={40} className="shrink-0" />
+          <p className="pt-2 text-lg text-label-3">Thinking…</p>
+        </div>
+      )}
+      {answer && !ask.isPending && (
+        <div className="flex items-start gap-3">
+          <RekallaAvatar size={40} className="shrink-0" />
+          <p className="flex-1 rounded-2xl bg-elev-1 p-4 text-lg leading-relaxed text-label">
+            {answer}
+          </p>
+        </div>
       )}
     </div>
   );

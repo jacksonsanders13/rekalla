@@ -1,12 +1,11 @@
 "use client";
 
 /**
- * Web client for the `assistant` Edge Function + browser speech.
+ * Web client for the `assistant` Edge Function, plus dictation.
  *
- * The model key is NEVER here — we call our own Edge Function via
- * supabase.functions.invoke (forwards the user's JWT). Web gets REAL voice
- * input via the Web Speech API (SpeechRecognition), plus spoken output via
- * SpeechSynthesis.
+ * The model key is NEVER here. We call our own Edge Function via
+ * supabase.functions.invoke, which forwards the user's JWT. Voice input uses
+ * the browser's Web Speech API (SpeechRecognition).
  */
 import { createClient } from "@/lib/supabase/client";
 import type { AssistantRequest, AssistantResponse } from "@/lib/v2-types";
@@ -19,20 +18,6 @@ export async function askAssistant(req: AssistantRequest): Promise<AssistantResp
   if (error) throw error;
   if (!data) throw new Error("empty assistant response");
   return data;
-}
-
-export function speak(text: string) {
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.rate = 0.95;
-  window.speechSynthesis.speak(u);
-}
-
-export function stopSpeaking() {
-  if (typeof window !== "undefined" && "speechSynthesis" in window) {
-    window.speechSynthesis.cancel();
-  }
 }
 
 // Minimal typing for the vendor-prefixed SpeechRecognition API.

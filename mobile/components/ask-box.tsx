@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { colors, radius } from "../lib/theme";
 import { a11y, a11yFont } from "../lib/a11y";
 import { useAssistant } from "../hooks/v2";
-import { speak } from "../lib/assistant";
+import { RekallaAvatar } from "./rekalla-avatar";
 
 const EXAMPLES = [
   "What's my next appointment?",
@@ -30,7 +30,6 @@ export function AskBox() {
       {
         onSuccess: (res) => {
           setAnswer(res.reply);
-          speak(res.reply);
         },
         onError: () => setAnswer("Sorry, I had trouble just now. Please try again."),
       },
@@ -72,8 +71,18 @@ export function AskBox() {
       ) : null}
 
       {asked ? <Text style={styles.q}>{asked}</Text> : null}
-      {ask.isPending ? <Text style={styles.thinking}>Thinking…</Text> : null}
-      {answer ? <Text style={styles.a}>{answer}</Text> : null}
+      {ask.isPending ? (
+        <View style={styles.replyRow}>
+          <RekallaAvatar size={40} />
+          <Text style={styles.thinking}>Thinking…</Text>
+        </View>
+      ) : null}
+      {answer && !ask.isPending ? (
+        <View style={styles.replyRow}>
+          <RekallaAvatar size={40} />
+          <Text style={styles.a}>{answer}</Text>
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -111,8 +120,10 @@ const styles = StyleSheet.create({
   },
   chipText: { color: colors.label2, fontSize: a11yFont.body - 3 },
   q: { color: colors.label3, fontSize: a11yFont.body - 2, fontWeight: "600" },
-  thinking: { color: colors.label3, fontSize: a11yFont.body, fontStyle: "italic" },
+  replyRow: { flexDirection: "row", alignItems: "flex-start", gap: a11y.space(3) },
+  thinking: { flex: 1, color: colors.label3, fontSize: a11yFont.body, paddingTop: a11y.space(2) },
   a: {
+    flex: 1,
     color: colors.label,
     fontSize: a11yFont.body,
     lineHeight: a11y.lineHeight(a11yFont.body),

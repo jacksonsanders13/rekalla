@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import {
   Mic,
   Square,
@@ -25,12 +24,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Dialog } from "@/components/ui/dialog";
-import {
-  isVoiceInputSupported,
-  speak,
-  startDictation,
-  stopSpeaking,
-} from "@/lib/assistant-client";
+import { RekallaAvatar } from "@/components/ui/rekalla-avatar";
+import { isVoiceInputSupported, startDictation } from "@/lib/assistant-client";
 import { useAssistant, useConfirmProposedAction } from "@/hooks/use-assistant-v2";
 import {
   useCreateConversation,
@@ -112,7 +107,6 @@ export function AssistantView({ userId }: { userId: string }) {
       {
         onSuccess: (res) => {
           setTurns((t) => [...t, { role: "rekalla", text: res.reply, meta: res }]);
-          speak(res.reply);
           if (convoId) {
             appendMsg.mutate({ conversationId: convoId, role: "rekalla", content: res.reply, meta: res });
           }
@@ -127,7 +121,6 @@ export function AssistantView({ userId }: { userId: string }) {
   }
 
   function newChat() {
-    stopSpeaking();
     setTurns([]);
     setActiveId(null);
     setInput("");
@@ -137,7 +130,6 @@ export function AssistantView({ userId }: { userId: string }) {
   }
 
   async function openChat(id: string) {
-    stopSpeaking();
     setSidebarOpen(false);
     try {
       const msgs = await loadMessages(id);
@@ -169,7 +161,6 @@ export function AssistantView({ userId }: { userId: string }) {
   }
 
   function toggleMic() {
-    stopSpeaking();
     if (listening) {
       recRef.current?.stop();
       return;
@@ -325,7 +316,8 @@ function Welcome() {
   const [showHelp, setShowHelp] = useState(false);
   return (
     <div className="flex animate-fade-up flex-col items-center text-center">
-      <h1 className="text-4xl font-semibold tracking-tight text-label">How can I help?</h1>
+      <RekallaAvatar size={104} />
+      <h1 className="mt-5 text-4xl font-semibold tracking-tight text-label">How can I help?</h1>
 
       <button
         type="button"
@@ -358,11 +350,7 @@ function Welcome() {
 }
 
 function Avatar() {
-  return (
-    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-elev-1 ring-1 ring-white/10">
-      <Image src="/logo.svg" alt="" width={26} height={26} className="rounded-md" />
-    </div>
-  );
+  return <RekallaAvatar size={40} className="shrink-0" />;
 }
 
 function MessageRow({ turn }: { turn: Turn }) {

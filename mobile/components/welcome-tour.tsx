@@ -1,34 +1,26 @@
 import { useEffect, useState } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSession } from "../lib/session";
 import { useT } from "../lib/i18n";
+import { RekallaAvatar, type AvatarBadge } from "./rekalla-avatar";
 import { colors, font, radius, spacing } from "../lib/theme";
 
 const VERSION = "v3";
 const keyFor = (userId: string) => `rekalla:welcome-seen:${VERSION}:${userId}`;
 
 interface Slide {
-  icon: keyof typeof Ionicons.glyphMap;
+  badge: AvatarBadge;
   titleKey: string;
   bodyKey: string;
 }
 
 /** The v3 loop, in three screens: photograph it, check it, get reminded. */
 const SLIDES: Slide[] = [
-  { icon: "camera-outline", titleKey: "tour.p1.title", bodyKey: "tour.p1.body" },
-  {
-    icon: "sparkles-outline",
-    titleKey: "tour.p2.title",
-    bodyKey: "tour.p2.body",
-  },
-  {
-    icon: "notifications-outline",
-    titleKey: "tour.p3.title",
-    bodyKey: "tour.p3.body",
-  },
+  { badge: "camera", titleKey: "tour.p1.title", bodyKey: "tour.p1.body" },
+  { badge: "calendar", titleKey: "tour.p2.title", bodyKey: "tour.p2.body" },
+  { badge: "bell", titleKey: "tour.p3.title", bodyKey: "tour.p3.body" },
 ];
 
 /**
@@ -86,9 +78,7 @@ export function WelcomeTour({ enabled }: { enabled: boolean }) {
           </Pressable>
 
           <View style={styles.body}>
-            <View style={styles.iconWrap}>
-              <Ionicons name={slide.icon} size={56} color={colors.label} />
-            </View>
+            <RekallaAvatar size={148} badge={slide.badge} />
             <Text style={styles.title}>{t(slide.titleKey)}</Text>
             <Text style={styles.text}>{t(slide.bodyKey)}</Text>
           </View>
@@ -126,14 +116,6 @@ const styles = StyleSheet.create({
   skip: { alignSelf: "flex-end", minHeight: 44, justifyContent: "center", paddingHorizontal: spacing(2) },
   skipText: { color: colors.label3, fontSize: font.base, fontWeight: "600" },
   body: { flex: 1, alignItems: "center", justifyContent: "center", gap: spacing(5) },
-  iconWrap: {
-    width: 112,
-    height: 112,
-    borderRadius: 32,
-    backgroundColor: colors.elev1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   title: {
     color: colors.label,
     fontSize: font.x2,

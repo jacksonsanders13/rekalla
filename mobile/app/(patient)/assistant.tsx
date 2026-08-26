@@ -15,7 +15,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "../../lib/session";
 import { colors, radius } from "../../lib/theme";
 import { a11y, a11yFont } from "../../lib/a11y";
-import { speak, stopSpeaking } from "../../lib/assistant";
 import { useAssistant, useConfirmProposedAction } from "../../hooks/v2";
 import {
   useCreateConversation,
@@ -24,6 +23,7 @@ import {
 } from "../../hooks/chats";
 import { BigButton } from "../../components/big-ui";
 import { ChatHistory } from "../../components/chat-history";
+import { RekallaAvatar } from "../../components/rekalla-avatar";
 import type {
   AssistantResponse,
   EmergencyContact,
@@ -47,6 +47,7 @@ export default function AssistantScreen() {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
   const scroller = useRef<ScrollView>(null);
+  const inputRef = useRef<TextInput>(null);
 
   async function send(text: string) {
     const message = text.trim();
@@ -71,7 +72,6 @@ export default function AssistantScreen() {
       {
         onSuccess: (res) => {
           setTurns((t) => [...t, { role: "rekalla", text: res.reply, meta: res }]);
-          speak(res.reply);
           if (convoId) {
             appendMsg.mutate({ conversationId: convoId, role: "rekalla", content: res.reply, meta: res });
           }
@@ -91,7 +91,6 @@ export default function AssistantScreen() {
   }
 
   function newChat() {
-    stopSpeaking();
     setTurns([]);
     setActiveId(null);
     setInput("");
@@ -99,7 +98,6 @@ export default function AssistantScreen() {
   }
 
   async function openChat(id: string) {
-    stopSpeaking();
     setHistoryOpen(false);
     try {
       const msgs = await loadMessages(id);
@@ -160,6 +158,7 @@ export default function AssistantScreen() {
       >
         {turns.length === 0 ? (
           <View style={styles.welcome}>
+            <RekallaAvatar size={104} />
             <Text style={styles.welcomeText}>
               Ask me about anything you've scanned — your appointments, your
               bills, what's coming up this week.
@@ -194,14 +193,15 @@ export default function AssistantScreen() {
       <View style={styles.composerWrap}>
         <View style={styles.composer}>
           <Pressable
-            onPress={() => stopSpeaking()}
+            onPress={() => inputRef.current?.focus()}
             accessibilityRole="button"
-            accessibilityLabel="Voice input — opens the keyboard so you can dictate"
+            accessibilityLabel="Voice input. Opens the keyboard so you can dictate"
             style={styles.micBtn}
           >
             <Ionicons name="mic-outline" size={24} color={colors.label2} />
           </Pressable>
           <TextInput
+            ref={inputRef}
             style={styles.input}
             value={input}
             onChangeText={setInput}
@@ -235,8 +235,11 @@ function TurnBubble({ turn }: { turn: Turn }) {
   const proposal = turn.meta?.proposed_action;
   return (
     <View style={[styles.bubbleRow, mine ? styles.rowMine : styles.rowTheirs]}>
-      <View style={[styles.bubble, mine ? styles.bubbleMine : styles.bubbleTheirs]}>
-        <Text style={styles.bubbleText}>{turn.text}</Text>
+      <View style={styles.bubbleLine}>
+        {mine ? null : <RekallaAvatar size={36} />}
+        <View style={[styles.bubble, mine ? styles.bubbleMine : styles.bubbleTheirs]}>
+          <Text style={styles.bubbleText}>{turn.text}</Text>
+        </View>
       </View>
       {turn.meta ? <TierUI res={turn.meta} /> : null}
       {proposal && proposal.kind !== "none" ? <ProposeCard action={proposal} /> : null}
@@ -381,7 +384,7 @@ const styles = StyleSheet.create({
   headerBtn: { width: 48, height: 48, alignItems: "center", justifyContent: "center" },
   headerTitle: { color: colors.label, fontSize: a11yFont.bodyLg, fontWeight: "700" },
   thread: { padding: a11y.space(4), gap: a11y.space(3), paddingBottom: a11y.space(6) },
-  welcome: { gap: a11y.space(5), paddingTop: a11y.space(6) },
+  welcome: { gap: a11y.space(5), paddingTop: a11y.space(6), alignItems: "center" },
   welcomeText: {
     color: colors.label2,
     fontSize: a11yFont.body,
@@ -392,6 +395,7 @@ const styles = StyleSheet.create({
   suggestion: { justifyContent: "flex-start" },
   thinking: { color: colors.label3, fontSize: a11yFont.body, fontStyle: "italic" },
   bubbleRow: { gap: a11y.space(2) },
+  bubbleLine: { flexDirection: "row", alignItems: "flex-end", gap: a11y.space(2) },
   rowMine: { alignItems: "flex-end" },
   rowTheirs: { alignItems: "flex-start" },
   bubble: {
