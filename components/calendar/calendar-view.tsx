@@ -37,13 +37,13 @@ export function CalendarView({ userId }: { userId: string }) {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-center text-3xl font-bold text-label">Calendar</h1>
+      <h1 className="text-center text-3xl font-semibold tracking-tight text-label">Calendar</h1>
 
       <div className="flex items-center justify-between">
         <button onClick={() => shift(-1)} aria-label="Previous month" className="flex size-11 items-center justify-center rounded-full text-label hover:bg-white/10">
           <ChevronLeft className="size-7" aria-hidden="true" />
         </button>
-        <span className="text-2xl font-bold text-label">{monthLabel}</span>
+        <span className="text-2xl font-semibold text-label">{monthLabel}</span>
         <button onClick={() => shift(1)} aria-label="Next month" className="flex size-11 items-center justify-center rounded-full text-label hover:bg-white/10">
           <ChevronRight className="size-7" aria-hidden="true" />
         </button>
@@ -51,7 +51,7 @@ export function CalendarView({ userId }: { userId: string }) {
 
       <div className="grid grid-cols-7">
         {WEEKDAYS.map((w, i) => (
-          <span key={i} className="py-1 text-center text-sm font-bold text-label-3">{w}</span>
+          <span key={i} className="py-1 text-center text-sm font-semibold text-label-3">{w}</span>
         ))}
       </div>
 
@@ -70,7 +70,7 @@ export function CalendarView({ userId }: { userId: string }) {
                   aria-label={`${monthLabel} ${day}${has ? ", has items" : ""}`}
                   className={cn(
                     "flex aspect-square flex-col items-center justify-center rounded-xl text-lg text-label",
-                    isSel && "bg-white font-extrabold text-black",
+                    isSel && "bg-white font-semibold text-black",
                     !isSel && dISO === todayISO && "ring-2 ring-accent",
                   )}
                 >
@@ -83,7 +83,7 @@ export function CalendarView({ userId }: { userId: string }) {
         ))}
       </div>
 
-      <h2 className="pt-2 text-2xl font-bold text-label">
+      <h2 className="pt-2 text-2xl font-semibold tracking-tight text-label">
         {selected === todayISO
           ? "Today"
           : new Date(selected).toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}
@@ -91,7 +91,7 @@ export function CalendarView({ userId }: { userId: string }) {
       {dayItems.length === 0 ? (
         <p className="text-xl text-label-3">Nothing on this day.</p>
       ) : (
-        <ul className="space-y-3">
+        <ul className="divide-y divide-white/10 overflow-hidden rounded-2xl bg-elev-1">
           {dayItems.map((r) => (
             <li key={r.id}>
               <ReminderRow r={r} userId={userId} />

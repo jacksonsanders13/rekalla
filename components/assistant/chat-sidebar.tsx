@@ -74,7 +74,7 @@ export function ChatSidebar({
           <button
             type="button"
             onClick={onNewChat}
-            className="flex min-h-[60px] w-full items-center gap-3 rounded-2xl bg-gradient-to-br from-accent to-accent-2 px-5 text-xl font-bold text-white shadow-[0_4px_20px_rgba(139,124,255,0.4)] transition-all hover:brightness-110"
+            className="flex min-h-[60px] w-full items-center gap-3 rounded-2xl bg-accent px-5 text-xl font-bold text-white transition-all hover:brightness-110"
           >
             <SquarePen className="size-6" aria-hidden="true" />
             New chat

@@ -80,7 +80,7 @@ export function SettingsView({
           type="button"
           onClick={save}
           disabled={busy}
-          className="flex min-h-[56px] w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-accent to-accent-2 text-xl font-bold text-white shadow-[0_4px_20px_rgba(139,124,255,0.4)] hover:brightness-110 disabled:opacity-70"
+          className="flex min-h-[56px] w-full items-center justify-center gap-2 rounded-2xl bg-accent text-xl font-bold text-white hover:brightness-110 disabled:opacity-70"
         >
           <Check className="size-6" aria-hidden="true" /> {busy ? "Saving…" : "Save"}
         </button>

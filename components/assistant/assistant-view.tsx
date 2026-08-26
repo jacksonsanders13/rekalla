@@ -224,7 +224,7 @@ export function AssistantView({ userId }: { userId: string }) {
       {/* Composer, sticky above the tab bar */}
       <div className="sticky bottom-[calc(5rem+env(safe-area-inset-bottom))] z-30 -mx-4 px-4">
         <div className="pointer-events-none absolute inset-x-0 -top-10 h-10 bg-gradient-to-t from-base to-transparent" />
-        <div className="rounded-[28px] border border-white/10 bg-elev-1/80 p-3 shadow-[0_8px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl">
+        <div className="rounded-3xl border border-white/10 bg-elev-1/80 p-3 backdrop-blur-xl">
           {image && (
             <div className="mb-3 flex items-center gap-3 px-1">
               <div className="relative">
@@ -299,7 +299,7 @@ export function AssistantView({ userId }: { userId: string }) {
               aria-label="Send"
               className={cn(
                 "flex size-14 items-center justify-center rounded-full transition-all",
-                "bg-gradient-to-br from-accent to-accent-2 text-white shadow-[0_4px_24px_rgba(139,124,255,0.5)] hover:brightness-110",
+                "bg-accent text-white hover:brightness-110",
                 "disabled:from-elev-3 disabled:to-elev-3 disabled:text-label-4 disabled:shadow-none",
               )}
             >
@@ -421,7 +421,7 @@ function ProposeCard({ action }: { action: ProposedAction }) {
           type="button"
           disabled={confirm.isPending}
           onClick={() => confirm.mutate(action, { onSuccess: () => setState("saved") })}
-          className="inline-flex min-h-[56px] items-center gap-2 rounded-2xl bg-gradient-to-br from-accent to-accent-2 px-6 text-lg font-bold text-white shadow-[0_4px_20px_rgba(139,124,255,0.4)] transition-all hover:brightness-110 disabled:opacity-70"
+          className="inline-flex min-h-[56px] items-center gap-2 rounded-2xl bg-accent px-6 text-lg font-bold text-white transition-all hover:brightness-110 disabled:opacity-70"
         >
           {confirm.isPending ? (
             <Loader2 className="size-6 animate-spin" aria-hidden="true" />

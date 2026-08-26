@@ -9,24 +9,24 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Premium near-black surfaces (Linear/Vercel-style), not pure black.
-        base: "#0a0a0c",
+        // iOS dark-mode surfaces, matching the mobile app token for token.
+        base: "#000000",
         elev: {
-          1: "#161619", // cards
-          2: "#212127", // nested / pressed surfaces
-          3: "#2e2e36", // filled-control borders
+          1: "#1c1c1e", // cards
+          2: "#2c2c2e", // nested / pressed surfaces
+          3: "#3a3a3c", // filled-control borders
         },
-        // Text hierarchy on dark.
+        // Text hierarchy on dark (iOS label colours).
         label: {
-          DEFAULT: "#f7f7f8",
-          2: "#c7c7cf",
-          3: "#8a8a94",
-          4: "#5c5c66",
+          DEFAULT: "#ffffff",
+          2: "#d1d1d6",
+          3: "#8e8e93",
+          4: "#636366",
         },
-        // Brand accent — a soft violet→indigo, used for the send button + glow.
+        // Accent: iOS system blue, the same one the mobile app uses.
         accent: {
-          DEFAULT: "#8b7cff",
-          2: "#6a5bff",
+          DEFAULT: "#0a84ff",
+          2: "#0071e3",
         },
         // iOS system tints, dark-mode variants.
         tint: {
@@ -41,13 +41,13 @@ const config: Config = {
         },
       },
       fontFamily: {
-        // Geist (Vercel's typeface) first for a modern, premium feel; falls
-        // back to the platform system stack.
+        // The platform's own typeface first, so an iPhone or a Mac renders
+        // Rekalla in SF the way a native app would.
         sans: [
-          "var(--font-geist-sans)",
           "-apple-system",
           "BlinkMacSystemFont",
           "SF Pro Text",
+          "var(--font-geist-sans)",
           "Segoe UI",
           "Roboto",
           "Helvetica Neue",

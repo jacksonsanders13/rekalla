@@ -33,7 +33,7 @@ export function ProfileView({ userId }: { userId: string }) {
         className="flex flex-col items-center gap-3 rounded-2xl bg-elev-1 p-6"
         aria-label={`Profile ${progress} percent complete`}
       >
-        <span className="text-5xl font-extrabold text-label">{progress}%</span>
+        <span className="text-5xl font-semibold text-label">{progress}%</span>
         <div
           className="h-4 w-full overflow-hidden rounded-full bg-elev-3"
           role="progressbar"

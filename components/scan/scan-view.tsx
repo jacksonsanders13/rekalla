@@ -192,7 +192,7 @@ function BigButton({
       disabled={disabled}
       className={`flex min-h-[60px] w-full items-center justify-center gap-2.5 rounded-2xl px-6 text-xl font-bold transition-all disabled:opacity-70 ${
         primary
-          ? "bg-gradient-to-br from-accent to-accent-2 text-white shadow-[0_4px_20px_rgba(139,124,255,0.4)] hover:brightness-110"
+          ? "bg-accent text-white hover:brightness-110"
           : "bg-elev-2 text-label hover:bg-elev-3"
       }`}
     >
