@@ -4,14 +4,10 @@ import { StatusBar } from "expo-status-bar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   useFonts,
-  Literata_400Regular,
-  Literata_600SemiBold,
-  Literata_700Bold,
-} from "@expo-google-fonts/literata";
-import {
-  BodoniModa_600SemiBold,
-  BodoniModa_700Bold,
-} from "@expo-google-fonts/bodoni-moda";
+  Quicksand_400Regular,
+  Quicksand_600SemiBold,
+  Quicksand_700Bold,
+} from "@expo-google-fonts/quicksand";
 import { SessionProvider } from "../lib/session";
 import { I18nProvider, useT } from "../lib/i18n";
 import { TermsGate } from "../components/terms-gate";
@@ -33,7 +29,7 @@ function AppStack() {
       screenOptions={{
         headerStyle: { backgroundColor: colors.base },
         headerTintColor: colors.label,
-        headerTitleStyle: { fontFamily: fonts.displayBold, fontWeight: "700", fontSize: font.xl },
+        headerTitleStyle: { fontFamily: fonts.bold, fontWeight: "700", fontSize: font.xl },
         contentStyle: { backgroundColor: colors.base },
         headerBackTitle: t("common.back"),
       }}
@@ -55,11 +51,9 @@ function AppStack() {
 export default function RootLayout() {
   const [termsResolved, setTermsResolved] = useState(false);
   const [fontsLoaded] = useFonts({
-    Literata_400Regular,
-    Literata_600SemiBold,
-    Literata_700Bold,
-    BodoniModa_600SemiBold,
-    BodoniModa_700Bold,
+    Quicksand_400Regular,
+    Quicksand_600SemiBold,
+    Quicksand_700Bold,
   });
 
   useEffect(() => {

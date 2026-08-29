@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: a11y.space(4),
     paddingVertical: a11y.space(3),
   },
-  headerTitle: { color: colors.label, fontSize: a11yFont.title, fontFamily: fonts.displayBold, fontWeight: "700", flex: 1 },
+  headerTitle: { color: colors.label, fontSize: a11yFont.title, fontFamily: fonts.bold, fontWeight: "700", flex: 1 },
   body: { padding: a11y.space(4), gap: a11y.space(4), paddingBottom: a11y.space(10) },
   center: { flex: 1, alignItems: "center", justifyContent: "center", gap: a11y.space(4), padding: a11y.space(4) },
   preview: { width: 200, height: 260, borderRadius: radius.lg, resizeMode: "cover" },

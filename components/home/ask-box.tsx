@@ -82,7 +82,7 @@ export function AskBox({ userId }: { userId: string }) {
         {!thinking && <SpeechBubble>{bubble}</SpeechBubble>}
       </div>
 
-      <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-elev-1 py-2 pl-5 pr-2">
+      <div className="flex items-center gap-2 rounded-full border border-white/10 bg-elev-1 py-2 pl-5 pr-2">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}

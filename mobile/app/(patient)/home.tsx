@@ -37,10 +37,7 @@ export default function Home() {
         <AskBox userId={userId} />
 
         {/* What's coming up */}
-        <View style={styles.sectionHead}>
-          <Text style={styles.section}>What's coming up</Text>
-          <View style={styles.rule} />
-        </View>
+        <Text style={styles.section}>What's coming up</Text>
         {isLoading ? (
           <BodyText>Loading…</BodyText>
         ) : !upcoming || upcoming.length === 0 ? (
@@ -104,17 +101,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: a11y.space(2),
   },
-  scanLabel: { color: "#ffffff", fontSize: a11yFont.title, fontFamily: fonts.display, fontWeight: "600", letterSpacing: -0.4 },
+  scanLabel: { color: "#ffffff", fontSize: a11yFont.title, fontFamily: fonts.semibold, fontWeight: "600", letterSpacing: -0.4 },
   scanSub: { color: "rgba(255,255,255,0.85)", fontSize: a11yFont.body - 3, fontFamily: fonts.regular, textAlign: "center" },
-  sectionHead: { marginTop: a11y.space(2), gap: a11y.space(2) },
   section: {
     color: colors.label,
     fontSize: a11yFont.bodyLg,
-    fontFamily: fonts.display,
-    fontWeight: "600",
-    letterSpacing: -0.4,
+    fontFamily: fonts.bold,
+    fontWeight: "700",
+    marginTop: a11y.space(3),
   },
-  rule: { height: StyleSheet.hairlineWidth, backgroundColor: "rgba(255,255,255,0.18)" },
   empty: { backgroundColor: colors.elev1, borderRadius: radius.md, padding: a11y.space(4) },
   row: {
     flexDirection: "row",

@@ -15,27 +15,27 @@ export function HomeView({ userId }: { userId: string }) {
     <div className="space-y-6">
       <Link
         href="/scan"
-        className="flex flex-col items-center gap-2 rounded-2xl bg-accent px-6 py-8 text-white transition-colors hover:bg-accent-2"
+        className="flex flex-col items-center gap-2 rounded-3xl bg-accent px-6 py-8 text-white transition-colors hover:bg-accent-2"
       >
         <Camera className="size-11" aria-hidden="true" />
-        <span className="font-display text-3xl font-semibold tracking-tight">Scan something</span>
+        <span className="text-3xl font-bold">Scan something</span>
         <span className="text-base text-white/85">A calendar, an appointment card, or a bill</span>
       </Link>
 
       <AskBox userId={userId} />
 
-      <h2 className="border-b border-white/15 pb-2 pt-2 font-display text-2xl font-semibold tracking-tight text-label">What&apos;s coming up</h2>
+      <h2 className="pt-3 text-2xl font-bold text-label">What&apos;s coming up</h2>
       {isLoading ? (
         <p className="text-xl text-label-3">Loading…</p>
       ) : !upcoming || upcoming.length === 0 ? (
-        <div className="rounded-2xl bg-elev-1 p-5">
+        <div className="rounded-3xl bg-elev-1 p-5">
           <p className="text-xl leading-relaxed text-label-2">
             Nothing here yet. Scan a paper calendar, an appointment card, or a
             bill, and it will show up here.
           </p>
         </div>
       ) : (
-        <ul className="divide-y divide-white/10 overflow-hidden rounded-2xl bg-elev-1">
+        <ul className="divide-y divide-white/10 overflow-hidden rounded-3xl bg-elev-1">
           {upcoming.map((r) => (
             <li key={r.id}>
               <ReminderRow r={r} userId={userId} />

@@ -141,7 +141,7 @@ export function SpeechBubble({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative flex-1">
       <span className="absolute -left-1.5 top-1/2 size-3 -translate-y-1/2 rotate-45 bg-elev-1" />
-      <div className="relative rounded-2xl bg-elev-1 px-4 py-3 text-lg leading-relaxed text-label">
+      <div className="relative rounded-3xl bg-elev-1 px-4 py-3 text-lg leading-relaxed text-label">
         {children}
       </div>
     </div>
