@@ -327,7 +327,7 @@ function Welcome() {
   const [showHelp, setShowHelp] = useState(false);
   return (
     <div className="flex animate-fade-up flex-col items-center text-center">
-      <RekallaAvatar size={104} pose="wave" />
+      <RekallaAvatar size={104} />
       <h1 className="mt-5 text-4xl font-semibold tracking-tight text-label">How can I help?</h1>
 
       <button

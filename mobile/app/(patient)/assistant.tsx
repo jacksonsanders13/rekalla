@@ -168,7 +168,7 @@ export default function AssistantScreen() {
       >
         {turns.length === 0 ? (
           <View style={styles.welcome}>
-            <RekallaAvatar size={104} pose="wave" />
+            <RekallaAvatar size={104} />
             <Text style={styles.welcomeText}>
               Ask me about anything you've scanned.
             </Text>

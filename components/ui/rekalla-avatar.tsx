@@ -2,7 +2,11 @@
  * Rekalla himself: a pink cartoon brain. He greets you on Home and stands next
  * to every answer he gives.
  *
- * `pose` changes what he's doing (waving hello, thinking about your question).
+ * He is built as one half, drawn twice. Every fold is defined for his left
+ * side only; his right side is that same group under a mirror transform, so
+ * the two halves cannot drift apart. The outline is mirror-exact the same way:
+ * each control point on the right is 100 minus its partner on the left.
+ *
  * Geometry is shared with the mobile version in
  * mobile/components/rekalla-avatar.tsx. Keep the two in step.
  */
@@ -13,11 +17,21 @@ const CLOUD = "#fdeef4"; // the thought bubble, a near-white pink
 const BLUE = "#0a84ff";
 
 export type AvatarBadge = "camera" | "calendar" | "bell";
-export type AvatarPose = "idle" | "wave" | "think";
+export type AvatarPose = "idle" | "think";
 
-/** The lobed outline: ten bumps, mirrored exactly about the centre line. */
+/** Ten lobes, mirrored about x = 50. */
 const OUTLINE =
   "M50 10C62 6 74 10 76 20C88 18 94 28 88 38C96 44 96 56 86 60C92 70 84 80 73 76C70 86 60 90 50 86C40 90 30 86 27 76C16 80 8 70 14 60C4 56 4 44 12 38C6 28 12 18 24 20C26 10 38 6 50 10Z";
+
+/** The folds on his left side. His right side is this list, mirrored. */
+const LEFT_FOLDS = [
+  "M32 26C26 30 28 36 22 40",
+  "M14 52C22 50 24 56 20 62",
+  "M30 74C34 70 30 66 34 62",
+];
+
+/** Reflects the left half onto the right. */
+const MIRROR = "translate(100, 0) scale(-1, 1)";
 
 export function RekallaAvatar({
   size = 96,
@@ -44,40 +58,21 @@ export function RekallaAvatar({
       aria-label={thinking ? "Rekalla is thinking" : "Rekalla"}
       className={className}
     >
-      {/* Arms sit behind the head. The resting one keeps him balanced while
-          the other is up, so the silhouette never reads as lopsided. */}
-      {pose === "wave" && (
-        <g>
-          <path
-            d="M16 62C9 66 6 74 8 80"
-            stroke={BODY}
-            strokeWidth={8}
-            strokeLinecap="round"
-            fill="none"
-          />
-          <circle cx={8} cy={84} r={6.5} fill={BODY} />
-          <path
-            d="M84 62C91 58 94 48 92 41"
-            stroke={BODY}
-            strokeWidth={8}
-            strokeLinecap="round"
-            fill="none"
-          />
-          <circle cx={92} cy={37} r={6.5} fill={BODY} />
-        </g>
-      )}
-
       <path d={OUTLINE} fill={BODY} />
 
+      {/* Folds: his left side, then the same group mirrored onto his right */}
       <g stroke={FOLD} strokeWidth={3} strokeLinecap="round" fill="none">
-        <path d="M50 14V36" />
-        <path d="M32 26C26 30 28 36 22 40" />
-        <path d="M68 26C74 30 72 36 78 40" />
-        <path d="M14 52C22 50 24 56 20 62" />
-        <path d="M86 52C78 50 76 56 80 62" />
-        <path d="M30 74C34 70 30 66 34 62" />
-        <path d="M70 74C66 70 70 66 66 62" />
+        {LEFT_FOLDS.map((d) => (
+          <path key={d} d={d} />
+        ))}
       </g>
+      <g stroke={FOLD} strokeWidth={3} strokeLinecap="round" fill="none" transform={MIRROR}>
+        {LEFT_FOLDS.map((d) => (
+          <path key={d} d={d} />
+        ))}
+      </g>
+      {/* The one fold that sits on the centre line */}
+      <path d="M50 14V36" stroke={FOLD} strokeWidth={3} strokeLinecap="round" fill="none" />
 
       <circle cx={40 + eyeX} cy={eyeY} r={4.5} fill={INK} />
       <circle cx={60 + eyeX} cy={eyeY} r={4.5} fill={INK} />

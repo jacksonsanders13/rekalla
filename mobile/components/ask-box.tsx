@@ -72,15 +72,15 @@ export function AskBox({ userId }: { userId: string }) {
     setHistoryOpen(false);
   }
 
-  // He waves while he waits on you, thinks while he waits on the model, then
-  // hands the answer back in the bubble.
+  // He waits on you, thinks while he waits on the model, then hands the
+  // answer back in the bubble.
   const thinking = ask.isPending;
   const bubble = answer ?? "What can I do for you today?";
 
   return (
     <View style={styles.wrap}>
       <View style={styles.greeting}>
-        <RekallaAvatar size={84} pose={thinking ? "think" : "wave"} />
+        <RekallaAvatar size={84} pose={thinking ? "think" : "idle"} />
         {thinking ? null : <SpeechBubble>{bubble}</SpeechBubble>}
       </View>
 
