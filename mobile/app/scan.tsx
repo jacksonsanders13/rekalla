@@ -8,7 +8,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "../lib/session";
-import { colors, radius } from "../lib/theme";
+import { colors, radius, fonts } from "../lib/theme";
 import { a11y, a11yFont } from "../lib/a11y";
 import { BigButton, BigField, BodyText } from "../components/big-ui";
 import { takePhoto, pickPhoto, type PickedPhoto } from "../lib/photos";
@@ -161,12 +161,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: a11y.space(4),
     paddingVertical: a11y.space(3),
   },
-  headerTitle: { color: colors.label, fontSize: a11yFont.title, fontWeight: "700", flex: 1 },
+  headerTitle: { color: colors.label, fontSize: a11yFont.title, fontFamily: fonts.bold, fontWeight: "700", flex: 1 },
   body: { padding: a11y.space(4), gap: a11y.space(4), paddingBottom: a11y.space(10) },
   center: { flex: 1, alignItems: "center", justifyContent: "center", gap: a11y.space(4), padding: a11y.space(4) },
   preview: { width: 200, height: 260, borderRadius: radius.lg, resizeMode: "cover" },
-  reading: { color: colors.label2, fontSize: a11yFont.bodyLg, fontWeight: "600" },
-  error: { color: colors.red, fontSize: a11yFont.body, fontWeight: "600" },
+  reading: { color: colors.label2, fontSize: a11yFont.bodyLg, fontFamily: fonts.semibold, fontWeight: "600" },
+  error: { color: colors.red, fontSize: a11yFont.body, fontFamily: fonts.semibold, fontWeight: "600" },
   card: {
     backgroundColor: colors.elev1,
     borderRadius: radius.lg,
@@ -174,6 +174,6 @@ const styles = StyleSheet.create({
     gap: a11y.space(3),
   },
   cardTop: { flexDirection: "row", alignItems: "center", gap: a11y.space(2) },
-  cardWhen: { color: colors.label, fontSize: a11yFont.body, fontWeight: "700" },
+  cardWhen: { color: colors.label, fontSize: a11yFont.body, fontFamily: fonts.bold, fontWeight: "700" },
   cardMeta: { color: colors.label2, fontSize: a11yFont.body - 2 },
 });

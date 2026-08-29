@@ -9,7 +9,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "../../lib/session";
-import { colors, radius } from "../../lib/theme";
+import { colors, radius, fonts } from "../../lib/theme";
 import { a11y, a11yFont } from "../../lib/a11y";
 import { BigButton, BigField, BodyText } from "../../components/big-ui";
 import { MonthGrid } from "../../components/month-grid";
@@ -231,10 +231,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: a11y.space(4),
     paddingVertical: a11y.space(3),
   },
-  headerTitle: { color: colors.label, fontSize: a11yFont.title, fontWeight: "700", flex: 1 },
+  headerTitle: { color: colors.label, fontSize: a11yFont.title, fontFamily: fonts.bold, fontWeight: "700", flex: 1 },
   body: { padding: a11y.space(4), gap: a11y.space(4), paddingBottom: a11y.space(10) },
   block: { gap: a11y.space(2) },
-  blockLabel: { color: colors.label2, fontSize: a11yFont.body, fontWeight: "700" },
+  blockLabel: { color: colors.label2, fontSize: a11yFont.body, fontFamily: fonts.bold, fontWeight: "700" },
   dateRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     paddingHorizontal: a11y.space(4),
   },
-  dateText: { flex: 1, color: colors.label, fontSize: a11yFont.body, fontWeight: "700" },
+  dateText: { flex: 1, color: colors.label, fontSize: a11yFont.body, fontFamily: fonts.bold, fontWeight: "700" },
   toggleRow: { flexDirection: "row", gap: a11y.space(3) },
   toggle: {
     flex: 1,
@@ -255,11 +255,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   toggleActive: { backgroundColor: colors.label },
-  toggleText: { color: colors.label, fontSize: a11yFont.body, fontWeight: "700" },
+  toggleText: { color: colors.label, fontSize: a11yFont.body, fontFamily: fonts.bold, fontWeight: "700" },
   toggleTextActive: { color: "#000000" },
   timeText: {
     color: colors.label,
-    fontSize: a11yFont.hero,
+    fontSize: a11yFont.hero, fontFamily: fonts.bold,
     fontWeight: "800",
     textAlign: "center",
     paddingVertical: a11y.space(2),
@@ -274,5 +274,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  error: { color: colors.red, fontSize: a11yFont.body, fontWeight: "600" },
+  error: { color: colors.red, fontSize: a11yFont.body, fontFamily: fonts.semibold, fontWeight: "600" },
 });

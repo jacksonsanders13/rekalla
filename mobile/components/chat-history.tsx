@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { colors, radius } from "../lib/theme";
+import { colors, radius, fonts } from "../lib/theme";
 import { a11y, a11yFont } from "../lib/a11y";
 import { BigButton } from "./big-ui";
 import {
@@ -159,10 +159,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "rgba(255,255,255,0.12)",
   },
-  title: { color: colors.label, fontSize: a11yFont.title, fontWeight: "700" },
+  title: { color: colors.label, fontSize: a11yFont.title, fontFamily: fonts.bold, fontWeight: "700" },
   close: { width: 44, height: 44, alignItems: "center", justifyContent: "center" },
   list: { padding: a11y.space(3), gap: a11y.space(2) },
-  empty: { color: colors.label3, fontSize: a11yFont.body, padding: a11y.space(3) },
+  empty: { color: colors.label3, fontSize: a11yFont.body, fontFamily: fonts.regular, padding: a11y.space(3) },
   row: {
     flexDirection: "row",
     alignItems: "center",
@@ -172,10 +172,10 @@ const styles = StyleSheet.create({
   rowActive: { backgroundColor: colors.elev2 },
   rowConfirm: { backgroundColor: colors.elev2, padding: a11y.space(3), gap: a11y.space(3), flexWrap: "wrap" },
   rowMain: { flex: 1, flexDirection: "row", alignItems: "center", gap: a11y.space(3), padding: a11y.space(3), minHeight: 60 },
-  rowTitle: { color: colors.label, fontSize: a11yFont.body, fontWeight: "600" },
-  rowDate: { color: colors.label3, fontSize: a11yFont.body - 6, marginTop: 2 },
+  rowTitle: { color: colors.label, fontSize: a11yFont.body, fontFamily: fonts.semibold, fontWeight: "600" },
+  rowDate: { color: colors.label3, fontSize: a11yFont.body - 6, fontFamily: fonts.regular, marginTop: 2 },
   trash: { width: 48, height: 48, alignItems: "center", justifyContent: "center" },
   confirmButtons: { flexDirection: "row", gap: a11y.space(2) },
   smallBtn: { minHeight: 44, borderRadius: radius.md, paddingHorizontal: a11y.space(4), alignItems: "center", justifyContent: "center" },
-  smallBtnText: { color: colors.label, fontSize: a11yFont.body - 2, fontWeight: "700" },
+  smallBtnText: { color: colors.label, fontSize: a11yFont.body - 2, fontFamily: fonts.bold, fontWeight: "700" },
 });

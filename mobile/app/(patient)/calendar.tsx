@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSession } from "../../lib/session";
-import { colors } from "../../lib/theme";
+import { colors, fonts } from "../../lib/theme";
 import { a11y, a11yFont } from "../../lib/a11y";
 import { BodyText } from "../../components/big-ui";
 import { ListGroup } from "../../components/list-group";
@@ -59,6 +59,6 @@ export default function CalendarScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.base },
   body: { padding: a11y.space(4), gap: a11y.space(3), paddingBottom: a11y.space(10) },
-  title: { color: colors.label, fontSize: a11yFont.title, fontWeight: "600", textAlign: "center", letterSpacing: -0.5 },
-  section: { color: colors.label, fontSize: a11yFont.bodyLg, fontWeight: "600", marginTop: a11y.space(3) },
+  title: { color: colors.label, fontSize: a11yFont.title, fontFamily: fonts.semibold, fontWeight: "600", textAlign: "center", letterSpacing: -0.5 },
+  section: { color: colors.label, fontSize: a11yFont.bodyLg, fontFamily: fonts.semibold, fontWeight: "600", marginTop: a11y.space(3) },
 });

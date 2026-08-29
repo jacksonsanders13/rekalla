@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useI18n, type Lang } from "../lib/i18n";
-import { colors, font, radius, spacing } from "../lib/theme";
+import { colors, font, radius, spacing, fonts } from "../lib/theme";
 import { Card } from "./ui";
 
 const OPTIONS: { value: Lang; labelKey: string }[] = [
@@ -37,7 +37,7 @@ export function LanguagePicker() {
 }
 
 const styles = StyleSheet.create({
-  label: { color: colors.label2, fontSize: font.base, fontWeight: "600" },
+  label: { color: colors.label2, fontSize: font.base, fontFamily: fonts.semibold, fontWeight: "600" },
   row: { flexDirection: "row", gap: spacing(2) },
   pill: {
     flex: 1,
@@ -48,6 +48,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   pillActive: { backgroundColor: colors.label },
-  pillText: { color: colors.label2, fontSize: font.base, fontWeight: "700" },
+  pillText: { color: colors.label2, fontSize: font.base, fontFamily: fonts.bold, fontWeight: "700" },
   pillTextActive: { color: "#000000" },
 });

@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "../../lib/session";
-import { colors, radius } from "../../lib/theme";
+import { colors, radius, fonts } from "../../lib/theme";
 import { a11y, a11yFont } from "../../lib/a11y";
 import { BodyText } from "../../components/big-ui";
 import { ListGroup } from "../../components/list-group";
@@ -101,9 +101,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: a11y.space(2),
   },
-  scanLabel: { color: "#ffffff", fontSize: a11yFont.bodyLg, fontWeight: "600" },
-  scanSub: { color: "rgba(255,255,255,0.85)", fontSize: a11yFont.body - 3, textAlign: "center" },
-  section: { color: colors.label, fontSize: a11yFont.bodyLg, fontWeight: "600", marginTop: a11y.space(2) },
+  scanLabel: { color: "#ffffff", fontSize: a11yFont.bodyLg, fontFamily: fonts.semibold, fontWeight: "600" },
+  scanSub: { color: "rgba(255,255,255,0.85)", fontSize: a11yFont.body - 3, fontFamily: fonts.regular, textAlign: "center" },
+  section: { color: colors.label, fontSize: a11yFont.bodyLg, fontFamily: fonts.semibold, fontWeight: "600", marginTop: a11y.space(2) },
   empty: { backgroundColor: colors.elev1, borderRadius: radius.md, padding: a11y.space(4) },
   row: {
     flexDirection: "row",
@@ -114,6 +114,6 @@ const styles = StyleSheet.create({
     minHeight: a11y.tapMin,
   },
   todayDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.blue },
-  rowTitle: { color: colors.label, fontSize: a11yFont.body, fontWeight: "600" },
-  rowWhen: { color: colors.label3, fontSize: a11yFont.body - 4, marginTop: 2 },
+  rowTitle: { color: colors.label, fontSize: a11yFont.body, fontFamily: fonts.semibold, fontWeight: "600" },
+  rowWhen: { color: colors.label3, fontSize: a11yFont.body - 4, fontFamily: fonts.regular, marginTop: 2 },
 });

@@ -16,7 +16,7 @@ import {
   type ViewStyle,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { colors, radius } from "../lib/theme";
+import { colors, radius, fonts } from "../lib/theme";
 import { a11y, a11yFont, TAP_MIN } from "../lib/a11y";
 
 export function BodyText({ children, style }: { children: ReactNode; style?: object }) {
@@ -115,8 +115,8 @@ export function MicButton({
 }
 
 const styles = StyleSheet.create({
-  body: { color: colors.label, fontSize: a11yFont.body, lineHeight: a11y.lineHeight(a11yFont.body) },
-  title: { color: colors.label, fontSize: a11yFont.title, fontWeight: "700" },
+  body: { color: colors.label, fontSize: a11yFont.body, fontFamily: fonts.regular, lineHeight: a11y.lineHeight(a11yFont.body) },
+  title: { color: colors.label, fontSize: a11yFont.title, fontFamily: fonts.bold, fontWeight: "700" },
   button: {
     minHeight: TAP_MIN,
     minWidth: TAP_MIN,
@@ -129,16 +129,16 @@ const styles = StyleSheet.create({
     paddingVertical: a11y.space(4),
   },
   emergencyButton: { minHeight: 84 }, // 911 must be unmissable
-  buttonLabel: { fontSize: a11yFont.button, fontWeight: "700" },
-  fieldLabel: { color: colors.label, fontSize: a11yFont.body, fontWeight: "700" },
-  hint: { color: colors.label3, fontSize: a11yFont.body - 2, lineHeight: a11y.lineHeight(a11yFont.body - 2) },
+  buttonLabel: { fontSize: a11yFont.button, fontFamily: fonts.bold, fontWeight: "700" },
+  fieldLabel: { color: colors.label, fontSize: a11yFont.body, fontFamily: fonts.bold, fontWeight: "700" },
+  hint: { color: colors.label3, fontSize: a11yFont.body - 2, fontFamily: fonts.regular, lineHeight: a11y.lineHeight(a11yFont.body - 2) },
   input: {
     minHeight: TAP_MIN,
     borderRadius: radius.md,
     backgroundColor: colors.elev1,
     color: colors.label,
     paddingHorizontal: a11y.space(4),
-    fontSize: a11yFont.body,
+    fontSize: a11yFont.body, fontFamily: fonts.regular,
   },
   inputMultiline: { minHeight: 120, paddingTop: a11y.space(3), textAlignVertical: "top" },
   mic: {

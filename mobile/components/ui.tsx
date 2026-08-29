@@ -12,7 +12,7 @@ import {
   type ViewStyle,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { colors, font, radius, spacing } from "../lib/theme";
+import { colors, font, radius, spacing, fonts } from "../lib/theme";
 
 /** Full-screen dark scroll container with safe-area padding. */
 export function Screen({
@@ -137,14 +137,14 @@ const styles = StyleSheet.create({
   screenContent: { padding: spacing(4), paddingBottom: spacing(10), gap: spacing(4) },
   title: {
     color: colors.label,
-    fontSize: font.x3,
+    fontSize: font.x3, fontFamily: fonts.bold,
     fontWeight: "700",
     letterSpacing: -0.5,
   },
-  subtitle: { color: colors.label3, fontSize: font.base, lineHeight: 24 },
+  subtitle: { color: colors.label3, fontSize: font.base, fontFamily: fonts.regular, lineHeight: 24 },
   sectionTitle: {
     color: colors.label,
-    fontSize: font.xl,
+    fontSize: font.xl, fontFamily: fonts.bold,
     fontWeight: "700",
     marginTop: spacing(2),
   },
@@ -161,16 +161,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: spacing(5),
   },
-  buttonLabel: { fontSize: font.base, fontWeight: "700" },
-  fieldLabel: { color: colors.label2, fontSize: font.base, fontWeight: "600" },
+  buttonLabel: { fontSize: font.base, fontFamily: fonts.bold, fontWeight: "700" },
+  fieldLabel: { color: colors.label2, fontSize: font.base, fontFamily: fonts.semibold, fontWeight: "600" },
   input: {
     minHeight: 52,
     borderRadius: radius.md,
     backgroundColor: colors.elev1,
     color: colors.label,
     paddingHorizontal: spacing(4),
-    fontSize: font.base,
+    fontSize: font.base, fontFamily: fonts.regular,
   },
-  emptyNote: { color: colors.label3, fontSize: font.base, lineHeight: 24 },
+  emptyNote: { color: colors.label3, fontSize: font.base, fontFamily: fonts.regular, lineHeight: 24 },
   loading: { flex: 1, alignItems: "center", justifyContent: "center", paddingVertical: 60 },
 });

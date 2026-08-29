@@ -2,7 +2,7 @@ import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useT } from "../lib/i18n";
 import { Card } from "./ui";
-import { colors, font, spacing } from "../lib/theme";
+import { colors, font, spacing, fonts } from "../lib/theme";
 
 const TERMS_URL = "https://rekalla.app/terms";
 const PRIVACY_URL = "https://rekalla.app/privacy";
@@ -41,6 +41,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: spacing(2),
   },
-  label: { color: colors.label, fontSize: font.base, fontWeight: "600" },
+  label: { color: colors.label, fontSize: font.base, fontFamily: fonts.semibold, fontWeight: "600" },
   divider: { height: 1, backgroundColor: colors.elev3 },
 });

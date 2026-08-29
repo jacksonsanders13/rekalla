@@ -39,3 +39,14 @@ export const font = {
 } as const;
 
 export const spacing = (n: number) => n * 4;
+
+/**
+ * Nunito is the brand face: rounded enough to sit beside the mascot, with a
+ * large x-height that stays legible at the sizes this app uses. React Native
+ * picks a face by exact family name, so the weight lives in the name.
+ */
+export const fonts = {
+  regular: "Nunito_400Regular",
+  semibold: "Nunito_600SemiBold",
+  bold: "Nunito_700Bold",
+} as const;

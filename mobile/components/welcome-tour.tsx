@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSession } from "../lib/session";
 import { useT } from "../lib/i18n";
 import { RekallaAvatar, type AvatarBadge } from "./rekalla-avatar";
-import { colors, font, radius, spacing } from "../lib/theme";
+import { colors, font, radius, spacing, fonts } from "../lib/theme";
 
 const VERSION = "v3";
 const keyFor = (userId: string) => `rekalla:welcome-seen:${VERSION}:${userId}`;
@@ -114,18 +114,18 @@ export function WelcomeTour({ enabled }: { enabled: boolean }) {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.base, padding: spacing(6) },
   skip: { alignSelf: "flex-end", minHeight: 44, justifyContent: "center", paddingHorizontal: spacing(2) },
-  skipText: { color: colors.label3, fontSize: font.base, fontWeight: "600" },
+  skipText: { color: colors.label3, fontSize: font.base, fontFamily: fonts.semibold, fontWeight: "600" },
   body: { flex: 1, alignItems: "center", justifyContent: "center", gap: spacing(5) },
   title: {
     color: colors.label,
-    fontSize: font.x2,
+    fontSize: font.x2, fontFamily: fonts.bold,
     fontWeight: "700",
     textAlign: "center",
     letterSpacing: -0.5,
   },
   text: {
     color: colors.label3,
-    fontSize: font.lg,
+    fontSize: font.lg, fontFamily: fonts.regular,
     lineHeight: 27,
     textAlign: "center",
     maxWidth: 340,
@@ -146,5 +146,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  buttonText: { color: "#000000", fontSize: font.base, fontWeight: "700" },
+  buttonText: { color: "#000000", fontSize: font.base, fontFamily: fonts.bold, fontWeight: "700" },
 });

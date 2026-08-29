@@ -3,7 +3,7 @@ import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { supabase } from "../../lib/supabase";
 import { useT } from "../../lib/i18n";
-import { colors, font, spacing } from "../../lib/theme";
+import { colors, font, spacing, fonts } from "../../lib/theme";
 import { isInternalAuthError } from "../../lib/utils";
 import { Screen, Card, Button, Field, Title, Subtitle } from "../../components/ui";
 
@@ -156,15 +156,15 @@ export default function Verify() {
 const styles = StyleSheet.create({
   logoWrap: { alignItems: "center", gap: spacing(3), marginVertical: spacing(4) },
   logo: { width: 84, height: 84, borderRadius: 20 },
-  wordmark: { color: colors.label, fontSize: font.x2, fontWeight: "700" },
-  error: { color: colors.red, fontSize: font.base, fontWeight: "600" },
-  notice: { color: colors.green, fontSize: font.base, fontWeight: "600" },
+  wordmark: { color: colors.label, fontSize: font.x2, fontFamily: fonts.bold, fontWeight: "700" },
+  error: { color: colors.red, fontSize: font.base, fontFamily: fonts.semibold, fontWeight: "600" },
+  notice: { color: colors.green, fontSize: font.base, fontFamily: fonts.semibold, fontWeight: "600" },
   // Only the overrides — `Field` merges these over its base input style, which
   // is what supplies the white text, background, height and padding.
-  codeInput: { fontSize: font.x2, letterSpacing: 6, textAlign: "center" },
+  codeInput: { fontSize: font.x2, fontFamily: fonts.regular, letterSpacing: 6, textAlign: "center" },
   junkHint: {
     color: colors.label3,
-    fontSize: font.sm,
+    fontSize: font.sm, fontFamily: fonts.regular,
     lineHeight: 21,
     textAlign: "center",
   },

@@ -2,12 +2,18 @@ import { useEffect, useState } from "react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  useFonts,
+  Nunito_400Regular,
+  Nunito_600SemiBold,
+  Nunito_700Bold,
+} from "@expo-google-fonts/nunito";
 import { SessionProvider } from "../lib/session";
 import { I18nProvider, useT } from "../lib/i18n";
 import { TermsGate } from "../components/terms-gate";
 import { WelcomeTour } from "../components/welcome-tour";
 import { configureNotifications } from "../lib/notifications";
-import { colors, font } from "../lib/theme";
+import { colors, font, fonts } from "../lib/theme";
 
 /**
  * Lives inside I18nProvider so the back-button label can be translated.
@@ -23,7 +29,7 @@ function AppStack() {
       screenOptions={{
         headerStyle: { backgroundColor: colors.base },
         headerTintColor: colors.label,
-        headerTitleStyle: { fontWeight: "700", fontSize: font.xl },
+        headerTitleStyle: { fontFamily: fonts.bold, fontWeight: "700", fontSize: font.xl },
         contentStyle: { backgroundColor: colors.base },
         headerBackTitle: t("common.back"),
       }}
@@ -44,6 +50,11 @@ function AppStack() {
 
 export default function RootLayout() {
   const [termsResolved, setTermsResolved] = useState(false);
+  const [fontsLoaded] = useFonts({
+    Nunito_400Regular,
+    Nunito_600SemiBold,
+    Nunito_700Bold,
+  });
 
   useEffect(() => {
     configureNotifications();
@@ -55,6 +66,10 @@ export default function RootLayout() {
         defaultOptions: { queries: { staleTime: 30_000, retry: 1 } },
       }),
   );
+
+  // Hold the first frame until Nunito is ready, so nothing renders in the
+  // system face and then jumps.
+  if (!fontsLoaded) return null;
 
   return (
     <QueryClientProvider client={queryClient}>

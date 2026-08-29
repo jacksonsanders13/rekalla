@@ -6,7 +6,7 @@
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { colors, radius } from "../lib/theme";
+import { colors, radius, fonts } from "../lib/theme";
 import { a11y, a11yFont } from "../lib/a11y";
 import { parseISODate, todayISO, toISODate } from "../lib/format";
 
@@ -119,9 +119,9 @@ function buildWeeks(year: number, month: number): number[][] {
 const styles = StyleSheet.create({
   monthBar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: a11y.space(2) },
   navBtn: { width: 48, height: 48, alignItems: "center", justifyContent: "center" },
-  monthLabel: { color: colors.label, fontSize: a11yFont.bodyLg, fontWeight: "700" },
+  monthLabel: { color: colors.label, fontSize: a11yFont.bodyLg, fontFamily: fonts.bold, fontWeight: "700" },
   weekHead: { flexDirection: "row" },
-  weekHeadText: { flex: 1, textAlign: "center", color: colors.label3, fontSize: a11yFont.body - 4, fontWeight: "700" },
+  weekHeadText: { flex: 1, textAlign: "center", color: colors.label3, fontSize: a11yFont.body - 4, fontFamily: fonts.bold, fontWeight: "700" },
   week: { flexDirection: "row" },
   cell: { flex: 1, aspectRatio: 1, alignItems: "center", justifyContent: "center", margin: 2, borderRadius: radius.md },
   cellSel: { backgroundColor: colors.label },

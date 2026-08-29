@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "../../lib/session";
-import { colors, radius } from "../../lib/theme";
+import { colors, radius, fonts } from "../../lib/theme";
 import { a11y, a11yFont } from "../../lib/a11y";
 import { useAssistant, useConfirmProposedAction } from "../../hooks/v2";
 import {
@@ -375,16 +375,16 @@ const styles = StyleSheet.create({
     paddingVertical: a11y.space(2),
   },
   headerBtn: { width: 48, height: 48, alignItems: "center", justifyContent: "center" },
-  headerTitle: { color: colors.label, fontSize: a11yFont.bodyLg, fontWeight: "700" },
+  headerTitle: { color: colors.label, fontSize: a11yFont.bodyLg, fontFamily: fonts.bold, fontWeight: "700" },
   thread: { padding: a11y.space(4), gap: a11y.space(3), paddingBottom: a11y.space(6) },
   welcome: { gap: a11y.space(5), paddingTop: a11y.space(6), alignItems: "center" },
   welcomeText: {
     color: colors.label2,
-    fontSize: a11yFont.body,
+    fontSize: a11yFont.body, fontFamily: fonts.regular,
     lineHeight: a11y.lineHeight(a11yFont.body),
     textAlign: "center",
   },
-  thinking: { color: colors.label3, fontSize: a11yFont.body, fontStyle: "italic" },
+  thinking: { color: colors.label3, fontSize: a11yFont.body, fontFamily: fonts.regular, fontStyle: "italic" },
   bubbleRow: { gap: a11y.space(2) },
   bubbleLine: { flexDirection: "row", alignItems: "flex-end", gap: a11y.space(2) },
   rowMine: { alignItems: "flex-end" },
@@ -399,7 +399,7 @@ const styles = StyleSheet.create({
   bubbleTheirs: { backgroundColor: colors.elev2, borderBottomLeftRadius: 6 },
   bubbleText: {
     color: colors.label,
-    fontSize: a11yFont.body,
+    fontSize: a11yFont.body, fontFamily: fonts.regular,
     lineHeight: a11y.lineHeight(a11yFont.body),
   },
   tierBox: {
@@ -413,7 +413,7 @@ const styles = StyleSheet.create({
   },
   tierHeading: {
     color: colors.label,
-    fontSize: a11yFont.body,
+    fontSize: a11yFont.body, fontFamily: fonts.bold,
     fontWeight: "700",
     lineHeight: a11y.lineHeight(a11yFont.body),
   },
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
   },
   proposeText: {
     color: colors.label,
-    fontSize: a11yFont.body,
+    fontSize: a11yFont.body, fontFamily: fonts.bold,
     fontWeight: "700",
     lineHeight: a11y.lineHeight(a11yFont.body),
   },
@@ -443,7 +443,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     padding: a11y.space(4),
   },
-  savedText: { color: colors.label, fontSize: a11yFont.body, fontWeight: "700" },
+  savedText: { color: colors.label, fontSize: a11yFont.body, fontFamily: fonts.bold, fontWeight: "700" },
   composerWrap: {
     paddingHorizontal: a11y.space(3),
     paddingTop: a11y.space(2),
@@ -471,7 +471,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     color: colors.label,
-    fontSize: a11yFont.body,
+    fontSize: a11yFont.body, fontFamily: fonts.regular,
     lineHeight: a11y.lineHeight(a11yFont.body),
     maxHeight: 130,
     paddingTop: a11y.space(2),

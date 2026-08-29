@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { colors, radius } from "../lib/theme";
+import { colors, radius, fonts } from "../lib/theme";
 import { a11y, a11yFont } from "../lib/a11y";
 import { useAssistant } from "../hooks/v2";
 import { useAppendMessage, useCreateConversation } from "../hooks/chats";
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     paddingRight: a11y.space(2),
     paddingVertical: a11y.space(2),
   },
-  input: { flex: 1, color: colors.label, fontSize: a11yFont.body, paddingVertical: a11y.space(2) },
+  input: { flex: 1, color: colors.label, fontSize: a11yFont.body, fontFamily: fonts.regular, paddingVertical: a11y.space(2) },
   send: {
     width: 48,
     height: 48,
@@ -180,6 +180,6 @@ const styles = StyleSheet.create({
   },
   tools: { flexDirection: "row", gap: a11y.space(5) },
   tool: { flexDirection: "row", alignItems: "center", gap: a11y.space(2), minHeight: 44 },
-  toolText: { color: colors.label3, fontSize: a11yFont.body - 4, fontWeight: "600" },
+  toolText: { color: colors.label3, fontSize: a11yFont.body - 4, fontFamily: fonts.semibold, fontWeight: "600" },
   q: { color: colors.label3, fontSize: a11yFont.body - 3 },
 });

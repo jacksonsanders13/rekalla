@@ -3,7 +3,7 @@ import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Link, router } from "expo-router";
 import { supabase } from "../../lib/supabase";
 import { useT } from "../../lib/i18n";
-import { colors, font, spacing } from "../../lib/theme";
+import { colors, font, spacing, fonts } from "../../lib/theme";
 import { isInternalAuthError } from "../../lib/utils";
 import { Screen, Card, Button, Field, Title, Subtitle } from "../../components/ui";
 
@@ -118,8 +118,8 @@ export default function SignUp() {
 const styles = StyleSheet.create({
   logoWrap: { alignItems: "center", gap: spacing(3), marginVertical: spacing(4) },
   logo: { width: 84, height: 84, borderRadius: 20 },
-  wordmark: { color: colors.label, fontSize: font.x2, fontWeight: "700" },
-  error: { color: colors.red, fontSize: font.base, fontWeight: "600" },
+  wordmark: { color: colors.label, fontSize: font.x2, fontFamily: fonts.bold, fontWeight: "700" },
+  error: { color: colors.red, fontSize: font.base, fontFamily: fonts.semibold, fontWeight: "600" },
   switchLink: { minHeight: 44, alignItems: "center", justifyContent: "center" },
   switchText: { color: colors.label3, fontSize: font.base },
   switchStrong: { color: colors.label, fontWeight: "700" },

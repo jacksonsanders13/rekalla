@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text } from "react-native";
 import { Link } from "expo-router";
 import { supabase } from "../../lib/supabase";
 import { useT } from "../../lib/i18n";
-import { colors, font } from "../../lib/theme";
+import { colors, font, fonts } from "../../lib/theme";
 import { isInternalAuthError } from "../../lib/utils";
 import { Screen, Card, Button, Field, Title, Subtitle } from "../../components/ui";
 
@@ -73,7 +73,7 @@ export default function ForgotPassword() {
 }
 
 const styles = StyleSheet.create({
-  error: { color: colors.red, fontSize: font.base, fontWeight: "600" },
+  error: { color: colors.red, fontSize: font.base, fontFamily: fonts.semibold, fontWeight: "600" },
   link: { minHeight: 44, alignItems: "center", justifyContent: "center" },
-  linkText: { color: colors.label2, fontSize: font.base, fontWeight: "600" },
+  linkText: { color: colors.label2, fontSize: font.base, fontFamily: fonts.semibold, fontWeight: "600" },
 });

@@ -13,7 +13,7 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSession } from "../lib/session";
 import { useT } from "../lib/i18n";
-import { colors, font, radius, spacing } from "../lib/theme";
+import { colors, font, radius, spacing, fonts } from "../lib/theme";
 
 /**
  * Bump this version to force everyone to re-accept when the agreement changes
@@ -199,8 +199,8 @@ const styles = StyleSheet.create({
     paddingBottom: spacing(3),
     gap: spacing(2),
   },
-  title: { color: colors.label, fontSize: font.x2, fontWeight: "700" },
-  subtitle: { color: colors.label3, fontSize: font.base, lineHeight: 23 },
+  title: { color: colors.label, fontSize: font.x2, fontFamily: fonts.bold, fontWeight: "700" },
+  subtitle: { color: colors.label3, fontSize: font.base, fontFamily: fonts.regular, lineHeight: 23 },
   scroll: {
     flex: 1,
     backgroundColor: colors.elev1,
@@ -208,20 +208,20 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
   },
   scrollContent: { padding: spacing(5), gap: spacing(4) },
-  heading: { color: colors.label, fontSize: font.xl, fontWeight: "700" },
-  meta: { color: colors.label4, fontSize: font.sm, marginTop: -spacing(2) },
+  heading: { color: colors.label, fontSize: font.xl, fontFamily: fonts.bold, fontWeight: "700" },
+  meta: { color: colors.label4, fontSize: font.sm, fontFamily: fonts.regular, marginTop: -spacing(2) },
   section: { gap: spacing(2) },
-  sectionHeading: { color: colors.label, fontSize: font.lg, fontWeight: "700" },
-  body: { color: colors.label2, fontSize: font.base, lineHeight: 25 },
+  sectionHeading: { color: colors.label, fontSize: font.lg, fontFamily: fonts.bold, fontWeight: "700" },
+  body: { color: colors.label2, fontSize: font.base, fontFamily: fonts.regular, lineHeight: 25 },
   finePrint: {
     color: colors.label3,
-    fontSize: font.sm,
+    fontSize: font.sm, fontFamily: fonts.regular,
     lineHeight: 22,
     marginTop: spacing(2),
   },
   scrollHint: {
     color: colors.label3,
-    fontSize: font.sm,
+    fontSize: font.sm, fontFamily: fonts.semibold,
     fontWeight: "600",
     textAlign: "center",
     marginTop: spacing(2),
@@ -236,6 +236,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing(5),
   },
   acceptButtonDisabled: { backgroundColor: colors.elev2 },
-  acceptLabel: { color: "#000000", fontSize: font.base, fontWeight: "700" },
+  acceptLabel: { color: "#000000", fontSize: font.base, fontFamily: fonts.bold, fontWeight: "700" },
   acceptLabelDisabled: { color: colors.label4 },
 });

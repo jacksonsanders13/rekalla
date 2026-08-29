@@ -1,7 +1,7 @@
 /** A rounded speech bubble with a tail pointing left, at Rekalla. */
 import type { ReactNode } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { colors, radius } from "../lib/theme";
+import { colors, radius, fonts } from "../lib/theme";
 import { a11y, a11yFont } from "../lib/a11y";
 
 export function SpeechBubble({ children }: { children: ReactNode }) {
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: colors.label,
-    fontSize: a11yFont.body,
+    fontSize: a11yFont.body, fontFamily: fonts.regular,
     lineHeight: a11y.lineHeight(a11yFont.body),
   },
 });

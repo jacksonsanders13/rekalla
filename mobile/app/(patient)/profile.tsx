@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { supabase } from "../../lib/supabase";
 import { useSession } from "../../lib/session";
-import { colors, radius } from "../../lib/theme";
+import { colors, radius, fonts } from "../../lib/theme";
 import { a11y, a11yFont } from "../../lib/a11y";
 import { BigButton, BigField } from "../../components/big-ui";
 import { LegalLinks } from "../../components/legal-links";
@@ -69,9 +69,9 @@ export default function Profile() {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.base },
   body: { padding: a11y.space(4), gap: a11y.space(4), paddingBottom: a11y.space(10) },
-  title: { color: colors.label, fontSize: a11yFont.title, fontWeight: "700", textAlign: "center" },
+  title: { color: colors.label, fontSize: a11yFont.title, fontFamily: fonts.bold, fontWeight: "700", textAlign: "center" },
   card: { backgroundColor: colors.elev1, borderRadius: radius.lg, padding: a11y.space(4), gap: a11y.space(3) },
   email: { color: colors.label3, fontSize: a11yFont.body },
-  error: { color: colors.red, fontSize: a11yFont.body, fontWeight: "600" },
-  saved: { color: colors.green, fontSize: a11yFont.body, fontWeight: "600" },
+  error: { color: colors.red, fontSize: a11yFont.body, fontFamily: fonts.semibold, fontWeight: "600" },
+  saved: { color: colors.green, fontSize: a11yFont.body, fontFamily: fonts.semibold, fontWeight: "600" },
 });
