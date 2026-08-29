@@ -15,9 +15,9 @@ const BLUE = "#0a84ff";
 export type AvatarBadge = "camera" | "calendar" | "bell";
 export type AvatarPose = "idle" | "wave" | "think";
 
-/** The lobed outline. Ten bumps is what reads as "brain" rather than "cloud". */
+/** The lobed outline: ten bumps, mirrored exactly about the centre line. */
 const OUTLINE =
-  "M50 14C60 8 72 12 74 22C84 20 92 28 88 38C96 44 94 56 86 60C90 70 82 79 73 76C70 86 58 90 50 84C42 90 30 86 27 76C18 79 10 70 14 60C6 56 4 44 12 38C8 28 16 20 26 22C28 12 40 8 50 14Z";
+  "M50 10C62 6 74 10 76 20C88 18 94 28 88 38C96 44 96 56 86 60C92 70 84 80 73 76C70 86 60 90 50 86C40 90 30 86 27 76C16 80 8 70 14 60C4 56 4 44 12 38C6 28 12 18 24 20C26 10 38 6 50 10Z";
 
 export function RekallaAvatar({
   size = 96,
@@ -61,7 +61,7 @@ export function RekallaAvatar({
       <path d={OUTLINE} fill={BODY} />
 
       <g stroke={FOLD} strokeWidth={3} strokeLinecap="round" fill="none">
-        <path d="M50 16C52 24 48 28 50 36" />
+        <path d="M50 14V36" />
         <path d="M32 26C26 30 28 36 22 40" />
         <path d="M68 26C74 30 72 36 78 40" />
         <path d="M14 52C22 50 24 56 20 62" />
@@ -73,7 +73,7 @@ export function RekallaAvatar({
       <circle cx={40 + eyeX} cy={eyeY} r={4.5} fill={INK} />
       <circle cx={60 + eyeX} cy={eyeY} r={4.5} fill={INK} />
       <path
-        d={thinking ? "M45 66C48 64 52 64 54 66" : "M42 64C45 68 55 68 58 64"}
+        d={thinking ? "M45 66C48 64 52 64 55 66" : "M42 64C45 68 55 68 58 64"}
         stroke={INK}
         strokeWidth={3.5}
         strokeLinecap="round"

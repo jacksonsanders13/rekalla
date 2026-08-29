@@ -1,37 +1,73 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowUp } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowUp, History, SquarePen } from "lucide-react";
 import { useAssistant } from "@/hooks/use-assistant-v2";
+import { useAppendMessage, useCreateConversation } from "@/hooks/use-chats";
+import { ChatSidebar } from "@/components/assistant/chat-sidebar";
 import { RekallaAvatar, SpeechBubble } from "@/components/ui/rekalla-avatar";
 
-const EXAMPLES = [
-  "What's my next appointment?",
-  "Whose birthday is coming up?",
-  "What's on my calendar this week?",
-];
-
-export function AskBox() {
+/**
+ * The "ask Rekalla" box on Home. Every exchange is saved as a conversation, so
+ * past chats are here to reopen or delete the way any chat app does it.
+ */
+export function AskBox({ userId }: { userId: string }) {
   const ask = useAssistant();
+  const router = useRouter();
+  const createChat = useCreateConversation(userId);
+  const appendMsg = useAppendMessage(userId);
+
   const [input, setInput] = useState("");
   const [asked, setAsked] = useState<string | null>(null);
   const [answer, setAnswer] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
 
-  function send(text: string) {
+  async function send(text: string) {
     const q = text.trim();
     if (!q || ask.isPending) return;
     setAsked(q);
     setInput("");
     setAnswer(null);
+
+    // Save the question first so the chat survives even if the answer fails.
+    let convoId = activeId;
+    try {
+      if (!convoId) {
+        convoId = await createChat.mutateAsync(q);
+        setActiveId(convoId);
+      }
+      appendMsg.mutate({ conversationId: convoId, role: "me", content: q });
+    } catch {
+      convoId = null;
+    }
+
     ask.mutate(
       { user_message: q },
       {
         onSuccess: (res) => {
           setAnswer(res.reply);
+          if (convoId) {
+            appendMsg.mutate({
+              conversationId: convoId,
+              role: "rekalla",
+              content: res.reply,
+              meta: res,
+            });
+          }
         },
         onError: () => setAnswer("Sorry, I had trouble just now. Please try again."),
       },
     );
+  }
+
+  function newChat() {
+    setActiveId(null);
+    setAsked(null);
+    setAnswer(null);
+    setInput("");
+    setHistoryOpen(false);
   }
 
   // He waves while he waits on you, thinks while he waits on the model, then
@@ -66,22 +102,43 @@ export function AskBox() {
         </button>
       </div>
 
-      {!asked && !ask.isPending && (
-        <div className="flex flex-col items-start gap-2">
-          {EXAMPLES.map((e) => (
-            <button
-              key={e}
-              type="button"
-              onClick={() => send(e)}
-              className="rounded-full bg-elev-1 px-4 py-2 text-base text-label-2 hover:bg-elev-2"
-            >
-              {e}
-            </button>
-          ))}
-        </div>
-      )}
+      <div className="flex items-center gap-5">
+        <button
+          type="button"
+          onClick={() => setHistoryOpen(true)}
+          className="flex min-h-11 items-center gap-2 text-base font-semibold text-label-3 hover:text-label-2"
+        >
+          <History className="size-5" aria-hidden="true" />
+          Your chats
+        </button>
+        {asked && (
+          <button
+            type="button"
+            onClick={newChat}
+            className="flex min-h-11 items-center gap-2 text-base font-semibold text-label-3 hover:text-label-2"
+          >
+            <SquarePen className="size-5" aria-hidden="true" />
+            New chat
+          </button>
+        )}
+      </div>
 
       {asked && <p className="text-base text-label-3">You asked: {asked}</p>}
+
+      <ChatSidebar
+        userId={userId}
+        open={historyOpen}
+        onClose={() => setHistoryOpen(false)}
+        activeId={activeId}
+        onSelect={(id) => {
+          setHistoryOpen(false);
+          router.push(`/assistant?chat=${id}`);
+        }}
+        onNewChat={newChat}
+        onDeleted={(id) => {
+          if (id === activeId) newChat();
+        }}
+      />
     </div>
   );
 }

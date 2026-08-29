@@ -41,13 +41,13 @@ const config: Config = {
         },
       },
       fontFamily: {
-        // The platform's own typeface first, so an iPhone or a Mac renders
-        // Rekalla in SF the way a native app would.
+        // Nunito is the brand face; the platform stack catches the gap while
+        // it loads and anywhere it fails.
         sans: [
+          "var(--font-nunito)",
           "-apple-system",
           "BlinkMacSystemFont",
           "SF Pro Text",
-          "var(--font-geist-sans)",
           "Segoe UI",
           "Roboto",
           "Helvetica Neue",

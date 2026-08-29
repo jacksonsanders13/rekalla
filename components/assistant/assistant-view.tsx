@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Mic,
   Square,
@@ -68,6 +69,16 @@ export function AssistantView({ userId }: { userId: string }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const taRef = useRef<HTMLTextAreaElement>(null);
   const voiceSupported = isVoiceInputSupported();
+
+  // Opened from a past chat on Home: load that conversation once.
+  const searchParams = useSearchParams();
+  const chatParam = searchParams.get("chat");
+  const openedRef = useRef(false);
+  useEffect(() => {
+    if (!chatParam || openedRef.current) return;
+    openedRef.current = true;
+    openChat(chatParam);
+  }, [chatParam]);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });

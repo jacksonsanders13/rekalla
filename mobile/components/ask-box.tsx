@@ -1,40 +1,75 @@
-/** A basic "ask about your calendar" box for the Home screen. */
+/**
+ * The "ask Rekalla" box on Home. Every exchange is saved as a conversation, so
+ * past chats are here to reopen or delete the way any chat app does it.
+ */
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, radius } from "../lib/theme";
 import { a11y, a11yFont } from "../lib/a11y";
 import { useAssistant } from "../hooks/v2";
+import { useAppendMessage, useCreateConversation } from "../hooks/chats";
+import { ChatHistory } from "./chat-history";
 import { RekallaAvatar } from "./rekalla-avatar";
 import { SpeechBubble } from "./speech-bubble";
 
-const EXAMPLES = [
-  "What's my next appointment?",
-  "When is my next bill due?",
-  "What's on my calendar this week?",
-];
-
-export function AskBox() {
+export function AskBox({ userId }: { userId: string }) {
   const ask = useAssistant();
+  const router = useRouter();
+  const createChat = useCreateConversation(userId);
+  const appendMsg = useAppendMessage(userId);
+
   const [input, setInput] = useState("");
   const [asked, setAsked] = useState<string | null>(null);
   const [answer, setAnswer] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
 
-  function send(text: string) {
+  async function send(text: string) {
     const q = text.trim();
     if (!q || ask.isPending) return;
     setAsked(q);
     setInput("");
     setAnswer(null);
+
+    // Save the question first so the chat survives even if the answer fails.
+    let convoId = activeId;
+    try {
+      if (!convoId) {
+        convoId = await createChat.mutateAsync(q);
+        setActiveId(convoId);
+      }
+      appendMsg.mutate({ conversationId: convoId, role: "me", content: q });
+    } catch {
+      convoId = null;
+    }
+
     ask.mutate(
       { user_message: q },
       {
         onSuccess: (res) => {
           setAnswer(res.reply);
+          if (convoId) {
+            appendMsg.mutate({
+              conversationId: convoId,
+              role: "rekalla",
+              content: res.reply,
+              meta: res,
+            });
+          }
         },
         onError: () => setAnswer("Sorry, I had trouble just now. Please try again."),
       },
     );
+  }
+
+  function newChat() {
+    setActiveId(null);
+    setAsked(null);
+    setAnswer(null);
+    setInput("");
+    setHistoryOpen(false);
   }
 
   // He waves while he waits on you, thinks while he waits on the model, then
@@ -71,17 +106,45 @@ export function AskBox() {
         </Pressable>
       </View>
 
-      {!asked && !ask.isPending ? (
-        <View style={styles.chips}>
-          {EXAMPLES.map((e) => (
-            <Pressable key={e} onPress={() => send(e)} style={styles.chip} accessibilityRole="button">
-              <Text style={styles.chipText}>{e}</Text>
-            </Pressable>
-          ))}
-        </View>
-      ) : null}
+      <View style={styles.tools}>
+        <Pressable
+          onPress={() => setHistoryOpen(true)}
+          accessibilityRole="button"
+          accessibilityLabel="Your chats"
+          style={styles.tool}
+        >
+          <Ionicons name="time-outline" size={20} color={colors.label3} />
+          <Text style={styles.toolText}>Your chats</Text>
+        </Pressable>
+        {asked ? (
+          <Pressable
+            onPress={newChat}
+            accessibilityRole="button"
+            accessibilityLabel="Start a new chat"
+            style={styles.tool}
+          >
+            <Ionicons name="create-outline" size={20} color={colors.label3} />
+            <Text style={styles.toolText}>New chat</Text>
+          </Pressable>
+        ) : null}
+      </View>
 
       {asked ? <Text style={styles.q}>You asked: {asked}</Text> : null}
+
+      <ChatHistory
+        userId={userId}
+        visible={historyOpen}
+        onClose={() => setHistoryOpen(false)}
+        activeId={activeId}
+        onSelect={(id) => {
+          setHistoryOpen(false);
+          router.push(`/(patient)/assistant?chat=${id}`);
+        }}
+        onNewChat={newChat}
+        onDeleted={(id) => {
+          if (id === activeId) newChat();
+        }}
+      />
     </View>
   );
 }
@@ -115,14 +178,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  chips: { gap: a11y.space(2) },
-  chip: {
-    alignSelf: "flex-start",
-    backgroundColor: colors.elev1,
-    borderRadius: 999,
-    paddingHorizontal: a11y.space(4),
-    paddingVertical: a11y.space(2),
-  },
-  chipText: { color: colors.label2, fontSize: a11yFont.body - 3 },
+  tools: { flexDirection: "row", gap: a11y.space(5) },
+  tool: { flexDirection: "row", alignItems: "center", gap: a11y.space(2), minHeight: 44 },
+  toolText: { color: colors.label3, fontSize: a11yFont.body - 4, fontWeight: "600" },
   q: { color: colors.label3, fontSize: a11yFont.body - 3 },
 });

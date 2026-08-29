@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
   Linking,
@@ -11,6 +11,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "../../lib/session";
 import { colors, radius } from "../../lib/theme";
@@ -48,6 +49,15 @@ export default function AssistantScreen() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const scroller = useRef<ScrollView>(null);
   const inputRef = useRef<TextInput>(null);
+
+  // Opened from a past chat on Home: load that conversation once.
+  const { chat } = useLocalSearchParams<{ chat?: string }>();
+  const openedRef = useRef(false);
+  useEffect(() => {
+    if (!chat || openedRef.current) return;
+    openedRef.current = true;
+    openChat(String(chat));
+  }, [chat]);
 
   async function send(text: string) {
     const message = text.trim();
@@ -158,26 +168,10 @@ export default function AssistantScreen() {
       >
         {turns.length === 0 ? (
           <View style={styles.welcome}>
-            <RekallaAvatar size={104} />
+            <RekallaAvatar size={104} pose="wave" />
             <Text style={styles.welcomeText}>
               Ask me about anything you've scanned.
             </Text>
-            <View style={styles.suggestions}>
-              {[
-                "What's on my calendar this week?",
-                "What's my next appointment?",
-                "When is my next bill due?",
-              ].map((s) => (
-                <BigButton
-                  key={s}
-                  label={s}
-                  variant="secondary"
-                  icon="chatbubble-ellipses"
-                  onPress={() => send(s)}
-                  style={styles.suggestion}
-                />
-              ))}
-            </View>
           </View>
         ) : (
           turns.map((turn, i) => <TurnBubble key={i} turn={turn} />)
@@ -390,8 +384,6 @@ const styles = StyleSheet.create({
     lineHeight: a11y.lineHeight(a11yFont.body),
     textAlign: "center",
   },
-  suggestions: { gap: a11y.space(3) },
-  suggestion: { justifyContent: "flex-start" },
   thinking: { color: colors.label3, fontSize: a11yFont.body, fontStyle: "italic" },
   bubbleRow: { gap: a11y.space(2) },
   bubbleLine: { flexDirection: "row", alignItems: "flex-end", gap: a11y.space(2) },

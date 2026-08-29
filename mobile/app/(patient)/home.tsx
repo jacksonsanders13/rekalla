@@ -9,7 +9,6 @@ import { a11y, a11yFont } from "../../lib/a11y";
 import { BodyText } from "../../components/big-ui";
 import { ListGroup } from "../../components/list-group";
 import { AskBox } from "../../components/ask-box";
-import { LogoMark } from "../../components/logo-mark";
 import { useUpcomingReminders, type Reminder } from "../../hooks/scans";
 import { formatDay, formatTime, isToday } from "../../lib/format";
 
@@ -22,10 +21,6 @@ export default function Home() {
   return (
     <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
       <ScrollView contentContainerStyle={styles.body}>
-        <View style={styles.brand} accessibilityRole="header">
-          <LogoMark size={76} />
-        </View>
-
         {/* The hero: Scan */}
         <Pressable
           onPress={() => router.push("/scan")}
@@ -39,7 +34,7 @@ export default function Home() {
         </Pressable>
 
         {/* Basic chat: ask about your calendar */}
-        <AskBox />
+        <AskBox userId={userId} />
 
         {/* What's coming up */}
         <Text style={styles.section}>What's coming up</Text>
@@ -98,7 +93,6 @@ function iconFor(category: string): keyof typeof Ionicons.glyphMap {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.base },
   body: { padding: a11y.space(4), gap: a11y.space(4), paddingBottom: a11y.space(10) },
-  brand: { alignItems: "center", paddingTop: a11y.space(1) },
   scan: {
     backgroundColor: colors.blue,
     borderRadius: radius.lg,
@@ -109,16 +103,6 @@ const styles = StyleSheet.create({
   },
   scanLabel: { color: "#ffffff", fontSize: a11yFont.bodyLg, fontWeight: "600" },
   scanSub: { color: "rgba(255,255,255,0.85)", fontSize: a11yFont.body - 3, textAlign: "center" },
-  ask: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: a11y.space(2),
-    minHeight: 56,
-    borderRadius: radius.lg,
-    backgroundColor: colors.elev1,
-  },
-  askText: { color: colors.label, fontSize: a11yFont.body, fontWeight: "700" },
   section: { color: colors.label, fontSize: a11yFont.bodyLg, fontWeight: "600", marginTop: a11y.space(2) },
   empty: { backgroundColor: colors.elev1, borderRadius: radius.md, padding: a11y.space(4) },
   row: {

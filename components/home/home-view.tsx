@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Camera, CalendarDays, ChevronRight, Receipt, Stethoscope } from "lucide-react";
 import { AskBox } from "@/components/home/ask-box";
 import { EventEditor } from "@/components/calendar/event-editor";
@@ -14,10 +13,6 @@ export function HomeView({ userId }: { userId: string }) {
 
   return (
     <div className="space-y-6">
-      <h1 className="flex justify-center">
-        <Image src="/logo.svg" alt="Rekalla" width={76} height={76} priority />
-      </h1>
-
       <Link
         href="/scan"
         className="flex flex-col items-center gap-2 rounded-2xl bg-accent px-6 py-8 text-white transition-colors hover:bg-accent-2"
@@ -27,7 +22,7 @@ export function HomeView({ userId }: { userId: string }) {
         <span className="text-base text-white/85">A calendar, an appointment card, or a bill</span>
       </Link>
 
-      <AskBox />
+      <AskBox userId={userId} />
 
       <h2 className="pt-2 text-2xl font-semibold tracking-tight text-label">What&apos;s coming up</h2>
       {isLoading ? (
