@@ -43,9 +43,18 @@ export function RekallaAvatar({
       accessibilityLabel={thinking ? "Rekalla is thinking" : "Rekalla"}
     >
       <Svg width={size} height={size} viewBox="0 0 100 100" fill="none">
-        {/* Arm goes behind the head so it reads as coming from behind him. */}
+        {/* Arms sit behind the head. The resting one keeps him balanced while
+            the other is up, so the silhouette never reads as lopsided. */}
         {pose === "wave" ? (
           <G>
+            <Path
+              d="M16 62C9 66 6 74 8 80"
+              stroke={BODY}
+              strokeWidth={8}
+              strokeLinecap="round"
+              fill="none"
+            />
+            <Circle cx={8} cy={84} r={6.5} fill={BODY} />
             <Path
               d="M84 62C91 58 94 48 92 41"
               stroke={BODY}

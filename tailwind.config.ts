@@ -41,10 +41,10 @@ const config: Config = {
         },
       },
       fontFamily: {
-        // Nunito is the brand face; the platform stack catches the gap while
-        // it loads and anywhere it fails.
+        // Plus Jakarta Sans is the brand face; the platform stack catches the
+        // gap while it loads and anywhere it fails.
         sans: [
-          "var(--font-nunito)",
+          "var(--font-jakarta)",
           "-apple-system",
           "BlinkMacSystemFont",
           "SF Pro Text",

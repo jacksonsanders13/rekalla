@@ -1,13 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Nunito } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
-// Nunito: rounded and warm enough to sit beside the mascot, with a large
-// x-height that holds up at the sizes this app sets text in.
-const nunito = Nunito({
+// Plus Jakarta Sans: the brand face, geometric with enough character to not
+// read as a system default, and legible at the sizes this app sets text in.
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "600", "700"],
-  variable: "--font-nunito",
+  variable: "--font-jakarta",
   display: "swap",
 });
 
@@ -36,7 +36,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={nunito.variable}>
+    <html lang="en" className={jakarta.variable}>
       <body className="min-h-dvh font-sans">{children}</body>
     </html>
   );
