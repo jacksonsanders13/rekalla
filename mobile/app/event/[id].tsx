@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: a11y.space(4),
     paddingVertical: a11y.space(3),
   },
-  headerTitle: { color: colors.label, fontSize: a11yFont.title, fontFamily: fonts.bold, fontWeight: "700", flex: 1 },
+  headerTitle: { color: colors.label, fontSize: a11yFont.title, fontFamily: fonts.displayBold, fontWeight: "700", flex: 1 },
   body: { padding: a11y.space(4), gap: a11y.space(4), paddingBottom: a11y.space(10) },
   block: { gap: a11y.space(2) },
   blockLabel: { color: colors.label2, fontSize: a11yFont.body, fontFamily: fonts.bold, fontWeight: "700" },

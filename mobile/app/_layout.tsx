@@ -8,6 +8,10 @@ import {
   Literata_600SemiBold,
   Literata_700Bold,
 } from "@expo-google-fonts/literata";
+import {
+  BodoniModa_600SemiBold,
+  BodoniModa_700Bold,
+} from "@expo-google-fonts/bodoni-moda";
 import { SessionProvider } from "../lib/session";
 import { I18nProvider, useT } from "../lib/i18n";
 import { TermsGate } from "../components/terms-gate";
@@ -29,7 +33,7 @@ function AppStack() {
       screenOptions={{
         headerStyle: { backgroundColor: colors.base },
         headerTintColor: colors.label,
-        headerTitleStyle: { fontFamily: fonts.bold, fontWeight: "700", fontSize: font.xl },
+        headerTitleStyle: { fontFamily: fonts.displayBold, fontWeight: "700", fontSize: font.xl },
         contentStyle: { backgroundColor: colors.base },
         headerBackTitle: t("common.back"),
       }}
@@ -54,6 +58,8 @@ export default function RootLayout() {
     Literata_400Regular,
     Literata_600SemiBold,
     Literata_700Bold,
+    BodoniModa_600SemiBold,
+    BodoniModa_700Bold,
   });
 
   useEffect(() => {

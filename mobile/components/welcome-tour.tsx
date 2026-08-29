@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   body: { flex: 1, alignItems: "center", justifyContent: "center", gap: spacing(5) },
   title: {
     color: colors.label,
-    fontSize: font.x2, fontFamily: fonts.bold,
+    fontSize: font.x2, fontFamily: fonts.displayBold,
     fontWeight: "700",
     textAlign: "center",
     letterSpacing: -0.5,

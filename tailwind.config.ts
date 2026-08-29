@@ -43,6 +43,13 @@ const config: Config = {
       fontFamily: {
         // The brand serif; the platform stack catches the gap while it loads
         // and anywhere it fails.
+        display: [
+          "var(--font-display)",
+          "Didot",
+          "Bodoni MT",
+          "Georgia",
+          "serif",
+        ],
         sans: [
           "var(--font-serif)",
           "Iowan Old Style",

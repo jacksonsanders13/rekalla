@@ -37,7 +37,7 @@ export function CalendarView({ userId }: { userId: string }) {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-center text-3xl font-bold tracking-tight text-label">Calendar</h1>
+      <h1 className="text-center font-display text-3xl font-bold tracking-tight text-label">Calendar</h1>
 
       <div className="flex items-center justify-between">
         <button onClick={() => shift(-1)} aria-label="Previous month" className="flex size-11 items-center justify-center rounded-full text-label hover:bg-white/10">
@@ -83,7 +83,7 @@ export function CalendarView({ userId }: { userId: string }) {
         ))}
       </div>
 
-      <h2 className="border-b border-white/15 pb-2 pt-2 text-2xl font-semibold tracking-tight text-label">
+      <h2 className="border-b border-white/15 pb-2 pt-2 font-display text-2xl font-semibold tracking-tight text-label">
         {selected === todayISO
           ? "Today"
           : new Date(selected).toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}

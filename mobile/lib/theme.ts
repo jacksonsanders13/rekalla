@@ -41,13 +41,20 @@ export const font = {
 export const spacing = (n: number) => n * 4;
 
 /**
- * A modern serif with short, solid serifs, standing in for Quil Display until
- * its licensed files are in the repo. React Native picks a face by exact
- * family name, so the weight lives in the name rather than in fontWeight.
- * To swap: drop the real files in assets/fonts and change these three names.
+ * Two serifs, the way editorial work pairs them: a high-contrast display face
+ * for headings and Rekalla's own voice, and a sturdy text face underneath it
+ * that stays readable at body sizes on a black screen.
+ *
+ * Both are free stand-ins for the licensed faces (Parlour Pro on display,
+ * Quil Display on text). To swap in the real ones, drop the files in
+ * assets/fonts, register them in app/_layout.tsx, and change the names here.
+ * React Native picks a face by exact family name, so the weight lives in the
+ * name rather than in fontWeight.
  */
 export const fonts = {
   regular: "Literata_400Regular",
   semibold: "Literata_600SemiBold",
   bold: "Literata_700Bold",
+  display: "BodoniModa_600SemiBold",
+  displayBold: "BodoniModa_700Bold",
 } as const;

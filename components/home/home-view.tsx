@@ -18,13 +18,13 @@ export function HomeView({ userId }: { userId: string }) {
         className="flex flex-col items-center gap-2 rounded-2xl bg-accent px-6 py-8 text-white transition-colors hover:bg-accent-2"
       >
         <Camera className="size-11" aria-hidden="true" />
-        <span className="text-2xl font-semibold tracking-tight">Scan something</span>
+        <span className="font-display text-3xl font-semibold tracking-tight">Scan something</span>
         <span className="text-base text-white/85">A calendar, an appointment card, or a bill</span>
       </Link>
 
       <AskBox userId={userId} />
 
-      <h2 className="border-b border-white/15 pb-2 pt-2 text-2xl font-semibold tracking-tight text-label">What&apos;s coming up</h2>
+      <h2 className="border-b border-white/15 pb-2 pt-2 font-display text-2xl font-semibold tracking-tight text-label">What&apos;s coming up</h2>
       {isLoading ? (
         <p className="text-xl text-label-3">Loading…</p>
       ) : !upcoming || upcoming.length === 0 ? (

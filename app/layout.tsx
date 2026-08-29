@@ -1,14 +1,23 @@
 import type { Metadata, Viewport } from "next";
-import { Literata } from "next/font/google";
+import { Bodoni_Moda, Literata } from "next/font/google";
 import "./globals.css";
 
-// A modern serif with short, solid serifs, standing in for Quil Display until
-// its licensed files are in the repo. Swap the import and the variable name
-// for a next/font/local declaration pointing at the real files.
+// Two serifs, the way editorial work pairs them: a high-contrast display face
+// for headings, and a sturdy text face underneath that stays readable at body
+// sizes on a black screen. Both are free stand-ins for the licensed faces
+// (Parlour Pro on display, Quil Display on text). To swap in the real ones,
+// put the files in public/fonts and use next/font/local here instead.
 const serif = Literata({
   subsets: ["latin"],
   weight: ["400", "600", "700"],
   variable: "--font-serif",
+  display: "swap",
+});
+
+const displaySerif = Bodoni_Moda({
+  subsets: ["latin"],
+  weight: ["600", "700"],
+  variable: "--font-display",
   display: "swap",
 });
 
@@ -37,7 +46,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={serif.variable}>
+    <html lang="en" className={`${serif.variable} ${displaySerif.variable}`}>
       <body className="min-h-dvh font-sans">{children}</body>
     </html>
   );
