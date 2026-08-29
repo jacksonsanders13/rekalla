@@ -39,9 +39,12 @@ export default function CalendarScreen() {
 
         <MonthGrid selected={selected} onSelect={setSelected} marked={marked} />
 
-        <Text style={styles.section}>
-          {selected === today ? "Today" : formatFullDay(selected)}
-        </Text>
+        <View style={styles.sectionHead}>
+          <Text style={styles.section}>
+            {selected === today ? "Today" : formatFullDay(selected)}
+          </Text>
+          <View style={styles.rule} />
+        </View>
         {dayItems.length === 0 ? (
           <BodyText>Nothing on this day.</BodyText>
         ) : (
@@ -59,6 +62,14 @@ export default function CalendarScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.base },
   body: { padding: a11y.space(4), gap: a11y.space(3), paddingBottom: a11y.space(10) },
-  title: { color: colors.label, fontSize: a11yFont.title, fontFamily: fonts.semibold, fontWeight: "600", textAlign: "center", letterSpacing: -0.5 },
-  section: { color: colors.label, fontSize: a11yFont.bodyLg, fontFamily: fonts.semibold, fontWeight: "600", marginTop: a11y.space(3) },
+  title: { color: colors.label, fontSize: a11yFont.title, fontFamily: fonts.bold, fontWeight: "700", textAlign: "center", letterSpacing: -0.8 },
+  sectionHead: { marginTop: a11y.space(3), gap: a11y.space(2) },
+  section: {
+    color: colors.label,
+    fontSize: a11yFont.bodyLg,
+    fontFamily: fonts.semibold,
+    fontWeight: "600",
+    letterSpacing: -0.4,
+  },
+  rule: { height: StyleSheet.hairlineWidth, backgroundColor: "rgba(255,255,255,0.18)" },
 });

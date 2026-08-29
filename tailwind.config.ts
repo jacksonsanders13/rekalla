@@ -41,18 +41,15 @@ const config: Config = {
         },
       },
       fontFamily: {
-        // Plus Jakarta Sans is the brand face; the platform stack catches the
-        // gap while it loads and anywhere it fails.
+        // The brand serif; the platform stack catches the gap while it loads
+        // and anywhere it fails.
         sans: [
-          "var(--font-jakarta)",
-          "-apple-system",
-          "BlinkMacSystemFont",
-          "SF Pro Text",
-          "Segoe UI",
-          "Roboto",
-          "Helvetica Neue",
-          "Arial",
-          "sans-serif",
+          "var(--font-serif)",
+          "Iowan Old Style",
+          "Charter",
+          "Georgia",
+          "Cambria",
+          "serif",
         ],
       },
       fontSize: {

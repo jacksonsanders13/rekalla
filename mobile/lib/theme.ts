@@ -41,11 +41,13 @@ export const font = {
 export const spacing = (n: number) => n * 4;
 
 /**
- * Plus Jakarta Sans is the brand face. React Native picks a face by exact
+ * A modern serif with short, solid serifs, standing in for Quil Display until
+ * its licensed files are in the repo. React Native picks a face by exact
  * family name, so the weight lives in the name rather than in fontWeight.
+ * To swap: drop the real files in assets/fonts and change these three names.
  */
 export const fonts = {
-  regular: "PlusJakartaSans_400Regular",
-  semibold: "PlusJakartaSans_600SemiBold",
-  bold: "PlusJakartaSans_700Bold",
+  regular: "Literata_400Regular",
+  semibold: "Literata_600SemiBold",
+  bold: "Literata_700Bold",
 } as const;

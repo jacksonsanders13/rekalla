@@ -4,10 +4,10 @@ import { StatusBar } from "expo-status-bar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   useFonts,
-  PlusJakartaSans_400Regular,
-  PlusJakartaSans_600SemiBold,
-  PlusJakartaSans_700Bold,
-} from "@expo-google-fonts/plus-jakarta-sans";
+  Literata_400Regular,
+  Literata_600SemiBold,
+  Literata_700Bold,
+} from "@expo-google-fonts/literata";
 import { SessionProvider } from "../lib/session";
 import { I18nProvider, useT } from "../lib/i18n";
 import { TermsGate } from "../components/terms-gate";
@@ -51,9 +51,9 @@ function AppStack() {
 export default function RootLayout() {
   const [termsResolved, setTermsResolved] = useState(false);
   const [fontsLoaded] = useFonts({
-    PlusJakartaSans_400Regular,
-    PlusJakartaSans_600SemiBold,
-    PlusJakartaSans_700Bold,
+    Literata_400Regular,
+    Literata_600SemiBold,
+    Literata_700Bold,
   });
 
   useEffect(() => {
