@@ -13,6 +13,7 @@ import { View } from "react-native";
 const BODY = "#f7a8c8"; // brain pink
 const FOLD = "#d4779f"; // the sulci, a deeper pink
 const INK = "#43202f";
+const CLOUD = "#fdeef4"; // the thought bubble, a near-white pink
 const BLUE = "#0a84ff";
 
 export type AvatarBadge = "camera" | "calendar" | "bell";
@@ -55,18 +56,6 @@ export function RekallaAvatar({
             <Circle cx={92} cy={37} r={6.5} fill={BODY} />
           </G>
         ) : null}
-        {thinking ? (
-          <G>
-            <Path
-              d="M70 74C76 76 79 82 77 88"
-              stroke={BODY}
-              strokeWidth={8}
-              strokeLinecap="round"
-              fill="none"
-            />
-            <Circle cx={64} cy={72} r={7} fill={BODY} />
-          </G>
-        ) : null}
 
         <Path d={OUTLINE} fill={BODY} />
 
@@ -102,12 +91,20 @@ export function RekallaAvatar({
           />
         )}
 
-        {/* Thought dots, rising away from him */}
+        {/* A thought bubble over his head, clear of the outline */}
         {thinking ? (
-          <G fill={BODY}>
-            <Circle cx={84} cy={31} r={2.5} />
-            <Circle cx={90} cy={23} r={3.5} />
-            <Circle cx={96} cy={14} r={4} />
+          <G>
+            <Circle cx={70} cy={18} r={2.2} fill={CLOUD} />
+            <G fill={CLOUD}>
+              <Circle cx={74} cy={9} r={6} />
+              <Circle cx={84} cy={6} r={7} />
+              <Circle cx={93} cy={10} r={5} />
+            </G>
+            <G fill={INK}>
+              <Circle cx={78} cy={8} r={1.7} />
+              <Circle cx={84} cy={6} r={1.7} />
+              <Circle cx={90} cy={8} r={1.7} />
+            </G>
           </G>
         ) : null}
 

@@ -9,6 +9,7 @@
 const BODY = "#f7a8c8"; // brain pink
 const FOLD = "#d4779f"; // the sulci, a deeper pink
 const INK = "#43202f";
+const CLOUD = "#fdeef4"; // the thought bubble, a near-white pink
 const BLUE = "#0a84ff";
 
 export type AvatarBadge = "camera" | "calendar" | "bell";
@@ -56,18 +57,6 @@ export function RekallaAvatar({
           <circle cx={92} cy={37} r={6.5} fill={BODY} />
         </g>
       )}
-      {thinking && (
-        <g>
-          <path
-            d="M70 74C76 76 79 82 77 88"
-            stroke={BODY}
-            strokeWidth={8}
-            strokeLinecap="round"
-            fill="none"
-          />
-          <circle cx={64} cy={72} r={7} fill={BODY} />
-        </g>
-      )}
 
       <path d={OUTLINE} fill={BODY} />
 
@@ -92,10 +81,18 @@ export function RekallaAvatar({
       />
 
       {thinking && (
-        <g fill={BODY}>
-          <circle cx={84} cy={31} r={2.5} />
-          <circle cx={90} cy={23} r={3.5} />
-          <circle cx={96} cy={14} r={4} />
+        <g>
+          <circle cx={70} cy={18} r={2.2} fill={CLOUD} />
+          <g fill={CLOUD}>
+            <circle cx={74} cy={9} r={6} />
+            <circle cx={84} cy={6} r={7} />
+            <circle cx={93} cy={10} r={5} />
+          </g>
+          <g fill={INK}>
+            <circle cx={78} cy={8} r={1.7} />
+            <circle cx={84} cy={6} r={1.7} />
+            <circle cx={90} cy={8} r={1.7} />
+          </g>
         </g>
       )}
 
