@@ -1,5 +1,6 @@
 import * as ImagePicker from "expo-image-picker";
 import { supabase } from "./supabase";
+import { withRetry } from "./retry";
 
 export interface PickedPhoto {
   base64: string;
@@ -101,10 +102,13 @@ export async function uploadScanImage(
         : "jpg";
   const path = `${userId}/scans/${Date.now()}.${ext}`;
 
-  const { error } = await supabase.storage
-    .from("vault-photos")
-    .upload(path, bytes.buffer as ArrayBuffer, { contentType: photo.mimeType });
-  if (error) throw error;
+  // The photo is the one thing worth retrying for: losing it means retaking it.
+  await withRetry(async () => {
+    const { error } = await supabase.storage
+      .from("vault-photos")
+      .upload(path, bytes.buffer as ArrayBuffer, { contentType: photo.mimeType });
+    if (error) throw error;
+  });
 
   return path;
 }

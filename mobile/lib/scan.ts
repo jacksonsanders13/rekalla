@@ -3,6 +3,7 @@
  * back the dated items the AI found. The model API key never touches the app.
  */
 import { supabase } from "./supabase";
+import { withRetry } from "./retry";
 import type { PickedPhoto } from "./photos";
 
 export type ScanItemType = "event" | "appointment" | "bill";
@@ -27,10 +28,13 @@ export async function scanPhoto(
   hint: "calendar" | "appointment" | "bill" | "auto" = "auto",
 ): Promise<ScanResult> {
   const image_data_url = `data:${photo.mimeType};base64,${photo.base64}`;
-  const { data, error } = await supabase.functions.invoke<ScanResult>("scan", {
-    body: { image_data_url, hint },
+  const data = await withRetry(async () => {
+    const { data, error } = await supabase.functions.invoke<ScanResult>("scan", {
+      body: { image_data_url, hint },
+    });
+    if (error) throw error;
+    if (!data) throw new Error("empty scan response");
+    return data;
   });
-  if (error) throw error;
-  if (!data) throw new Error("empty scan response");
   return { doc_type: data.doc_type ?? "other", items: data.items ?? [] };
 }

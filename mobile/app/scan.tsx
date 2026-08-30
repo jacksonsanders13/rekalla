@@ -15,6 +15,7 @@ import { takePhoto, pickPhoto, type PickedPhoto } from "../lib/photos";
 import { scanPhoto, type ScanItem } from "../lib/scan";
 import { useSaveScan } from "../hooks/scans";
 import { syncReminderNotifications } from "../lib/notify";
+import { isTransient } from "../lib/retry";
 import { formatDay, formatTime } from "../lib/format";
 
 type Phase = "choose" | "scanning" | "review" | "saving";
@@ -64,10 +65,14 @@ export default function ScanScreen() {
       await syncReminderNotifications(saved);
       router.replace("/(patient)/home");
     } catch (e) {
-      const msg =
-        (e as { message?: string })?.message ??
-        (typeof e === "string" ? e : JSON.stringify(e));
-      setError(`Didn't save: ${msg}`);
+      // The photo is still in state, so "Add to my calendar" retries without
+      // making them photograph the page again.
+      setError(
+        isTransient(e)
+          ? "I couldn't save that just now. Check your connection and try again."
+          : "I couldn't save that just now. Please try again.",
+      );
+      console.error("scan save failed", e);
       setPhase("review");
     }
   }

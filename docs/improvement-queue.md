@@ -18,12 +18,6 @@ at the top. If every box is ticked, it should open no PR and say so.
   who can see it. The app is single-user: no sharing, no caregiver access. Flag in the
   PR that a human must read this before it ships.
 
-- [ ] **Add retry to the scan upload.**
-  `mobile/lib/photos.ts` uploads the image and `hooks/scans.ts` saves the scan. If the
-  network drops mid-upload the person loses the photo and gets a raw error string.
-  Retry the upload a couple of times with a backoff, and on final failure keep the
-  captured photo in state so they can try again without retaking it.
-
 - [ ] **Payments phase 1: entitlements, no payment provider.**
   Per `landing/../docs` and the plan discussed: add an `entitlements` table keyed by
   user (plan, status, current_period_end, source, external_id), with no client write
@@ -36,6 +30,12 @@ at the top. If every box is ticked, it should open no PR and say so.
 ## Done
 
 <!-- Move completed items here with the PR number, newest first. -->
+
+- [x] **Add retry to the scan upload.**
+  `mobile/lib/retry.ts` retries while a failure looks like the network, twice with
+  a backoff, wrapped around both the storage upload and the scan Edge Function
+  call. The save failure message is now plain language instead of a raw error
+  string, and the photo stays in state so retrying does not mean retaking it.
 
 - [x] **Add an error boundary to the web app.**
   Three of them: `app/(app)/error.tsx` keeps the header and tab bar so nobody is
