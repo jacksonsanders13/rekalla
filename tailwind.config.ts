@@ -41,8 +41,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        // The brand serif; the platform stack catches the gap while it loads
-        // and anywhere it fails.
+        // Quicksand is the brand face; the platform stack catches the gap
+        // while it loads and anywhere it fails.
         sans: [
           "var(--font-quicksand)",
           "-apple-system",
