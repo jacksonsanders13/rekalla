@@ -18,11 +18,6 @@ at the top. If every box is ticked, it should open no PR and say so.
   who can see it. The app is single-user: no sharing, no caregiver access. Flag in the
   PR that a human must read this before it ships.
 
-- [ ] **Add an error boundary to the web app.**
-  There is none, so one bad render white-screens the whole page. Add
-  `app/(app)/error.tsx` and a root `app/error.tsx` in Rekalla's voice: plain language,
-  no stack traces shown to the person, a button to try again. Match the app's tokens.
-
 - [ ] **Add retry to the scan upload.**
   `mobile/lib/photos.ts` uploads the image and `hooks/scans.ts` saves the scan. If the
   network drops mid-upload the person loses the photo and gets a raw error string.
@@ -41,6 +36,13 @@ at the top. If every box is ticked, it should open no PR and say so.
 ## Done
 
 <!-- Move completed items here with the PR number, newest first. -->
+
+- [x] **Add an error boundary to the web app.**
+  Three of them: `app/(app)/error.tsx` keeps the header and tab bar so nobody is
+  stranded, `app/error.tsx` covers the landing and auth screens, and
+  `app/global-error.tsx` handles the root layout failing, styled inline because no
+  stylesheet is guaranteed at that point. Errors go to the console, never to the
+  person.
 
 - [x] **Fix the cost formula for assistant_usage.**
   Both Edge Functions priced Sonnet at $3/$15 per million inline, overstating spend
