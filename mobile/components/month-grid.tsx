@@ -12,6 +12,13 @@ import { parseISODate, todayISO, toISODate } from "../lib/format";
 
 const WEEKDAYS = ["S", "M", "T", "W", "T", "F", "S"];
 
+/**
+ * The day cells are fixed squares, so their text is the one place in the app
+ * that cannot be allowed to scale freely. Everything a person actually reads
+ * (titles, times, Rekalla's answers) scales all the way, as it should.
+ */
+const GRID_MAX_SCALE = 1.3;
+
 export function MonthGrid({
   selected,
   onSelect,
@@ -60,7 +67,7 @@ export function MonthGrid({
         >
           <Ionicons name="chevron-back" size={28} color={colors.label} />
         </Pressable>
-        <Text style={styles.monthLabel}>{monthLabel}</Text>
+        <Text style={styles.monthLabel} maxFontSizeMultiplier={1.5}>{monthLabel}</Text>
         <Pressable
           onPress={() => shift(1)}
           accessibilityRole="button"
@@ -73,7 +80,7 @@ export function MonthGrid({
 
       <View style={styles.weekHead}>
         {WEEKDAYS.map((w, i) => (
-          <Text key={i} style={styles.weekHeadText}>{w}</Text>
+          <Text key={i} style={styles.weekHeadText} maxFontSizeMultiplier={GRID_MAX_SCALE}>{w}</Text>
         ))}
       </View>
 
@@ -93,7 +100,12 @@ export function MonthGrid({
                 accessibilityLabel={`${monthLabel} ${day}${has ? ", has items" : ""}`}
                 style={[styles.cell, isSel && styles.cellSel, isToday && !isSel && styles.cellToday]}
               >
-                <Text style={[styles.cellText, isSel && styles.cellTextSel]}>{day}</Text>
+                <Text
+                  style={[styles.cellText, isSel && styles.cellTextSel]}
+                  maxFontSizeMultiplier={GRID_MAX_SCALE}
+                >
+                  {day}
+                </Text>
                 {has ? <View style={[styles.dot, isSel && { backgroundColor: "#000" }]} /> : null}
               </Pressable>
             );

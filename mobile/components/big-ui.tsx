@@ -61,7 +61,9 @@ export function BigButton({
       {...props}
     >
       {icon ? <Ionicons name={icon} size={28} color={palette.fg} /> : null}
-      <Text style={[styles.buttonLabel, { color: palette.fg }]}>{label}</Text>
+      <Text style={[styles.buttonLabel, { color: palette.fg }]} maxFontSizeMultiplier={1.6}>
+        {label}
+      </Text>
     </Pressable>
   );
 }
