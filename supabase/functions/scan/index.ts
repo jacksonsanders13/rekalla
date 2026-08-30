@@ -9,14 +9,13 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders, jsonResponse } from "../_shared/cors.ts";
 import { estCostMicros } from "../_shared/pricing.ts";
+import { monthlyLimitFor } from "../_shared/entitlements.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY")!;
 const ANTHROPIC_MODEL = Deno.env.get("ANTHROPIC_MODEL") ?? "claude-sonnet-5";
-// Shared monthly cap with the assistant, so scan spend is bounded too.
-const MONTHLY_MESSAGE_LIMIT = Number(Deno.env.get("MONTHLY_MESSAGE_LIMIT") ?? "500");
 
 const EXTRACT_TOOL = {
   name: "extract",
@@ -162,14 +161,16 @@ Deno.serve(async (req) => {
     });
 
     // Monthly cap: refuse BEFORE the model call so a blocked scan is free.
-    if (MONTHLY_MESSAGE_LIMIT > 0) {
+    // The limit comes from the user's plan, not a single global env var.
+    const monthlyLimit = await monthlyLimitFor(admin, userId);
+    if (monthlyLimit > 0) {
       try {
         const { count } = await admin
           .from("assistant_usage")
           .select("id", { count: "exact", head: true })
           .eq("user_id", userId)
           .gte("created_at", startOfMonthISO());
-        if ((count ?? 0) >= MONTHLY_MESSAGE_LIMIT) {
+        if ((count ?? 0) >= monthlyLimit) {
           return jsonResponse({ error: "limit_reached", doc_type: "other", items: [] }, 429);
         }
       } catch (_) {

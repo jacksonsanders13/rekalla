@@ -18,18 +18,18 @@ at the top. If every box is ticked, it should open no PR and say so.
   who can see it. The app is single-user: no sharing, no caregiver access. Flag in the
   PR that a human must read this before it ships.
 
-- [ ] **Payments phase 1: entitlements, no payment provider.**
-  Per `landing/../docs` and the plan discussed: add an `entitlements` table keyed by
-  user (plan, status, current_period_end, source, external_id), with no client write
-  policy, matching how `assistant_usage` is locked down. Then make the monthly cap in
-  both Edge Functions read the plan instead of the single `MONTHLY_MESSAGE_LIMIT` env
-  var. Everyone is on free for now. Do not add Stripe or RevenueCat in this PR.
-
 ---
 
 ## Done
 
 <!-- Move completed items here with the PR number, newest first. -->
+
+- [x] **Payments phase 1: entitlements, no payment provider.**
+  `20260830000001_entitlements.sql` adds the table, owner-read only, no client
+  write policy. `_shared/entitlements.ts` resolves a user's monthly limit and both
+  Edge Functions now use it. No row means free, so no backfill was needed. Caps
+  default to today's numbers, so deploying changes nothing until the free limit is
+  deliberately lowered. Needs both functions redeployed and the migration applied.
 
 - [x] **Add retry to the scan upload.**
   `mobile/lib/retry.ts` retries while a failure looks like the network, twice with

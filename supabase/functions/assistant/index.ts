@@ -6,6 +6,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders, jsonResponse } from "../_shared/cors.ts";
 import { estCostMicros } from "../_shared/pricing.ts";
+import { monthlyLimitFor } from "../_shared/entitlements.ts";
 import { retrieveContext } from "./retrieval.ts";
 import { buildSystemPrompt, RESPOND_TOOL } from "./prompt.ts";
 
@@ -14,7 +15,6 @@ const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY")!;
 const ANTHROPIC_MODEL = Deno.env.get("ANTHROPIC_MODEL") ?? "claude-sonnet-5";
-const MONTHLY_MESSAGE_LIMIT = Number(Deno.env.get("MONTHLY_MESSAGE_LIMIT") ?? "500");
 
 async function reply(systemPrompt: string, userMessage: string) {
   const res = await fetch("https://api.anthropic.com/v1/messages", {
@@ -77,14 +77,16 @@ Deno.serve(async (req) => {
     });
 
     // Monthly cap: refuse BEFORE the model call so a blocked message is free.
-    if (MONTHLY_MESSAGE_LIMIT > 0) {
+    // The limit comes from the user's plan, not a single global env var.
+    const monthlyLimit = await monthlyLimitFor(admin, userId);
+    if (monthlyLimit > 0) {
       try {
         const { count } = await admin
           .from("assistant_usage")
           .select("id", { count: "exact", head: true })
           .eq("user_id", userId)
           .gte("created_at", startOfMonthISO());
-        if ((count ?? 0) >= MONTHLY_MESSAGE_LIMIT) {
+        if ((count ?? 0) >= monthlyLimit) {
           return jsonResponse({
             reply:
               "You've used all of this month's questions with me. They'll refresh at the start of next month.",
