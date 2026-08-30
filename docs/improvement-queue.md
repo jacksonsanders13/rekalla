@@ -18,11 +18,6 @@ at the top. If every box is ticked, it should open no PR and say so.
   who can see it. The app is single-user: no sharing, no caregiver access. Flag in the
   PR that a human must read this before it ships.
 
-- [ ] **Fix the cost formula in `supabase/migrations/20260820000000_assistant_usage.sql`.**
-  The comment and `est_cost_micros` price Claude Sonnet at $3/$15 per million tokens.
-  It is $2/$10, so the column overstates spend by about 50%. Add a new migration
-  rather than editing the applied one, and correct the comment.
-
 - [ ] **Add an error boundary to the web app.**
   There is none, so one bad render white-screens the whole page. Add
   `app/(app)/error.tsx` and a root `app/error.tsx` in Rekalla's voice: plain language,
@@ -46,3 +41,9 @@ at the top. If every box is ticked, it should open no PR and say so.
 ## Done
 
 <!-- Move completed items here with the PR number, newest first. -->
+
+- [x] **Fix the cost formula for assistant_usage.**
+  Both Edge Functions priced Sonnet at $3/$15 per million inline, overstating spend
+  by ~50%. Rates now live in `supabase/functions/_shared/pricing.ts` so the two
+  cannot drift again, and `20260830000000_fix_usage_cost_rate.sql` corrects the
+  stored rows and the column comment. Needs both functions redeployed.

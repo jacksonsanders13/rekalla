@@ -8,6 +8,7 @@
 // SECURITY: ANTHROPIC_API_KEY lives ONLY here as an Edge Function secret.
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders, jsonResponse } from "../_shared/cors.ts";
+import { estCostMicros } from "../_shared/pricing.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
@@ -183,7 +184,11 @@ Deno.serve(async (req) => {
         user_id: userId,
         input_tokens: usage.input_tokens,
         output_tokens: usage.output_tokens,
-        est_cost_micros: usage.input_tokens * 3 + usage.output_tokens * 15,
+        est_cost_micros: estCostMicros(
+          ANTHROPIC_MODEL,
+          usage.input_tokens,
+          usage.output_tokens,
+        ),
       });
     } catch (e) {
       console.error("usage logging failed", e);

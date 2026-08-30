@@ -5,6 +5,7 @@
 // read scoped to the signed-in user; the model API key lives ONLY here.
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders, jsonResponse } from "../_shared/cors.ts";
+import { estCostMicros } from "../_shared/pricing.ts";
 import { retrieveContext } from "./retrieval.ts";
 import { buildSystemPrompt, RESPOND_TOOL } from "./prompt.ts";
 
@@ -103,7 +104,11 @@ Deno.serve(async (req) => {
         user_id: userId,
         input_tokens: result.usage.input_tokens,
         output_tokens: result.usage.output_tokens,
-        est_cost_micros: result.usage.input_tokens * 3 + result.usage.output_tokens * 15,
+        est_cost_micros: estCostMicros(
+          ANTHROPIC_MODEL,
+          result.usage.input_tokens,
+          result.usage.output_tokens,
+        ),
       });
     } catch (e) {
       console.error("usage logging failed", e);
