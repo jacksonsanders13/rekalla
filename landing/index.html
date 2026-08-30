@@ -3,15 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Rekalla · Bring your paper life online</title>
-<meta name="description" content="Take a photo of a paper calendar, an appointment card, or a bill. Rekalla reads the dates and reminds you when the day comes.">
+<title>Rekalla &middot; Bring your paper life online</title>
+<meta name="description" content="Photograph a paper calendar, an appointment card or a bill. Rekalla reads the dates, puts them on your calendar and reminds you on the day.">
 <link rel="icon" href="logo.svg" type="image/svg+xml">
-<meta property="og:title" content="Rekalla · Bring your paper life online">
-<meta property="og:description" content="Take a photo of a paper calendar, an appointment card, or a bill. Rekalla reads the dates and reminds you when the day comes.">
+<meta property="og:title" content="Rekalla - Bring your paper life online">
+<meta property="og:description" content="Photograph a paper calendar, an appointment card or a bill. Rekalla reads the dates and reminds you on the day.">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Quicksand:wght@400;600;700&display=swap">
+
+<script>
+  // Two heroes, one page. Facebook and Instagram ads point at /?a=family, which
+  // shows the version written for the son or daughter. Everyone else gets the
+  // version written for someone who went looking. Runs before paint, so the
+  // wrong hero never flashes.
+  (function () {
+    try {
+      if (new URLSearchParams(location.search).get("a") === "family") {
+        document.documentElement.className += " family";
+      }
+    } catch (e) {}
+  })();
+</script>
+
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
@@ -25,7 +40,6 @@
     --label4: #636366;
     --blue: #0a84ff;
     --blue-dark: #0071e3;
-    --pink: #f7a8c8;
     --radius: 24px;
     --radius-lg: 30px;
   }
@@ -35,43 +49,43 @@
     * { animation: none !important; transition: none !important; }
   }
   body {
-    background: var(--base);
-    color: var(--label);
+    background: var(--base); color: var(--label);
     font-family: "Quicksand", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    font-size: 18px;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
+    font-size: 18px; line-height: 1.6; -webkit-font-smoothing: antialiased;
   }
   a { color: inherit; text-decoration: none; }
   img, svg { display: block; max-width: 100%; }
   .wrap { max-width: 1060px; margin: 0 auto; padding: 0 24px; }
 
+  /* hero switching */
+  .hero-b { display: none; }
+  html.family .hero-a { display: none; }
+  html.family .hero-b { display: flex; }
+  .for-a { display: inline; }
+  .for-b { display: none; }
+  html.family .for-a { display: none; }
+  html.family .for-b { display: inline; }
+
   /* ---- nav ---- */
   nav {
     position: sticky; top: 0; z-index: 10;
     background: rgba(0,0,0,0.82);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
     border-bottom: 1px solid rgba(255,255,255,0.08);
   }
-  .nav-inner {
-    display: flex; align-items: center; justify-content: space-between;
-    min-height: 68px; gap: 16px;
-  }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; min-height: 68px; gap: 16px; }
   .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 21px; letter-spacing: -0.3px; }
   .brand img { width: 36px; height: 36px; }
   .nav-links { display: flex; align-items: center; gap: 26px; }
   .nav-links a { color: var(--label3); font-size: 16px; font-weight: 600; transition: color .15s; }
   .nav-links a:hover { color: var(--label); }
-  @media (max-width: 720px) { .nav-links { display: none; } }
+  @media (max-width: 760px) { .nav-links { display: none; } }
 
   .btn {
-    display: inline-flex; align-items: center; justify-content: center;
-    min-height: 52px; padding: 0 26px;
-    border-radius: 999px; font-size: 17px; font-weight: 700;
-    font-family: inherit; border: 0; cursor: pointer;
-    transition: background-color .15s, opacity .15s;
-    white-space: nowrap;
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    min-height: 54px; padding: 0 28px; border-radius: 999px;
+    font-size: 17px; font-weight: 700; font-family: inherit; border: 0; cursor: pointer;
+    transition: background-color .15s, opacity .15s; white-space: nowrap; text-align: center;
   }
   .btn-primary { background: var(--blue); color: #fff; }
   .btn-primary:hover { background: var(--blue-dark); }
@@ -81,80 +95,110 @@
   .btn-light:hover { opacity: .9; }
 
   /* ---- hero ---- */
-  .hero { text-align: center; padding: 72px 0 40px; display: flex; flex-direction: column; align-items: center; gap: 26px; }
+  .hero { text-align: center; padding: 62px 0 10px; flex-direction: column; align-items: center; gap: 22px; }
+  .hero-a { display: flex; }
+  .eyebrow { color: var(--label3); font-size: 16px; font-weight: 700; letter-spacing: 0.5px; }
   .hero h1 {
-    font-size: clamp(38px, 7vw, 66px);
-    line-height: 1.05; font-weight: 700; letter-spacing: -1.2px;
-    max-width: 15ch; text-wrap: balance;
+    font-size: clamp(37px, 6.2vw, 60px); line-height: 1.07; font-weight: 700;
+    letter-spacing: -1.2px; max-width: 18ch; text-wrap: balance;
   }
-  .hero p.lede {
-    font-size: clamp(19px, 2.4vw, 23px);
-    color: var(--label2); max-width: 34ch; text-wrap: balance;
-  }
+  .hero ul { list-style: none; display: flex; flex-direction: column; gap: 10px; text-align: left; max-width: 430px; width: 100%; }
+  .hero ul li { display: flex; gap: 12px; align-items: flex-start; font-size: 17px; color: var(--label2); }
   .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
-  .hero .fineprint { color: var(--label3); font-size: 16px; }
+  .fineprint { color: var(--label3); font-size: 16px; }
+  .trustline { color: var(--label4); font-size: 15px; font-weight: 600; letter-spacing: 0.3px; }
+  .tick { flex: none; width: 21px; height: 21px; margin-top: 3px; }
 
   /* ---- sections ---- */
-  section { padding: 64px 0; }
-  .section-head { text-align: center; margin-bottom: 44px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
-  h2 {
-    font-size: clamp(28px, 4.2vw, 40px);
-    font-weight: 700; letter-spacing: -0.8px; line-height: 1.15;
-    max-width: 20ch; text-wrap: balance;
+  section { padding: 58px 0; }
+  .section-head { text-align: center; margin-bottom: 42px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+  h2 { font-size: clamp(27px, 4vw, 38px); font-weight: 700; letter-spacing: -0.8px; line-height: 1.15; max-width: 22ch; text-wrap: balance; }
+  .section-head p { color: var(--label2); max-width: 48ch; font-size: 18px; text-wrap: balance; }
+
+  /* ---- before / after ---- */
+  .proof-shot { padding-top: 8px; }
+  .transform { display: grid; gap: 20px; align-items: center; grid-template-columns: 1fr; justify-items: center; width: 100%; }
+  @media (min-width: 780px) { .transform { grid-template-columns: 1fr auto 1fr; gap: 32px; } }
+  .paper {
+    background: #f4efe2; color: #2b2620; border-radius: 14px; padding: 22px 24px 26px;
+    width: 100%; max-width: 330px; box-shadow: 0 18px 40px rgba(0,0,0,0.5);
+    transform: rotate(-1.6deg); text-align: left;
   }
-  .section-head p { color: var(--label2); max-width: 46ch; font-size: 19px; text-wrap: balance; }
+  .paper .month { font-weight: 700; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: #8a8175; margin-bottom: 12px; }
+  .paper .line { font-family: "Caveat", cursive; font-size: 25px; line-height: 1.5; border-bottom: 1px solid #ded6c4; padding-bottom: 3px; margin-bottom: 11px; }
+  .paper .line:last-child { border-bottom: 0; margin-bottom: 0; }
+  .arrow { color: var(--label4); }
+  @media (max-width: 779px) { .arrow { transform: rotate(90deg); } }
+  .result { width: 100%; max-width: 330px; display: flex; flex-direction: column; gap: 10px; }
+  .result .cap { font-size: 13px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: var(--label3); text-align: left; }
+
+  /* ---- lead ---- */
+  .lead { max-width: 640px; margin: 0 auto; text-align: center; display: flex; flex-direction: column; gap: 18px; }
+  .lead p { font-size: 20px; color: var(--label2); }
+  .lead p strong { color: var(--label); font-weight: 700; }
 
   /* ---- steps ---- */
-  .steps { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
-  .step {
-    background: var(--elev1); border-radius: var(--radius-lg);
-    padding: 34px 26px; text-align: center;
-    display: flex; flex-direction: column; align-items: center; gap: 14px;
-  }
-  .step h3 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
-  .step p { color: var(--label2); font-size: 17px; }
+  .steps { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(258px, 1fr)); list-style: none; }
+  .step { background: var(--elev1); border-radius: var(--radius-lg); padding: 32px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .step h3 { font-size: 21px; font-weight: 700; letter-spacing: -0.3px; }
+  .step p { color: var(--label2); font-size: 16.5px; }
+
+  /* ---- benefits ---- */
+  .benefits { list-style: none; display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  .benefits li { display: flex; gap: 14px; align-items: flex-start; font-size: 17.5px; color: var(--label2); }
+  .benefits b { color: var(--label); }
+
+  /* ---- accent cards ---- */
+  .cards { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .card { border-radius: var(--radius-lg); padding: 32px 28px; display: flex; flex-direction: column; gap: 10px; min-height: 220px; }
+  .card h3 { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.15; }
+  .card p { font-size: 16.5px; }
+  .card-blue { background: var(--blue); color: #fff; }
+  .card-blue p { color: rgba(255,255,255,0.88); }
+  .card-pink { background: #f7a8c8; color: #3a1f2c; }
+  .card-pink p { color: rgba(58,31,44,0.82); }
+  .card-dark { background: var(--elev1); color: var(--label); }
+  .card-dark p { color: var(--label2); }
+  .card .spacer { flex: 1; }
+
+  /* ---- comparison ---- */
+  .table-scroll { overflow-x: auto; margin-top: 28px; }
+  table { width: 100%; border-collapse: collapse; min-width: 620px; font-size: 16.5px; }
+  th, td { text-align: left; padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.12); }
+  thead th { font-size: 15px; color: var(--label3); font-weight: 700; }
+  thead th:nth-child(2) { color: var(--label); }
+  tbody td:first-child { color: var(--label2); }
+  .yes { color: var(--blue); font-weight: 700; }
+  .no { color: var(--label4); }
+
+  /* ---- proof ---- */
+  .proof-grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); list-style: none; }
+  .proof-grid li { background: var(--elev1); border-radius: var(--radius); padding: 24px; display: flex; flex-direction: column; gap: 8px; }
+  .proof-grid h3 { font-size: 18px; font-weight: 700; }
+  .proof-grid p { font-size: 16px; color: var(--label2); }
+
+  /* ---- archetypes ---- */
+  .archetypes { display: grid; gap: 22px; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); }
+  .arch { border-left: 2px solid var(--elev3); padding-left: 22px; }
+  .arch h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.3px; }
+  .arch p { color: var(--label2); font-size: 17px; }
 
   /* ---- the app ---- */
-  .app-row { display: grid; gap: 48px; align-items: center; grid-template-columns: 1fr; }
+  .app-row { display: grid; gap: 44px; align-items: center; grid-template-columns: 1fr; }
   @media (min-width: 860px) { .app-row { grid-template-columns: 340px 1fr; } }
-  .app-copy { display: flex; flex-direction: column; gap: 18px; }
+  .app-copy { display: flex; flex-direction: column; gap: 16px; }
   .app-copy h2 { max-width: 18ch; }
-  .app-copy p { color: var(--label2); font-size: 19px; max-width: 46ch; }
-
-  .phone {
-    background: #000; border: 1px solid var(--elev2);
-    border-radius: 38px; padding: 14px; margin: 0 auto; width: 100%; max-width: 340px;
-  }
+  .app-copy p { color: var(--label2); font-size: 18.5px; max-width: 46ch; }
+  .phone { background: #000; border: 1px solid var(--elev2); border-radius: 38px; padding: 14px; margin: 0 auto; width: 100%; max-width: 340px; }
   .screen { display: flex; flex-direction: column; gap: 14px; }
-  .scan-card {
-    background: var(--blue); border-radius: var(--radius);
-    padding: 26px 16px; text-align: center;
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
-  }
+  .scan-card { background: var(--blue); border-radius: var(--radius); padding: 26px 16px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; }
   .scan-card .t { font-size: 21px; font-weight: 700; letter-spacing: -0.3px; }
   .scan-card .s { font-size: 13px; color: rgba(255,255,255,0.85); }
   .greet { display: flex; align-items: center; gap: 8px; }
-  .bubble {
-    position: relative; flex: 1;
-    background: var(--elev1); border-radius: 22px;
-    padding: 11px 14px; font-size: 15px; line-height: 1.4;
-  }
-  .bubble::before {
-    content: ""; position: absolute; left: -4px; top: 50%;
-    width: 11px; height: 11px; margin-top: -5.5px;
-    background: var(--elev1); transform: rotate(45deg);
-  }
-  .ask {
-    display: flex; align-items: center; gap: 8px;
-    background: var(--elev1); border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 999px; padding: 5px 5px 5px 16px;
-    font-size: 14px; color: var(--label4);
-  }
-  .ask .send {
-    margin-left: auto; width: 32px; height: 32px; border-radius: 50%;
-    background: var(--blue); color: #fff;
-    display: flex; align-items: center; justify-content: center; font-size: 16px;
-  }
+  .bubble { position: relative; flex: 1; background: var(--elev1); border-radius: 22px; padding: 11px 14px; font-size: 15px; line-height: 1.4; }
+  .bubble::before { content: ""; position: absolute; left: -4px; top: 50%; width: 11px; height: 11px; margin-top: -5.5px; background: var(--elev1); transform: rotate(45deg); }
+  .ask { display: flex; align-items: center; gap: 8px; background: var(--elev1); border: 1px solid rgba(255,255,255,0.1); border-radius: 999px; padding: 5px 5px 5px 16px; font-size: 14px; color: var(--label4); }
+  .ask .send { margin-left: auto; width: 32px; height: 32px; border-radius: 50%; background: var(--blue); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; }
   .up-head { font-size: 16px; font-weight: 700; margin-top: 2px; }
   .list { background: var(--elev1); border-radius: 18px; overflow: hidden; }
   .item { display: flex; align-items: center; gap: 10px; padding: 12px 14px; }
@@ -164,51 +208,16 @@
   .item .iw { font-size: 12px; color: var(--label3); }
   .item .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); }
 
-  /* ---- reads ---- */
-  .reads {
-    background: var(--elev1); border-radius: var(--radius-lg);
-    padding: 40px; display: grid; gap: 34px; grid-template-columns: 1fr;
-  }
-  @media (min-width: 800px) { .reads { grid-template-columns: 1fr 1fr; padding: 52px; } }
-  .reads h2 { max-width: 16ch; }
-  .reads p { color: var(--label2); font-size: 18px; max-width: 42ch; }
-  .reads ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-  .reads li { display: flex; align-items: flex-start; gap: 12px; font-size: 18px; }
-  .tick { flex: none; width: 22px; height: 22px; margin-top: 3px; }
-
-  /* ---- care ---- */
-  .care { display: grid; gap: 26px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
-  .care div { border-left: 2px solid var(--elev3); padding-left: 20px; }
-  .care h3 { font-size: 19px; font-weight: 700; margin-bottom: 6px; }
-  .care p { color: var(--label2); font-size: 17px; }
-
-  /* ---- join ---- */
-  .join {
-    text-align: center; display: flex; flex-direction: column;
-    align-items: center; gap: 18px;
-    background: var(--elev1); border-radius: var(--radius-lg);
-    padding: 56px 24px;
-  }
-  .join p { color: var(--label2); max-width: 44ch; font-size: 18px; text-wrap: balance; }
-  .join-form { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; width: 100%; max-width: 480px; }
-  .join-form input {
-    flex: 1 1 220px; min-height: 52px;
-    background: var(--base); color: var(--label);
-    border: 1px solid var(--elev3); border-radius: 999px;
-    padding: 0 20px; font-size: 17px; font-family: inherit;
-  }
-  .join-form input::placeholder { color: var(--label4); }
-  .join-form input:focus { outline: none; border-color: var(--blue); }
-  .join-msg { min-height: 26px; color: var(--label2); font-size: 16px; }
+  /* ---- closing ---- */
+  .closing { background: var(--elev1); border-radius: var(--radius-lg); padding: 56px 28px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+  .closing ul { list-style: none; display: flex; flex-direction: column; gap: 10px; text-align: left; max-width: 400px; width: 100%; }
+  .closing ul li { display: flex; gap: 12px; align-items: flex-start; font-size: 17px; color: var(--label2); }
 
   /* ---- faq ---- */
-  .faq-list { display: flex; flex-direction: column; gap: 0; max-width: 760px; margin: 0 auto; }
+  .faq-list { display: flex; flex-direction: column; max-width: 760px; margin: 0 auto; }
   details { border-top: 1px solid rgba(255,255,255,0.12); padding: 20px 0; }
   details:last-child { border-bottom: 1px solid rgba(255,255,255,0.12); }
-  summary {
-    cursor: pointer; font-size: 19px; font-weight: 700; letter-spacing: -0.2px;
-    list-style: none; display: flex; justify-content: space-between; gap: 16px;
-  }
+  summary { cursor: pointer; font-size: 19px; font-weight: 700; letter-spacing: -0.2px; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
   summary::-webkit-details-marker { display: none; }
   summary::after { content: "+"; color: var(--label3); font-weight: 400; font-size: 24px; line-height: 1; }
   details[open] summary::after { content: "\2013"; }
@@ -216,62 +225,10 @@
 
   /* ---- footer ---- */
   footer { border-top: 1px solid rgba(255,255,255,0.08); padding: 40px 0 64px; }
-  .foot-inner { display: flex; flex-wrap: wrap; gap: 20px 28px; align-items: center; justify-content: center; }
+  .foot-inner { display: flex; flex-wrap: wrap; gap: 18px 28px; align-items: center; justify-content: center; }
   .foot-inner a { color: var(--label3); font-size: 16px; font-weight: 600; }
   .foot-inner a:hover { color: var(--label); }
   .disclaimer { text-align: center; color: var(--label4); font-size: 15px; margin-top: 22px; max-width: 46ch; margin-left: auto; margin-right: auto; }
-
-  /* ---- before / after ---- */
-  .transform {
-    display: grid; gap: 20px; align-items: center;
-    grid-template-columns: 1fr; justify-items: center;
-    margin-top: 14px; width: 100%;
-  }
-  @media (min-width: 780px) { .transform { grid-template-columns: 1fr auto 1fr; gap: 32px; } }
-
-  .paper {
-    background: #f4efe2; color: #2b2620;
-    border-radius: 14px; padding: 22px 24px 26px;
-    width: 100%; max-width: 330px;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.5);
-    transform: rotate(-1.6deg);
-    text-align: left;
-  }
-  .paper .month {
-    font-family: "Quicksand", sans-serif; font-weight: 700;
-    font-size: 13px; letter-spacing: 2px; text-transform: uppercase;
-    color: #8a8175; margin-bottom: 12px;
-  }
-  .paper .line {
-    font-family: "Caveat", cursive; font-size: 25px; line-height: 1.5;
-    border-bottom: 1px solid #ded6c4; padding-bottom: 3px; margin-bottom: 11px;
-  }
-  .paper .line:last-child { border-bottom: 0; margin-bottom: 0; }
-
-  .arrow { color: var(--label4); }
-  @media (max-width: 779px) { .arrow { transform: rotate(90deg); } }
-
-  .result { width: 100%; max-width: 330px; display: flex; flex-direction: column; gap: 10px; }
-  .result .cap {
-    font-size: 13px; font-weight: 700; letter-spacing: 1.4px;
-    text-transform: uppercase; color: var(--label3); text-align: left;
-  }
-
-  /* ---- accent cards ---- */
-  .cards { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-  .card {
-    border-radius: var(--radius-lg); padding: 34px 30px;
-    display: flex; flex-direction: column; gap: 10px; min-height: 230px;
-  }
-  .card h3 { font-size: 25px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.15; }
-  .card p { font-size: 17px; }
-  .card-blue { background: var(--blue); color: #fff; }
-  .card-blue p { color: rgba(255,255,255,0.88); }
-  .card-pink { background: #f7a8c8; color: #3a1f2c; }
-  .card-pink p { color: rgba(58,31,44,0.82); }
-  .card-dark { background: var(--elev1); color: var(--label); }
-  .card-dark p { color: var(--label2); }
-  .card .spacer { flex: 1; }
 
   :focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; border-radius: 6px; }
 </style>
@@ -280,47 +237,56 @@
 
 <nav>
   <div class="wrap nav-inner">
-    <a class="brand" href="#top">
-      <img src="logo.svg" alt="">
-      Rekalla
-    </a>
+    <a class="brand" href="#top"><img src="logo.svg" alt="">Rekalla</a>
     <div class="nav-links">
       <a href="#how">How it works</a>
-      <a href="#reads">What it reads</a>
+      <a href="#different">Why it works</a>
       <a href="#faq">Questions</a>
     </div>
-    <a class="btn btn-primary" href="#join" data-app>Get early access</a>
+    <a class="btn btn-primary" href="https://apps.apple.com/app/id6794918254">Download</a>
   </div>
 </nav>
 
 <main id="top">
 
-  <!-- ---------- hero ---------- -->
-  <section class="wrap hero">
-    <svg width="128" height="128" viewBox="0 0 100 100" fill="none" role="img" aria-label="Rekalla, a pink cartoon brain">
-      <path d="M50 10C62 6 74 10 76 20C88 18 94 28 88 38C96 44 96 56 86 60C92 70 84 80 73 76C70 86 60 90 50 86C40 90 30 86 27 76C16 80 8 70 14 60C4 56 4 44 12 38C6 28 12 18 24 20C26 10 38 6 50 10Z" fill="#f7a8c8"/>
-      <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none">
-        <path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/>
-      </g>
-      <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none" transform="translate(100,0) scale(-1,1)">
-        <path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/>
-      </g>
-      <path d="M50 14V36" stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none"/>
-      <circle cx="40" cy="52" r="4.5" fill="#43202f"/><circle cx="60" cy="52" r="4.5" fill="#43202f"/>
-      <path d="M42 64C45 68 55 68 58 64" stroke="#43202f" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-    </svg>
-
-    <h1>Bring your paper life online</h1>
-    <p class="lede">
-      Photograph the paper. He reads the dates, puts them on your calendar,
-      and tells you when the day comes.
-    </p>
+  <!-- ===== HERO A: default, and where Google Ads land ===== -->
+  <section class="wrap hero hero-a">
+    <p class="eyebrow">For anyone who still keeps a paper calendar</p>
+    <h1>Photograph your paper calendar. It&rsquo;s on your phone in seconds.</h1>
+    <ul>
+      <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Nothing to type. You take the photo, Rekalla does the writing</li>
+      <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Reads printed dates and handwriting</li>
+      <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>You see everything he found before anything is saved</li>
+      <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Your phone reminds you when the day comes</li>
+    </ul>
     <div class="hero-actions">
-      <a class="btn btn-primary" href="#join" data-app>Get early access</a>
+      <a class="btn btn-primary" href="https://apps.apple.com/app/id6794918254">Download on the App Store</a>
       <a class="btn btn-quiet" href="#how">See how it works</a>
     </div>
-    <p class="fineprint">Free to start. Nothing to type.</p>
+    <p class="fineprint">Free to start. No card needed.</p>
+    <p class="trustline">No ads. No tracking. Not a medical app.</p>
+  </section>
 
+  <!-- ===== HERO B: Facebook and Instagram, /?a=family ===== -->
+  <section class="wrap hero hero-b">
+    <p class="eyebrow">For the wall calendar nobody else can see</p>
+    <h1>Her appointments are on the kitchen wall. One photo puts them on her phone.</h1>
+    <ul>
+      <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>She takes one photo. No typing, no setup, no learning an app</li>
+      <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Every appointment, bill and birthday, with a reminder on the day</li>
+      <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>She approves each date, so nothing appears that she didn&rsquo;t put there</li>
+      <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Big, plain screens made to be read without glasses</li>
+    </ul>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="https://apps.apple.com/app/id6794918254">Download on the App Store</a>
+      <a class="btn btn-quiet" href="#how">See how it works</a>
+    </div>
+    <p class="fineprint">Free to start. Takes about a minute.</p>
+    <p class="trustline">Private to her account. Nobody else can see it, including us.</p>
+  </section>
+
+  <!-- ===== THE PROOF SHOT: paper in, calendar out ===== -->
+  <section class="wrap proof-shot">
     <div class="transform">
       <div class="paper" role="img" aria-label="A photo of a handwritten paper calendar for September">
         <div class="month">September</div>
@@ -328,281 +294,234 @@
         <div class="line">7th &mdash; water bill due, $64.20</div>
         <div class="line">8th &mdash; book club, 6pm</div>
       </div>
-
-      <svg class="arrow" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M5 12h14M13 6l6 6-6 6"/>
-      </svg>
-
+      <svg class="arrow" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       <div class="result">
-        <div class="cap">On your phone</div>
+        <div class="cap"><span class="for-a">On your phone</span><span class="for-b">On her phone</span></div>
         <div class="list">
-          <div class="item">
-            <div class="txt">
-              <div class="it">Dr. Alvarez, cardiology</div>
-              <div class="iw">Fri, Sep 4 &middot; 10:30 AM &middot; Suite 210</div>
-            </div>
-            <span class="dot" aria-hidden="true"></span>
-          </div>
-          <div class="item">
-            <div class="txt">
-              <div class="it">Water bill</div>
-              <div class="iw">Mon, Sep 7 &middot; All day &middot; $64.20</div>
-            </div>
-          </div>
-          <div class="item">
-            <div class="txt">
-              <div class="it">Book club</div>
-              <div class="iw">Tue, Sep 8 &middot; 6:00 PM</div>
-            </div>
-          </div>
+          <div class="item"><div class="txt"><div class="it">Dr. Alvarez, cardiology</div><div class="iw">Fri, Sep 4 &middot; 10:30 AM &middot; Suite 210</div></div><span class="dot" aria-hidden="true"></span></div>
+          <div class="item"><div class="txt"><div class="it">Water bill</div><div class="iw">Mon, Sep 7 &middot; All day &middot; $64.20</div></div></div>
+          <div class="item"><div class="txt"><div class="it">Book club</div><div class="iw">Tue, Sep 8 &middot; 6:00 PM</div></div></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ---------- how it works ---------- -->
+  <!-- ===== LEAD ===== -->
+  <section class="wrap">
+    <div class="lead">
+      <p>The appointment card goes in a drawer. The bill goes under the fruit bowl. The calendar on the wall works beautifully, right up until you leave the kitchen.</p>
+      <p><strong>Nothing is disorganised, exactly. It&rsquo;s just that none of it is with you when it matters.</strong></p>
+      <p>So don&rsquo;t reorganise any of it. Photograph what you already have, check what Rekalla read, and let your phone do the remembering.</p>
+    </div>
+  </section>
+
+  <!-- ===== HOW IT WORKS ===== -->
   <section id="how" class="wrap">
     <div class="section-head">
-      <h2>Three steps, and you are done</h2>
+      <h2>Three steps, then you&rsquo;re done</h2>
       <p>There is nothing else to learn.</p>
     </div>
-
-    <ol class="steps" style="list-style: none;">
+    <ol class="steps">
       <li class="step">
-        <svg width="92" height="92" viewBox="0 0 100 100" fill="none" role="img" aria-label="Rekalla with a camera">
+        <svg width="88" height="88" viewBox="0 0 100 100" fill="none" role="img" aria-label="Rekalla with a camera">
           <path d="M50 10C62 6 74 10 76 20C88 18 94 28 88 38C96 44 96 56 86 60C92 70 84 80 73 76C70 86 60 90 50 86C40 90 30 86 27 76C16 80 8 70 14 60C4 56 4 44 12 38C6 28 12 18 24 20C26 10 38 6 50 10Z" fill="#f7a8c8"/>
-          <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none">
-            <path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/>
-          </g>
-          <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none" transform="translate(100,0) scale(-1,1)">
-            <path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/>
-          </g>
+          <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none"><path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/></g>
+          <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none" transform="translate(100,0) scale(-1,1)"><path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/></g>
           <path d="M50 14V36" stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none"/>
           <circle cx="40" cy="52" r="4.5" fill="#43202f"/><circle cx="60" cy="52" r="4.5" fill="#43202f"/>
           <path d="M42 64C45 68 55 68 58 64" stroke="#43202f" stroke-width="3.5" stroke-linecap="round" fill="none"/>
           <circle cx="78" cy="78" r="19" fill="#0a84ff"/>
-          <g stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none">
-            <rect x="68" y="72" width="20" height="14" rx="3"/><circle cx="78" cy="79" r="3.5"/><path d="M74 72L76 69H80L82 72"/>
-          </g>
+          <g stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="68" y="72" width="20" height="14" rx="3"/><circle cx="78" cy="79" r="3.5"/><path d="M74 72L76 69H80L82 72"/></g>
         </svg>
         <h3>Take the photo</h3>
-        <p>A calendar on the kitchen wall, a card from the doctor, a bill with a due date. However it happens to be written.</p>
+        <p>A wall calendar, an appointment card, a bill. However it happens to be written.</p>
       </li>
-
       <li class="step">
-        <svg width="92" height="92" viewBox="0 0 100 100" fill="none" role="img" aria-label="Rekalla with a calendar">
+        <svg width="88" height="88" viewBox="0 0 100 100" fill="none" role="img" aria-label="Rekalla with a calendar">
           <path d="M50 10C62 6 74 10 76 20C88 18 94 28 88 38C96 44 96 56 86 60C92 70 84 80 73 76C70 86 60 90 50 86C40 90 30 86 27 76C16 80 8 70 14 60C4 56 4 44 12 38C6 28 12 18 24 20C26 10 38 6 50 10Z" fill="#f7a8c8"/>
-          <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none">
-            <path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/>
-          </g>
-          <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none" transform="translate(100,0) scale(-1,1)">
-            <path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/>
-          </g>
+          <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none"><path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/></g>
+          <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none" transform="translate(100,0) scale(-1,1)"><path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/></g>
           <path d="M50 14V36" stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none"/>
           <circle cx="40" cy="52" r="4.5" fill="#43202f"/><circle cx="60" cy="52" r="4.5" fill="#43202f"/>
           <path d="M42 64C45 68 55 68 58 64" stroke="#43202f" stroke-width="3.5" stroke-linecap="round" fill="none"/>
           <circle cx="78" cy="78" r="19" fill="#0a84ff"/>
-          <g stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none">
-            <rect x="68" y="70" width="20" height="17" rx="3"/><path d="M68 76H88M73 67V71M83 67V71"/>
-          </g>
+          <g stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="68" y="70" width="20" height="17" rx="3"/><path d="M68 76H88M73 67V71M83 67V71"/></g>
         </svg>
-        <h3>He reads the dates</h3>
-        <p>You see everything he found before anything is saved, and you can change whatever he got wrong.</p>
+        <h3>Check what he found</h3>
+        <p>Rekalla shows you every date before saving. Change anything he got wrong.</p>
       </li>
-
       <li class="step">
-        <svg width="92" height="92" viewBox="0 0 100 100" fill="none" role="img" aria-label="Rekalla with a bell">
+        <svg width="88" height="88" viewBox="0 0 100 100" fill="none" role="img" aria-label="Rekalla with a bell">
           <path d="M50 10C62 6 74 10 76 20C88 18 94 28 88 38C96 44 96 56 86 60C92 70 84 80 73 76C70 86 60 90 50 86C40 90 30 86 27 76C16 80 8 70 14 60C4 56 4 44 12 38C6 28 12 18 24 20C26 10 38 6 50 10Z" fill="#f7a8c8"/>
-          <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none">
-            <path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/>
-          </g>
-          <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none" transform="translate(100,0) scale(-1,1)">
-            <path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/>
-          </g>
+          <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none"><path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/></g>
+          <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none" transform="translate(100,0) scale(-1,1)"><path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/></g>
           <path d="M50 14V36" stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none"/>
           <circle cx="40" cy="52" r="4.5" fill="#43202f"/><circle cx="60" cy="52" r="4.5" fill="#43202f"/>
           <path d="M42 64C45 68 55 68 58 64" stroke="#43202f" stroke-width="3.5" stroke-linecap="round" fill="none"/>
           <circle cx="78" cy="78" r="19" fill="#0a84ff"/>
-          <g stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none">
-            <path d="M71 83C74 80 73 78 73 75C73 71 75 68 78 68C81 68 83 71 83 75C83 78 82 80 85 83Z"/><path d="M76 86H80"/>
-          </g>
+          <g stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M71 83C74 80 73 78 73 75C73 71 75 68 78 68C81 68 83 71 83 75C83 78 82 80 85 83Z"/><path d="M76 86H80"/></g>
         </svg>
-        <h3>Then he reminds you</h3>
-        <p>It goes on your calendar, and your phone tells you when the day comes around.</p>
+        <h3>Get reminded</h3>
+        <p>It&rsquo;s on your calendar, and your phone tells you when the day comes.</p>
       </li>
     </ol>
   </section>
 
-  <!-- ---------- the app ---------- -->
+  <!-- ===== BENEFITS ===== -->
+  <section class="wrap">
+    <div class="section-head"><h2>Nothing gets missed, and nothing gets typed</h2></div>
+    <ul class="benefits">
+      <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Every date in one place.</b> The doctor, the dentist, the water bill, the grandson&rsquo;s birthday, in the order they happen.</span></li>
+      <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>A reminder on the day.</b> Your phone tells you, so you don&rsquo;t have to keep it in your head or trust a note on the fridge.</span></li>
+      <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Answers when you want them.</b> Ask &ldquo;when is my next appointment?&rdquo; and get told, in plain words, from your own calendar.</span></li>
+      <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Fix anything, any time.</b> Tap a date to change it or remove it. Nothing is ever stuck.</span></li>
+      <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>The paper can stay on the wall.</b> This doesn&rsquo;t replace how you live. It copies it.</span></li>
+    </ul>
+  </section>
+
+  <!-- ===== DIFFERENTIATORS ===== -->
+  <section id="different" class="wrap">
+    <div class="section-head">
+      <h2>Why this works when other apps didn&rsquo;t</h2>
+      <p>Every other calendar asks you to type the appointment in. That is the exact step that stops people, and it is the step Rekalla removes.</p>
+    </div>
+    <div class="cards">
+      <div class="card card-blue">
+        <h3>You don&rsquo;t type</h3><div class="spacer"></div>
+        <p>You take the picture. Rekalla does the writing. That is the whole point of him.</p>
+      </div>
+      <div class="card card-pink">
+        <h3>You approve every date</h3><div class="spacer"></div>
+        <p>Nothing is saved until you have seen it, so the app can never quietly get it wrong.</p>
+      </div>
+      <div class="card card-dark">
+        <h3>Yours alone</h3><div class="spacer"></div>
+        <p>No shared accounts, no family dashboard, nobody looking over your shoulder. No ads and no tracking.</p>
+      </div>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th scope="col"></th><th scope="col">Rekalla</th><th scope="col">Typing it in yourself</th><th scope="col">Leaving it on paper</th></tr></thead>
+        <tbody>
+          <tr><td>Effort to add an appointment</td><td class="yes">One photo</td><td class="no">Date, time, title, place</td><td>None</td></tr>
+          <tr><td>Reminds you on the day</td><td class="yes">Yes</td><td>Only if you entered it</td><td class="no">No</td></tr>
+          <tr><td>Works with what&rsquo;s on your wall</td><td class="yes">Yes</td><td class="no">No</td><td class="yes">Yes</td></tr>
+          <tr><td>Works away from the house</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="no">No</td></tr>
+          <tr><td>Something new to learn</td><td class="yes">No</td><td class="no">Usually</td><td class="yes">No</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!--
+    TESTIMONIALS GO HERE once you have permission to use them. Real words from
+    real people, first name and last initial. Three slots worth filling:
+      1. Whoever has used it longest, ideally about one specific document.
+      2. Someone who was sceptical about apps and used it anyway.
+      3. An adult child, on what changed for their parent.
+    Do not invent these. Until they exist, the four verifiable claims below are
+    doing the work honestly.
+  -->
+  <section class="wrap">
+    <div class="section-head"><h2>Why you can believe the above</h2></div>
+    <ul class="proof-grid">
+      <li><h3>On the App Store</h3><p>Reviewed and approved by Apple before it reached you.</p></li>
+      <li><h3>No ads, no tracking</h3><p>Not in the app, not on this page. Nothing about you is sold on.</p></li>
+      <li><h3>Delete it all, whenever</h3><p>Your account and everything in it, removed from Settings in a few taps.</p></li>
+      <li><h3>Not a medical device</h3><p>Rekalla gives no medical advice and will not read prescriptions or medication lists.</p></li>
+    </ul>
+  </section>
+
+  <!-- ===== THE APP ===== -->
   <section class="wrap">
     <div class="app-row">
       <div class="phone">
         <div class="screen">
           <div class="scan-card">
-            <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M3 8.5A2 2 0 0 1 5 6.5h1.6l1.2-2h8.4l1.2 2H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/>
-              <circle cx="12" cy="13" r="3.6"/>
-            </svg>
+            <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5A2 2 0 0 1 5 6.5h1.6l1.2-2h8.4l1.2 2H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><circle cx="12" cy="13" r="3.6"/></svg>
             <span class="t">Scan something</span>
             <span class="s">A calendar, an appointment card, or a bill</span>
           </div>
-
           <div class="greet">
             <svg width="72" height="72" viewBox="0 0 100 100" fill="none" role="img" aria-label="Rekalla">
               <path d="M50 10C62 6 74 10 76 20C88 18 94 28 88 38C96 44 96 56 86 60C92 70 84 80 73 76C70 86 60 90 50 86C40 90 30 86 27 76C16 80 8 70 14 60C4 56 4 44 12 38C6 28 12 18 24 20C26 10 38 6 50 10Z" fill="#f7a8c8"/>
-              <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none">
-                <path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/>
-              </g>
-              <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none" transform="translate(100,0) scale(-1,1)">
-                <path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/>
-              </g>
+              <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none"><path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/></g>
+              <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none" transform="translate(100,0) scale(-1,1)"><path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/></g>
               <path d="M50 14V36" stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none"/>
               <circle cx="40" cy="52" r="4.5" fill="#43202f"/><circle cx="60" cy="52" r="4.5" fill="#43202f"/>
               <path d="M42 64C45 68 55 68 58 64" stroke="#43202f" stroke-width="3.5" stroke-linecap="round" fill="none"/>
             </svg>
             <div class="bubble">What can I do for you today?</div>
           </div>
-
-          <div class="ask">
-            Ask about your calendar…
-            <span class="send" aria-hidden="true">&#8593;</span>
-          </div>
-
+          <div class="ask">Ask about your calendar&hellip;<span class="send" aria-hidden="true">&#8593;</span></div>
           <div class="up-head">What&rsquo;s coming up</div>
           <div class="list">
-            <div class="item">
-              <div class="txt">
-                <div class="it">Dr. Alvarez, cardiology</div>
-                <div class="iw">Fri, Sep 4 &middot; 10:30 AM &middot; Suite 210</div>
-              </div>
-              <span class="dot" aria-hidden="true"></span>
-            </div>
-            <div class="item">
-              <div class="txt">
-                <div class="it">Water bill</div>
-                <div class="iw">Mon, Sep 7 &middot; All day &middot; $64.20</div>
-              </div>
-            </div>
+            <div class="item"><div class="txt"><div class="it">Dr. Alvarez, cardiology</div><div class="iw">Fri, Sep 4 &middot; 10:30 AM &middot; Suite 210</div></div><span class="dot" aria-hidden="true"></span></div>
+            <div class="item"><div class="txt"><div class="it">Water bill</div><div class="iw">Mon, Sep 7 &middot; All day &middot; $64.20</div></div></div>
           </div>
         </div>
       </div>
-
       <div class="app-copy">
         <h2>One screen, and a friend who reads for you</h2>
-        <p>
-          A big blue button to take a photo. Underneath, everything coming up,
-          in the order it happens.
-        </p>
-        <p>
-          Rekalla is the pink fellow. Ask him anything about what he has read
-          for you, in your own words, and he answers from your own calendar.
-          &ldquo;When is my next appointment?&rdquo; &ldquo;What&rsquo;s due this week?&rdquo;
-        </p>
-        <p>
-          Got a date wrong? Tap it and change it. Nothing is ever stuck.
-        </p>
+        <p>A big blue button to take a photo. Underneath, everything coming up, in the order it happens.</p>
+        <p>Rekalla is the pink fellow. Ask him anything about what he has read for you, in your own words, and he answers from your own calendar.</p>
+        <p>Got a date wrong? Tap it and change it. Nothing is ever stuck.</p>
       </div>
     </div>
   </section>
 
-  <!-- ---------- what it reads ---------- -->
-  <section id="reads" class="wrap">
-    <div class="reads">
-      <div>
-        <h2>If it has a date on it, he can read it</h2>
-        <p>
-          Rekalla was built for the paper that piles up on a kitchen table.
-          Printed or handwritten, he has a go at both.
-        </p>
-      </div>
-      <ul>
-        <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Paper wall calendars and planners</li>
-        <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Appointment cards</li>
-        <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Bills with a due date</li>
-        <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Letters from the surgery</li>
-        <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Church and club newsletters</li>
-        <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Anything else with a date written on it</li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- ---------- built with care ---------- -->
+  <!-- ===== WHO IT IS FOR ===== -->
   <section class="wrap">
-    <div class="section-head">
-      <h2>Built with care, on purpose</h2>
-    </div>
-    <div class="cards">
-      <div class="card card-blue">
-        <h3>Nothing to type</h3>
-        <div class="spacer"></div>
-        <p>You take the picture. Rekalla does the writing. That is the whole point of him.</p>
+    <div class="section-head"><h2>Who Rekalla is for</h2></div>
+    <div class="archetypes">
+      <div class="arch">
+        <h3>The one who keeps a wall calendar</h3>
+        <p>Everything is written down, and it all works, as long as you&rsquo;re standing in the kitchen. Rekalla puts the same calendar in your pocket without changing a thing about how you keep it.</p>
       </div>
-      <div class="card card-pink">
-        <h3>Ask him anything</h3>
-        <div class="spacer"></div>
-        <p>&ldquo;When is my next appointment?&rdquo; He answers from your own calendar, in plain words.</p>
+      <div class="arch">
+        <h3>The one with a drawer of appointment cards</h3>
+        <p>Cardiology in September, the dentist some time after that, a letter about the eye clinic. Photograph them as they arrive and stop keeping the dates in your head.</p>
       </div>
-      <div class="card card-dark">
-        <h3>Yours alone</h3>
-        <div class="spacer"></div>
-        <p>Private to your account. No advertising, no tracking, nothing sold on. Delete it all whenever you like.</p>
+      <div class="arch">
+        <h3>The son or daughter three hours away</h3>
+        <p>You can&rsquo;t see her calendar from another city, and you don&rsquo;t want to manage her life. Set this up in a minute on a visit, and let her own phone do the reminding.</p>
       </div>
     </div>
   </section>
 
-  <!-- ---------- join ---------- -->
-  <section id="join" class="wrap">
-    <div class="join">
-      <h2>Be first to know when Rekalla launches</h2>
-      <p>
-        Leave your email and we will let you know the moment it is on the App
-        Store. No spam, just one message when it is ready.
-      </p>
-      <form id="waitlist-form" class="join-form" novalidate>
-        <input
-          type="email"
-          id="waitlist-email"
-          required
-          autocomplete="email"
-          placeholder="you@example.com"
-          aria-label="Your email address"
-        >
-        <button type="submit" class="btn btn-light">Notify me</button>
-      </form>
-      <p id="join-msg" class="join-msg" role="status" aria-live="polite"></p>
-    </div>
-  </section>
+  <!--
+    ABOUT THE TEAM - write this yourself and paste it in here. For this audience
+    it is the most persuasive block on the page and the least convincing when
+    ghostwritten. Three or four sentences, first person, signed: who you built it
+    for, the moment that made you build it, and the one promise you are making.
+  -->
 
-  <!-- ---------- faq ---------- -->
+  <!-- ===== FAQ ===== -->
   <section id="faq" class="wrap">
-    <div class="section-head">
-      <h2>Questions</h2>
-    </div>
+    <div class="section-head"><h2>Questions people ask first</h2></div>
     <div class="faq-list">
-      <details>
-        <summary>Do I have to type anything?</summary>
-        <p>No. You take a photo and check what Rekalla found. If a name or a time is wrong you can correct it, but on most documents there is nothing to change.</p>
-      </details>
-      <details>
-        <summary>Will it read my handwriting?</summary>
-        <p>Usually, yes, if it is reasonably clear. Lay the page flat in good light and it copes with most handwritten calendars. When it cannot read something it says so rather than guessing.</p>
-      </details>
-      <details>
-        <summary>What if it gets a date wrong?</summary>
-        <p>Nothing is saved until you have seen it. Everything Rekalla finds is shown to you first, and every event can be tapped and edited afterwards, or removed.</p>
-      </details>
-      <details>
-        <summary>Who can see my calendar?</summary>
-        <p>Only you. Rekalla is a single-person app: there are no shared accounts and nobody else is given access to what you scan. You can delete your account and everything in it from Settings at any time.</p>
-      </details>
-      <details>
-        <summary>Is this a medical app?</summary>
-        <p>No. Rekalla is not a medical device, does not give medical advice, and will not read prescriptions or medication lists. It is for everyday paper: appointments, events and bills.</p>
-      </details>
-      <details>
-        <summary>What does it cost?</summary>
-        <p>It is free to start, with no card needed. If you scan a great deal there will be a paid plan later, and we will tell you the price plainly before anything changes.</p>
-      </details>
+      <details><summary>Will it read my handwriting?</summary><p>Usually, yes, if it&rsquo;s reasonably clear. Lay the page flat in good light. When it can&rsquo;t read something, it says so instead of guessing.</p></details>
+      <details><summary>What if it gets a date wrong?</summary><p>You see everything before it&rsquo;s saved, and you can change or delete anything afterwards. Nothing is ever stuck.</p></details>
+      <details><summary>Who can see my calendar?</summary><p>Only you. There are no shared accounts and no family dashboard. Not us either.</p></details>
+      <details><summary>Do I have to type anything?</summary><p>No. That&rsquo;s the whole point of it. You take the photo.</p></details>
+      <details><summary>Is this a medical app?</summary><p>No. Rekalla is not a medical device, gives no medical advice, and will not read prescriptions or medication lists. It&rsquo;s for everyday paper.</p></details>
+      <details><summary>What does it cost?</summary><p>Free to download and free to start. If you scan a great deal there&rsquo;ll be a paid plan later, and we&rsquo;ll tell you the price plainly before anything changes.</p></details>
+      <details><summary>What if I don&rsquo;t get on with it?</summary><p>Delete the app, and delete your account from Settings. Everything in it goes too.</p></details>
+    </div>
+  </section>
+
+  <!-- ===== FULL STOP ===== -->
+  <section class="wrap">
+    <div class="closing">
+      <h2>The paper stays on the wall. The dates come with you.</h2>
+      <ul>
+        <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>One photo instead of typing</li>
+        <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Every date in one place, with a reminder on the day</li>
+        <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>You approve everything before it saves</li>
+        <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Private to you. No ads, no tracking</li>
+      </ul>
+      <a class="btn btn-light" href="https://apps.apple.com/app/id6794918254">Download on the App Store</a>
+      <p class="fineprint">Free to start, and gone completely if you delete it.</p>
     </div>
   </section>
 
@@ -616,68 +535,9 @@
       <a href="/support/">Support</a>
       <a href="mailto:rekallasupport@gmail.com">Contact</a>
     </div>
-    <p class="disclaimer">
-      Rekalla is not a medical device and does not provide medical advice.
-    </p>
+    <p class="disclaimer">Rekalla is not a medical device and does not provide medical advice.</p>
   </div>
 </footer>
-
-<script>
-  // Where the live web app is deployed. Set APP_URL to your app's address and
-  // every "Get early access" button opens it instead. Until it's set, the
-  // buttons fall back to the email sign-up below.
-  (function () {
-    var APP_URL = "https://YOUR-REKALLA-APP-URL"; // <-- change after deploying
-    if (APP_URL.indexOf("YOUR-REKALLA") !== -1) return; // not set yet
-    document.querySelectorAll("[data-app]").forEach(function (a) {
-      a.setAttribute("href", APP_URL);
-    });
-  })();
-</script>
-
-<script>
-  // Waitlist sign-up. Posts to a Supabase table that only allows inserts —
-  // the anon key is a public, insert-only key protected by row-level security.
-  (function () {
-    var SUPABASE_URL = "https://mhahpfcjxnoelcthdsss.supabase.co";
-    var SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1oYWhwZmNqeG5vZWxjdGhkc3NzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1ODcyODQsImV4cCI6MjA5OTE2MzI4NH0.ev4eaDbr5JLZXR0aJVCLH1VGk1-riPwmaq3c0PUNV1c";
-    var form = document.getElementById("waitlist-form");
-    var input = document.getElementById("waitlist-email");
-    var msg = document.getElementById("join-msg");
-    var EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
-    if (!form) return;
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var email = (input.value || "").trim();
-      if (!EMAIL_RE.test(email)) {
-        msg.textContent = "Please enter a valid email address.";
-        return;
-      }
-      msg.textContent = "Adding you…";
-      fetch(SUPABASE_URL + "/rest/v1/waitlist", {
-        method: "POST",
-        headers: {
-          apikey: SUPABASE_ANON,
-          Authorization: "Bearer " + SUPABASE_ANON,
-          "Content-Type": "application/json",
-          Prefer: "return=minimal",
-        },
-        body: JSON.stringify({ email: email }),
-      })
-        .then(function (res) {
-          if (res.ok) {
-            form.reset();
-            msg.textContent = "You're on the list — thank you!";
-          } else {
-            msg.textContent = "Hmm, that didn't work. Please try again.";
-          }
-        })
-        .catch(function () {
-          msg.textContent = "Hmm, that didn't work. Please try again.";
-        });
-    });
-  })();
-</script>
 
 </body>
 </html>
