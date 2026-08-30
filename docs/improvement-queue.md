@@ -10,19 +10,18 @@ at the top. If every box is ticked, it should open no PR and say so.
 
 ## Queue
 
-- [ ] **Rewrite `landing/privacy/` and `landing/terms/` for v3.**
-  Both still describe caregivers, wellness check-ins and the Memory Vault, none of
-  which the app has. They are linked from the App Store listing and from Settings, so
-  they are the highest-risk stale content in the repo. Keep the legal structure and
-  the existing headings; replace only the descriptions of what data is collected and
-  who can see it. The app is single-user: no sharing, no caregiver access. Flag in the
-  PR that a human must read this before it ships.
-
 ---
 
 ## Done
 
 <!-- Move completed items here with the PR number, newest first. -->
+
+- [x] **Rewrite `landing/privacy/` and `landing/terms/` for v3.**
+  All caregiver, wellness and Memory Vault language is gone from both. More
+  importantly, neither disclosed that photographs are sent to a model provider to
+  be read; both now name Anthropic and say what is sent and why. Terms section 5
+  became an honest statement that the reading is imperfect and must be checked.
+  NOT LEGALLY REVIEWED: a human needs to read both before they ship.
 
 - [x] **Payments phase 1: entitlements, no payment provider.**
   `20260830000001_entitlements.sql` adds the table, owner-read only, no client
