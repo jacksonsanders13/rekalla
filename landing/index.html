@@ -3,9 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Rekalla — Memory support, made simple</title>
-<meta name="description" content="Rekalla helps older adults stay on top of their day — and gives the people who love them a simple way to help from anywhere.">
+<title>Rekalla · Bring your paper life online</title>
+<meta name="description" content="Take a photo of a paper calendar, an appointment card, or a bill. Rekalla reads the dates and reminds you when the day comes.">
 <link rel="icon" href="logo.svg" type="image/svg+xml">
+<meta property="og:title" content="Rekalla · Bring your paper life online">
+<meta property="og:description" content="Take a photo of a paper calendar, an appointment card, or a bill. Rekalla reads the dates and reminds you when the day comes.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
@@ -17,21 +23,28 @@
     --label2: #d1d1d6;
     --label3: #8e8e93;
     --label4: #636366;
-    --radius: 20px;
-    --radius-lg: 26px;
+    --blue: #0a84ff;
+    --blue-dark: #0071e3;
+    --pink: #f7a8c8;
+    --radius: 24px;
+    --radius-lg: 30px;
   }
   html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { animation: none !important; transition: none !important; }
+  }
   body {
     background: var(--base);
     color: var(--label);
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    font-size: 17px;
+    font-family: "Quicksand", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 18px;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
   a { color: inherit; text-decoration: none; }
-  img { display: block; max-width: 100%; }
-  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  img, svg { display: block; max-width: 100%; }
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 0 24px; }
 
   /* ---- nav ---- */
   nav {
@@ -43,409 +56,483 @@
   }
   .nav-inner {
     display: flex; align-items: center; justify-content: space-between;
-    min-height: 64px;
+    min-height: 68px; gap: 16px;
   }
-  .brand { display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 20px; letter-spacing: -0.2px; }
+  .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 21px; letter-spacing: -0.3px; }
   .brand img { width: 36px; height: 36px; }
-  .nav-links { display: flex; align-items: center; gap: 28px; }
-  .nav-links a { color: var(--label3); font-size: 15px; font-weight: 500; transition: color .15s; }
+  .nav-links { display: flex; align-items: center; gap: 26px; }
+  .nav-links a { color: var(--label3); font-size: 16px; font-weight: 600; transition: color .15s; }
   .nav-links a:hover { color: var(--label); }
+  @media (max-width: 720px) { .nav-links { display: none; } }
+
   .btn {
     display: inline-flex; align-items: center; justify-content: center;
-    min-height: 48px; padding: 0 22px;
-    border-radius: 14px; font-size: 16px; font-weight: 700;
-    transition: opacity .15s;
+    min-height: 52px; padding: 0 26px;
+    border-radius: 999px; font-size: 17px; font-weight: 700;
+    font-family: inherit; border: 0; cursor: pointer;
+    transition: background-color .15s, opacity .15s;
+    white-space: nowrap;
   }
-  .btn:hover { opacity: .85; }
-  .btn-primary { background: var(--label); color: #000; }
-  .btn-secondary { background: var(--elev2); color: var(--label); }
-  .nav-links .btn { min-height: 40px; padding: 0 18px; font-size: 15px; }
+  .btn-primary { background: var(--blue); color: #fff; }
+  .btn-primary:hover { background: var(--blue-dark); }
+  .btn-quiet { background: var(--elev1); color: var(--label); }
+  .btn-quiet:hover { background: var(--elev2); }
+  .btn-light { background: #fff; color: #000; }
+  .btn-light:hover { opacity: .9; }
 
   /* ---- hero ---- */
-  .hero { padding: 88px 0 40px; display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px; align-items: center; }
-  .eyebrow {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: var(--elev1); border: 1px solid rgba(255,255,255,0.1);
-    color: var(--label2); font-size: 14px; font-weight: 600;
-    padding: 7px 14px; border-radius: 999px; margin-bottom: 22px;
+  .hero { text-align: center; padding: 72px 0 40px; display: flex; flex-direction: column; align-items: center; gap: 26px; }
+  .hero h1 {
+    font-size: clamp(38px, 7vw, 66px);
+    line-height: 1.05; font-weight: 700; letter-spacing: -1.2px;
+    max-width: 15ch; text-wrap: balance;
   }
-  .eyebrow::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--label); }
-  h1 { font-size: clamp(40px, 6vw, 60px); line-height: 1.06; letter-spacing: -1.5px; font-weight: 700; }
-  h1 .dim { color: var(--label3); }
-  .hero p { color: var(--label3); font-size: 19px; max-width: 30em; margin: 22px 0 30px; }
-  .cta-row { display: flex; gap: 14px; flex-wrap: wrap; }
-
-  /* ---- phone frame ---- */
-  .phone {
-    width: min(300px, 78vw); margin: 0 auto;
-    border-radius: 44px; padding: 10px;
-    background: #0a0a0b;
-    border: 1px solid rgba(255,255,255,0.14);
-    box-shadow: 0 30px 80px rgba(0,0,0,0.65), 0 0 0 1px rgba(0,0,0,0.8);
+  .hero p.lede {
+    font-size: clamp(19px, 2.4vw, 23px);
+    color: var(--label2); max-width: 34ch; text-wrap: balance;
   }
-  .phone img {
-    border-radius: 34px; width: 100%; height: auto;
-    aspect-ratio: 9 / 16.5;
-    object-fit: cover; object-position: top;
-  }
-  .phone-sm { width: min(260px, 70vw); }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+  .hero .fineprint { color: var(--label3); font-size: 16px; }
 
   /* ---- sections ---- */
-  section { padding: 72px 0; scroll-margin-top: 80px; }
-  .section-head { max-width: 34em; margin-bottom: 48px; }
-  .section-head h2 { font-size: clamp(28px, 4vw, 38px); letter-spacing: -0.8px; line-height: 1.15; }
-  .section-head p { color: var(--label3); font-size: 18px; margin-top: 12px; }
-
-  .feature {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 56px;
-    align-items: center; padding: 44px 0;
+  section { padding: 64px 0; }
+  .section-head { text-align: center; margin-bottom: 44px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+  h2 {
+    font-size: clamp(28px, 4.2vw, 40px);
+    font-weight: 700; letter-spacing: -0.8px; line-height: 1.15;
+    max-width: 20ch; text-wrap: balance;
   }
-  .feature h3 { font-size: 27px; letter-spacing: -0.5px; line-height: 1.2; margin-bottom: 14px; }
-  .feature p { color: var(--label3); font-size: 17px; max-width: 28em; }
-  .feature ul { list-style: none; margin-top: 18px; display: grid; gap: 10px; }
-  .feature li { color: var(--label2); font-size: 16px; padding-left: 26px; position: relative; }
-  .feature li::before {
-    content: "✓"; position: absolute; left: 0; top: 0;
-    color: var(--label); font-weight: 700;
-  }
-  .feature.flip .media { order: -1; }
+  .section-head p { color: var(--label2); max-width: 46ch; font-size: 19px; text-wrap: balance; }
 
   /* ---- steps ---- */
-  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .steps { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
   .step {
     background: var(--elev1); border-radius: var(--radius-lg);
-    padding: 30px 26px;
+    padding: 34px 26px; text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
   }
-  .step .num {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 40px; height: 40px; border-radius: 12px;
-    background: var(--label); color: #000; font-weight: 700; font-size: 18px;
-    margin-bottom: 18px;
+  .step h3 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+  .step p { color: var(--label2); font-size: 17px; }
+
+  /* ---- the app ---- */
+  .app-row { display: grid; gap: 48px; align-items: center; grid-template-columns: 1fr; }
+  @media (min-width: 860px) { .app-row { grid-template-columns: 340px 1fr; } }
+  .app-copy { display: flex; flex-direction: column; gap: 18px; }
+  .app-copy h2 { max-width: 18ch; }
+  .app-copy p { color: var(--label2); font-size: 19px; max-width: 46ch; }
+
+  .phone {
+    background: #000; border: 1px solid var(--elev2);
+    border-radius: 38px; padding: 14px; margin: 0 auto; width: 100%; max-width: 340px;
   }
-  .step h4 { font-size: 19px; margin-bottom: 8px; letter-spacing: -0.3px; }
-  .step p { color: var(--label3); font-size: 15.5px; }
-  .code-sample {
-    display: inline-block; margin-top: 14px;
-    background: var(--elev2); border-radius: 10px;
-    padding: 6px 14px; font-weight: 700; letter-spacing: 5px; font-size: 18px;
+  .screen { display: flex; flex-direction: column; gap: 14px; }
+  .scan-card {
+    background: var(--blue); border-radius: var(--radius);
+    padding: 26px 16px; text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
   }
-
-  /* ---- principles ---- */
-  .principles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
-  .principle { background: var(--elev1); border-radius: var(--radius); padding: 26px 22px; }
-  .principle h4 { font-size: 17px; margin-bottom: 6px; }
-  .principle p { color: var(--label3); font-size: 14.5px; line-height: 1.5; }
-
-  /* ---- footer ---- */
-  footer { border-top: 1px solid rgba(255,255,255,0.08); padding: 44px 0 56px; }
-  .foot { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
-  .foot .brand { font-size: 17px; }
-  .foot .brand img { width: 28px; height: 28px; }
-  .foot-links { display: flex; gap: 24px; }
-  .foot-links a { color: var(--label3); font-size: 15px; }
-  .foot-links a:hover { color: var(--label); }
-  .fine { color: var(--label4); font-size: 13.5px; margin-top: 26px; max-width: 46em; }
-
-  @media (max-width: 820px) {
-    .hero { grid-template-columns: 1fr; padding-top: 56px; text-align: center; }
-    .hero p { margin-left: auto; margin-right: auto; }
-    .cta-row { justify-content: center; }
-    .feature, .feature.flip { grid-template-columns: 1fr; gap: 32px; text-align: center; padding: 32px 0; }
-    .feature .media, .feature.flip .media { order: 0; }
-    .feature p, .feature ul { margin-left: auto; margin-right: auto; }
-    .feature li { text-align: left; }
-    .steps, .principles { grid-template-columns: 1fr; }
-    .nav-links a.link { display: none; }
-    section { padding: 52px 0; }
-    .join-form { flex-direction: column; }
+  .scan-card .t { font-size: 21px; font-weight: 700; letter-spacing: -0.3px; }
+  .scan-card .s { font-size: 13px; color: rgba(255,255,255,0.85); }
+  .greet { display: flex; align-items: center; gap: 8px; }
+  .bubble {
+    position: relative; flex: 1;
+    background: var(--elev1); border-radius: 22px;
+    padding: 11px 14px; font-size: 15px; line-height: 1.4;
   }
+  .bubble::before {
+    content: ""; position: absolute; left: -4px; top: 50%;
+    width: 11px; height: 11px; margin-top: -5.5px;
+    background: var(--elev1); transform: rotate(45deg);
+  }
+  .ask {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--elev1); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 999px; padding: 5px 5px 5px 16px;
+    font-size: 14px; color: var(--label4);
+  }
+  .ask .send {
+    margin-left: auto; width: 32px; height: 32px; border-radius: 50%;
+    background: var(--blue); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 16px;
+  }
+  .up-head { font-size: 16px; font-weight: 700; margin-top: 2px; }
+  .list { background: var(--elev1); border-radius: 18px; overflow: hidden; }
+  .item { display: flex; align-items: center; gap: 10px; padding: 12px 14px; }
+  .item + .item { border-top: 1px solid rgba(255,255,255,0.15); }
+  .item .txt { flex: 1; min-width: 0; }
+  .item .it { font-size: 15px; font-weight: 700; }
+  .item .iw { font-size: 12px; color: var(--label3); }
+  .item .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); }
 
-  /* ---- join / waitlist ---- */
-  .join { text-align: center; }
-  .join h2 { font-size: clamp(28px, 4vw, 38px); letter-spacing: -0.8px; }
-  .join p { color: var(--label3); font-size: 18px; margin: 12px auto 28px; max-width: 34em; }
-  .join-form { display: flex; gap: 12px; max-width: 460px; margin: 0 auto; }
+  /* ---- reads ---- */
+  .reads {
+    background: var(--elev1); border-radius: var(--radius-lg);
+    padding: 40px; display: grid; gap: 34px; grid-template-columns: 1fr;
+  }
+  @media (min-width: 800px) { .reads { grid-template-columns: 1fr 1fr; padding: 52px; } }
+  .reads h2 { max-width: 16ch; }
+  .reads p { color: var(--label2); font-size: 18px; max-width: 42ch; }
+  .reads ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .reads li { display: flex; align-items: flex-start; gap: 12px; font-size: 18px; }
+  .tick { flex: none; width: 22px; height: 22px; margin-top: 3px; }
+
+  /* ---- care ---- */
+  .care { display: grid; gap: 26px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .care div { border-left: 2px solid var(--elev3); padding-left: 20px; }
+  .care h3 { font-size: 19px; font-weight: 700; margin-bottom: 6px; }
+  .care p { color: var(--label2); font-size: 17px; }
+
+  /* ---- join ---- */
+  .join {
+    text-align: center; display: flex; flex-direction: column;
+    align-items: center; gap: 18px;
+    background: var(--elev1); border-radius: var(--radius-lg);
+    padding: 56px 24px;
+  }
+  .join p { color: var(--label2); max-width: 44ch; font-size: 18px; text-wrap: balance; }
+  .join-form { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; width: 100%; max-width: 480px; }
   .join-form input {
-    flex: 1; min-height: 52px; padding: 0 18px;
-    border-radius: 14px; border: 1px solid var(--elev3);
-    background: var(--elev1); color: var(--label);
-    font-size: 16px; font-family: inherit;
+    flex: 1 1 220px; min-height: 52px;
+    background: var(--base); color: var(--label);
+    border: 1px solid var(--elev3); border-radius: 999px;
+    padding: 0 20px; font-size: 17px; font-family: inherit;
   }
   .join-form input::placeholder { color: var(--label4); }
-  .join-form input:focus { outline: 2px solid var(--label3); outline-offset: 1px; }
-  .join-form .btn { white-space: nowrap; }
-  .join-msg { min-height: 24px; margin-top: 16px; font-size: 15px; font-weight: 600; color: var(--label2); }
+  .join-form input:focus { outline: none; border-color: var(--blue); }
+  .join-msg { min-height: 26px; color: var(--label2); font-size: 16px; }
 
   /* ---- faq ---- */
-  .faq { display: grid; gap: 12px; max-width: 760px; }
-  .faq details {
-    background: var(--elev1); border-radius: var(--radius);
-    padding: 4px 22px;
+  .faq-list { display: flex; flex-direction: column; gap: 0; max-width: 760px; margin: 0 auto; }
+  details { border-top: 1px solid rgba(255,255,255,0.12); padding: 20px 0; }
+  details:last-child { border-bottom: 1px solid rgba(255,255,255,0.12); }
+  summary {
+    cursor: pointer; font-size: 19px; font-weight: 700; letter-spacing: -0.2px;
+    list-style: none; display: flex; justify-content: space-between; gap: 16px;
   }
-  .faq summary {
-    cursor: pointer; list-style: none; padding: 18px 0;
-    font-size: 18px; font-weight: 600; color: var(--label);
-    display: flex; justify-content: space-between; align-items: center; gap: 16px;
-  }
-  .faq summary::-webkit-details-marker { display: none; }
-  .faq summary::after { content: "+"; color: var(--label3); font-size: 24px; font-weight: 400; }
-  .faq details[open] summary::after { content: "\2013"; }
-  .faq details p { color: var(--label3); font-size: 16px; padding: 0 0 20px; margin: 0; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; color: var(--label3); font-weight: 400; font-size: 24px; line-height: 1; }
+  details[open] summary::after { content: "\2013"; }
+  details p { color: var(--label2); font-size: 17px; margin-top: 10px; max-width: 62ch; }
 
-  /* ---- interactive demo ---- */
-  .demo { text-align: center; }
-  .demo-stage { display: flex; justify-content: center; margin-top: 8px; }
-  .demo-phone {
-    width: min(330px, 84vw);
-    aspect-ratio: 9 / 19;
-    border-radius: 48px; padding: 11px;
-    background: #0a0a0b;
-    border: 1px solid rgba(255,255,255,0.14);
-    box-shadow: 0 30px 80px rgba(0,0,0,0.65), 0 0 0 1px rgba(0,0,0,0.8);
-  }
-  .demo-frame {
-    width: 100%; height: 100%;
-    border: 0; border-radius: 38px; display: block;
-    background: #000;
-  }
-  .demo-hint { color: var(--label4); font-size: 14px; margin-top: 24px; }
+  /* ---- footer ---- */
+  footer { border-top: 1px solid rgba(255,255,255,0.08); padding: 40px 0 64px; }
+  .foot-inner { display: flex; flex-wrap: wrap; gap: 20px 28px; align-items: center; justify-content: center; }
+  .foot-inner a { color: var(--label3); font-size: 16px; font-weight: 600; }
+  .foot-inner a:hover { color: var(--label); }
+  .disclaimer { text-align: center; color: var(--label4); font-size: 15px; margin-top: 22px; max-width: 46ch; margin-left: auto; margin-right: auto; }
+
+  :focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; border-radius: 6px; }
 </style>
 </head>
 <body>
 
 <nav>
   <div class="wrap nav-inner">
-    <a class="brand" href="#top" aria-label="Rekalla home">
+    <a class="brand" href="#top">
       <img src="logo.svg" alt="">
       Rekalla
     </a>
     <div class="nav-links">
-      <a class="link" href="#features">Features</a>
-      <a class="link" href="#demo">Demo</a>
-      <a class="link" href="#how">How it works</a>
-      <a class="link" href="/privacy">Privacy</a>
-      <a class="btn btn-primary" href="#join" data-app>Use Rekalla now</a>
+      <a href="#how">How it works</a>
+      <a href="#reads">What it reads</a>
+      <a href="#faq">Questions</a>
     </div>
+    <a class="btn btn-primary" href="#join" data-app>Get early access</a>
   </div>
 </nav>
 
-<header id="top" class="wrap hero">
-  <div>
-    <span class="eyebrow">Coming soon to the App Store</span>
-    <h1>Memory support,<br><span class="dim">made simple.</span></h1>
-    <p>
-      Rekalla helps older adults stay on top of their day — and gives the
-      people who love them a simple way to help from anywhere.
+<main id="top">
+
+  <!-- ---------- hero ---------- -->
+  <section class="wrap hero">
+    <svg width="128" height="128" viewBox="0 0 100 100" fill="none" role="img" aria-label="Rekalla, a pink cartoon brain">
+      <path d="M50 10C62 6 74 10 76 20C88 18 94 28 88 38C96 44 96 56 86 60C92 70 84 80 73 76C70 86 60 90 50 86C40 90 30 86 27 76C16 80 8 70 14 60C4 56 4 44 12 38C6 28 12 18 24 20C26 10 38 6 50 10Z" fill="#f7a8c8"/>
+      <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none">
+        <path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/>
+      </g>
+      <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none" transform="translate(100,0) scale(-1,1)">
+        <path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/>
+      </g>
+      <path d="M50 14V36" stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <circle cx="40" cy="52" r="4.5" fill="#43202f"/><circle cx="60" cy="52" r="4.5" fill="#43202f"/>
+      <path d="M42 64C45 68 55 68 58 64" stroke="#43202f" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+    </svg>
+
+    <h1>Bring your paper life online</h1>
+    <p class="lede">
+      Take a photo of a paper calendar, an appointment card, or a bill.
+      Rekalla reads the dates and reminds you when the day comes.
     </p>
-    <div class="cta-row">
-      <a class="btn btn-primary" href="#join" data-app>Use Rekalla now</a>
-      <a class="btn btn-secondary" href="#features">See how it works</a>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="#join" data-app>Get early access</a>
+      <a class="btn btn-quiet" href="#how">See how it works</a>
     </div>
-  </div>
-  <div class="phone">
-    <img src="https://raw.githubusercontent.com/jacksonsanders13/rekalla/main/landing/img/summary.png" alt="Rekalla's Summary screen: three progress rings for reminders, routine, and daily check-in, with the next reminder below." width="480" height="1043">
-  </div>
-</header>
+    <p class="fineprint">Free to start. Nothing to type.</p>
+  </section>
 
-<section id="features" class="wrap">
-  <div class="section-head">
-    <h2>One glance says it all.</h2>
-    <p>
-      Three rings show the day at a glance — reminders done, routine followed,
-      check-in complete. Big text, big buttons, plain words. No clutter.
-    </p>
-  </div>
+  <!-- ---------- how it works ---------- -->
+  <section id="how" class="wrap">
+    <div class="section-head">
+      <h2>Three steps, and you are done</h2>
+      <p>The whole app is one loop. There is nothing else to learn.</p>
+    </div>
 
-  <div class="feature">
-    <div>
-      <h3>The people who matter, one tap away.</h3>
-      <p>
-        The Memory Vault keeps family, doctors, medications, and important
-        dates where they can always be found — with photos and one-tap
-        calling.
-      </p>
+    <ol class="steps" style="list-style: none;">
+      <li class="step">
+        <svg width="92" height="92" viewBox="0 0 100 100" fill="none" role="img" aria-label="Rekalla with a camera">
+          <path d="M50 10C62 6 74 10 76 20C88 18 94 28 88 38C96 44 96 56 86 60C92 70 84 80 73 76C70 86 60 90 50 86C40 90 30 86 27 76C16 80 8 70 14 60C4 56 4 44 12 38C6 28 12 18 24 20C26 10 38 6 50 10Z" fill="#f7a8c8"/>
+          <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none">
+            <path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/>
+          </g>
+          <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none" transform="translate(100,0) scale(-1,1)">
+            <path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/>
+          </g>
+          <path d="M50 14V36" stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <circle cx="40" cy="52" r="4.5" fill="#43202f"/><circle cx="60" cy="52" r="4.5" fill="#43202f"/>
+          <path d="M42 64C45 68 55 68 58 64" stroke="#43202f" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+          <circle cx="78" cy="78" r="19" fill="#0a84ff"/>
+          <g stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none">
+            <rect x="68" y="72" width="20" height="14" rx="3"/><circle cx="78" cy="79" r="3.5"/><path d="M74 72L76 69H80L82 72"/>
+          </g>
+        </svg>
+        <h3>Take the photo</h3>
+        <p>A calendar on the kitchen wall, a card from the doctor, a bill with a due date. However it happens to be written.</p>
+      </li>
+
+      <li class="step">
+        <svg width="92" height="92" viewBox="0 0 100 100" fill="none" role="img" aria-label="Rekalla with a calendar">
+          <path d="M50 10C62 6 74 10 76 20C88 18 94 28 88 38C96 44 96 56 86 60C92 70 84 80 73 76C70 86 60 90 50 86C40 90 30 86 27 76C16 80 8 70 14 60C4 56 4 44 12 38C6 28 12 18 24 20C26 10 38 6 50 10Z" fill="#f7a8c8"/>
+          <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none">
+            <path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/>
+          </g>
+          <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none" transform="translate(100,0) scale(-1,1)">
+            <path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/>
+          </g>
+          <path d="M50 14V36" stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <circle cx="40" cy="52" r="4.5" fill="#43202f"/><circle cx="60" cy="52" r="4.5" fill="#43202f"/>
+          <path d="M42 64C45 68 55 68 58 64" stroke="#43202f" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+          <circle cx="78" cy="78" r="19" fill="#0a84ff"/>
+          <g stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none">
+            <rect x="68" y="70" width="20" height="17" rx="3"/><path d="M68 76H88M73 67V71M83 67V71"/>
+          </g>
+        </svg>
+        <h3>He reads the dates</h3>
+        <p>You see everything he found before anything is saved, and you can change whatever he got wrong.</p>
+      </li>
+
+      <li class="step">
+        <svg width="92" height="92" viewBox="0 0 100 100" fill="none" role="img" aria-label="Rekalla with a bell">
+          <path d="M50 10C62 6 74 10 76 20C88 18 94 28 88 38C96 44 96 56 86 60C92 70 84 80 73 76C70 86 60 90 50 86C40 90 30 86 27 76C16 80 8 70 14 60C4 56 4 44 12 38C6 28 12 18 24 20C26 10 38 6 50 10Z" fill="#f7a8c8"/>
+          <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none">
+            <path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/>
+          </g>
+          <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none" transform="translate(100,0) scale(-1,1)">
+            <path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/>
+          </g>
+          <path d="M50 14V36" stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <circle cx="40" cy="52" r="4.5" fill="#43202f"/><circle cx="60" cy="52" r="4.5" fill="#43202f"/>
+          <path d="M42 64C45 68 55 68 58 64" stroke="#43202f" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+          <circle cx="78" cy="78" r="19" fill="#0a84ff"/>
+          <g stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none">
+            <path d="M71 83C74 80 73 78 73 75C73 71 75 68 78 68C81 68 83 71 83 75C83 78 82 80 85 83Z"/><path d="M76 86H80"/>
+          </g>
+        </svg>
+        <h3>Then he reminds you</h3>
+        <p>It goes on your calendar, and your phone tells you when the day comes around.</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ---------- the app ---------- -->
+  <section class="wrap">
+    <div class="app-row">
+      <div class="phone">
+        <div class="screen">
+          <div class="scan-card">
+            <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 8.5A2 2 0 0 1 5 6.5h1.6l1.2-2h8.4l1.2 2H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/>
+              <circle cx="12" cy="13" r="3.6"/>
+            </svg>
+            <span class="t">Scan something</span>
+            <span class="s">A calendar, an appointment card, or a bill</span>
+          </div>
+
+          <div class="greet">
+            <svg width="72" height="72" viewBox="0 0 100 100" fill="none" role="img" aria-label="Rekalla">
+              <path d="M50 10C62 6 74 10 76 20C88 18 94 28 88 38C96 44 96 56 86 60C92 70 84 80 73 76C70 86 60 90 50 86C40 90 30 86 27 76C16 80 8 70 14 60C4 56 4 44 12 38C6 28 12 18 24 20C26 10 38 6 50 10Z" fill="#f7a8c8"/>
+              <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none">
+                <path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/>
+              </g>
+              <g stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none" transform="translate(100,0) scale(-1,1)">
+                <path d="M32 26C26 30 28 36 22 40"/><path d="M14 52C22 50 24 56 20 62"/><path d="M30 74C34 70 30 66 34 62"/>
+              </g>
+              <path d="M50 14V36" stroke="#d4779f" stroke-width="3" stroke-linecap="round" fill="none"/>
+              <circle cx="40" cy="52" r="4.5" fill="#43202f"/><circle cx="60" cy="52" r="4.5" fill="#43202f"/>
+              <path d="M42 64C45 68 55 68 58 64" stroke="#43202f" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+            </svg>
+            <div class="bubble">What can I do for you today?</div>
+          </div>
+
+          <div class="ask">
+            Ask about your calendar…
+            <span class="send" aria-hidden="true">&#8593;</span>
+          </div>
+
+          <div class="up-head">What&rsquo;s coming up</div>
+          <div class="list">
+            <div class="item">
+              <div class="txt">
+                <div class="it">Dr. Alvarez, cardiology</div>
+                <div class="iw">Fri, Sep 4 &middot; 10:30 AM &middot; Suite 210</div>
+              </div>
+              <span class="dot" aria-hidden="true"></span>
+            </div>
+            <div class="item">
+              <div class="txt">
+                <div class="it">Water bill</div>
+                <div class="iw">Mon, Sep 7 &middot; All day &middot; $64.20</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="app-copy">
+        <h2>One screen, and a friend who reads for you</h2>
+        <p>
+          A big blue button to take a photo. Underneath, everything coming up,
+          in the order it happens.
+        </p>
+        <p>
+          Rekalla is the pink fellow. Ask him anything about what he has read
+          for you, in your own words, and he answers from your own calendar.
+          &ldquo;When is my next appointment?&rdquo; &ldquo;What&rsquo;s due this week?&rdquo;
+        </p>
+        <p>
+          Got a date wrong? Tap it and change it. Nothing is ever stuck.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- what it reads ---------- -->
+  <section id="reads" class="wrap">
+    <div class="reads">
+      <div>
+        <h2>If it has a date on it, he can read it</h2>
+        <p>
+          Rekalla was built for the paper that piles up on a kitchen table.
+          Printed or handwritten, he has a go at both.
+        </p>
+      </div>
       <ul>
-        <li>Photos on every entry, so faces stay familiar</li>
-        <li>Call a person straight from their card</li>
-        <li>Simple search across everything</li>
+        <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Paper wall calendars and planners</li>
+        <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Appointment cards</li>
+        <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Bills with a due date</li>
+        <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Letters from the surgery</li>
+        <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Church and club newsletters</li>
+        <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Anything else with a date written on it</li>
       </ul>
     </div>
-    <div class="media"><div class="phone phone-sm"><img src="https://raw.githubusercontent.com/jacksonsanders13/rekalla/main/landing/img/vault.png" alt="The Memory Vault: cards for family members and doctors with photos and tap-to-call phone numbers." width="480" height="1043"></div></div>
-  </div>
+  </section>
 
-  <div class="feature flip">
-    <div>
-      <h3>Family can help. From anywhere.</h3>
+  <!-- ---------- built with care ---------- -->
+  <section class="wrap">
+    <div class="section-head">
+      <h2>Built with care, on purpose</h2>
+    </div>
+    <div class="care">
+      <div>
+        <h3>Nothing to type</h3>
+        <p>You take the picture. Rekalla does the writing. That is the entire point of him.</p>
+      </div>
+      <div>
+        <h3>Big and plain</h3>
+        <p>Large text, high contrast, and no clutter. Made to be read without reaching for glasses.</p>
+      </div>
+      <div>
+        <h3>Yours alone</h3>
+        <p>Your calendar is private to your account. No advertising, no tracking, and nothing sold on.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- join ---------- -->
+  <section id="join" class="wrap">
+    <div class="join">
+      <h2>Be first to know when Rekalla launches</h2>
       <p>
-        Caregivers connect with a simple 6-letter code — no shared passwords —
-        then set up reminders, the daily routine, and the Memory Vault from
-        their own phone.
+        Leave your email and we will let you know the moment it is on the App
+        Store. No spam, just one message when it is ready.
       </p>
-      <ul>
-        <li>Manage reminders, routine &amp; vault remotely</li>
-        <li>See how the day is going</li>
-        <li>Connections can be ended at any time</li>
-      </ul>
+      <form id="waitlist-form" class="join-form" novalidate>
+        <input
+          type="email"
+          id="waitlist-email"
+          required
+          autocomplete="email"
+          placeholder="you@example.com"
+          aria-label="Your email address"
+        >
+        <button type="submit" class="btn btn-light">Notify me</button>
+      </form>
+      <p id="join-msg" class="join-msg" role="status" aria-live="polite"></p>
     </div>
-    <div class="media"><div class="phone phone-sm"><img src="https://raw.githubusercontent.com/jacksonsanders13/rekalla/main/landing/img/manager.png" alt="The caregiver view of a connected loved one, with tabs for Reminders, Routine, and Memory." width="480" height="1043"></div></div>
-  </div>
+  </section>
 
-  <div class="feature">
-    <div>
-      <h3>A gentle rhythm for every day.</h3>
-      <p>
-        Morning, afternoon, evening — a simple routine to follow and check
-        off, alongside reminders for medication, meals, appointments, and
-        family calls.
-      </p>
-      <ul>
-        <li>Done and Snooze — nothing more complicated</li>
-        <li>A short daily wellness check-in</li>
-        <li>Everything sized for older eyes and hands</li>
-      </ul>
+  <!-- ---------- faq ---------- -->
+  <section id="faq" class="wrap">
+    <div class="section-head">
+      <h2>Questions</h2>
     </div>
-    <div class="media"><div class="phone phone-sm"><img src="https://raw.githubusercontent.com/jacksonsanders13/rekalla/main/landing/img/routine.png" alt="The Routine screen: morning, afternoon, and evening steps with large checkboxes." width="480" height="1043"></div></div>
-  </div>
-</section>
+    <div class="faq-list">
+      <details>
+        <summary>Do I have to type anything?</summary>
+        <p>No. You take a photo and check what Rekalla found. If a name or a time is wrong you can correct it, but on most documents there is nothing to change.</p>
+      </details>
+      <details>
+        <summary>Will it read my handwriting?</summary>
+        <p>Usually, yes, if it is reasonably clear. Lay the page flat in good light and it copes with most handwritten calendars. When it cannot read something it says so rather than guessing.</p>
+      </details>
+      <details>
+        <summary>What if it gets a date wrong?</summary>
+        <p>Nothing is saved until you have seen it. Everything Rekalla finds is shown to you first, and every event can be tapped and edited afterwards, or removed.</p>
+      </details>
+      <details>
+        <summary>Who can see my calendar?</summary>
+        <p>Only you. Rekalla is a single-person app: there are no shared accounts and nobody else is given access to what you scan. You can delete your account and everything in it from Settings at any time.</p>
+      </details>
+      <details>
+        <summary>Is this a medical app?</summary>
+        <p>No. Rekalla is not a medical device, does not give medical advice, and will not read prescriptions or medication lists. It is for everyday paper: appointments, events and bills.</p>
+      </details>
+      <details>
+        <summary>What does it cost?</summary>
+        <p>It is free to start, with no card needed. If you scan a great deal there will be a paid plan later, and we will tell you the price plainly before anything changes.</p>
+      </details>
+    </div>
+  </section>
 
-<section id="demo" class="wrap demo">
-  <div class="section-head" style="margin-left:auto;margin-right:auto;">
-    <h2>Try it yourself.</h2>
-    <p>
-      A live, tappable preview — right here in your browser. Mark a reminder
-      done, check off the routine, search the vault, do a check-in and watch
-      the rings fill in. Switch screens with the tab bar at the bottom.
-    </p>
-  </div>
-
-  <div class="demo-stage">
-    <div class="demo-phone">
-      <iframe class="demo-frame" src="/demo/app.html" title="Interactive Rekalla preview" loading="lazy"></iframe>
-    </div>
-  </div>
-
-  <p class="demo-hint">A hands-on preview with sample data — the full app is coming to the App Store.</p>
-</section>
-
-<section id="how" class="wrap">
-  <div class="section-head">
-    <h2>Connected in under a minute.</h2>
-  </div>
-  <div class="steps">
-    <div class="step">
-      <span class="num">1</span>
-      <h4>Two accounts</h4>
-      <p>Your loved one signs up as a Loved One. You sign up as a Caregiver. Both free, both in seconds.</p>
-    </div>
-    <div class="step">
-      <span class="num">2</span>
-      <h4>Share the code</h4>
-      <p>Their app shows a short connect code. They read it to you over the phone — that's the whole handshake.</p>
-      <span class="code-sample">R7K2QX</span>
-    </div>
-    <div class="step">
-      <span class="num">3</span>
-      <h4>Set up their day</h4>
-      <p>Add reminders, build the routine, fill the Memory Vault with photos. It all appears on their phone instantly.</p>
-    </div>
-  </div>
-</section>
-
-<section class="wrap">
-  <div class="section-head">
-    <h2>Built with care, on purpose.</h2>
-  </div>
-  <div class="principles">
-    <div class="principle">
-      <h4>Designed for older adults</h4>
-      <p>Large text, generous touch targets, high contrast, and plain English on every screen.</p>
-    </div>
-    <div class="principle">
-      <h4>No ads. No tracking.</h4>
-      <p>Nothing is sold, shared with advertisers, or tracked across other apps. Ever.</p>
-    </div>
-    <div class="principle">
-      <h4>Private by design</h4>
-      <p>Only you and the caregivers you choose can see your information. Connections end at any time.</p>
-    </div>
-    <div class="principle">
-      <h4>Yours to delete</h4>
-      <p>One tap in Settings permanently erases an account and everything in it.</p>
-    </div>
-  </div>
-</section>
-
-<section id="join" class="wrap join">
-  <h2>Be first to know when Rekalla launches.</h2>
-  <p>
-    Leave your email and we&apos;ll let you know the moment it&apos;s on the
-    App Store. No spam — just one message when it&apos;s ready.
-  </p>
-  <form id="waitlist-form" class="join-form" novalidate>
-    <input
-      type="email"
-      id="waitlist-email"
-      required
-      autocomplete="email"
-      placeholder="you@example.com"
-      aria-label="Your email address"
-    >
-    <button type="submit" class="btn btn-primary">Notify me</button>
-  </form>
-  <p id="join-msg" class="join-msg" role="status" aria-live="polite"></p>
-</section>
-
-<section id="faq" class="wrap">
-  <div class="section-head">
-    <h2>Questions</h2>
-  </div>
-  <div class="faq">
-    <details>
-      <summary>Is Rekalla free?</summary>
-      <p>Rekalla is free while it&apos;s in early access. If that ever changes, we&apos;ll tell you well ahead of time.</p>
-    </details>
-    <details>
-      <summary>Do both people need the app?</summary>
-      <p>No. A Loved One can use Rekalla entirely on their own. A caregiver is optional — if there is one, they get their own account and connect with a simple code.</p>
-    </details>
-    <details>
-      <summary>Is my information private?</summary>
-      <p>Yes. Only you and the caregivers you choose to connect with can see your information. No ads, no tracking, and nothing is ever sold. You can delete your account and everything in it at any time.</p>
-    </details>
-    <details>
-      <summary>What devices does it work on?</summary>
-      <p>Rekalla is launching on iPhone first. Support for more devices is planned.</p>
-    </details>
-    <details>
-      <summary>Is Rekalla a medical app?</summary>
-      <p>No. Rekalla is a memory and coordination aid. It is not a medical device and does not provide medical advice, diagnosis, or treatment.</p>
-    </details>
-  </div>
-</section>
+</main>
 
 <footer>
   <div class="wrap">
-    <div class="foot">
-      <a class="brand" href="#top"><img src="logo.svg" alt="">Rekalla</a>
-      <div class="foot-links">
-        <a href="/privacy">Privacy Policy</a>
-        <a href="/terms">Terms of Use</a>
-        <a href="/support">Support</a>
-        <a href="mailto:rekallasupport@gmail.com">Contact</a>
-      </div>
+    <div class="foot-inner">
+      <a href="/privacy/">Privacy</a>
+      <a href="/terms/">Terms</a>
+      <a href="/support/">Support</a>
+      <a href="mailto:rekallasupport@gmail.com">Contact</a>
     </div>
-    <p class="fine">
-      © 2026 Jackson Sanders. Rekalla is a memory and coordination aid. It is
-      not a medical device and does not provide medical advice, diagnosis, or
-      treatment.
+    <p class="disclaimer">
+      Rekalla is not a medical device and does not provide medical advice.
     </p>
   </div>
 </footer>
 
 <script>
-  // Where the live web app is deployed. After you deploy (e.g. to Vercel),
-  // set APP_URL to your app's address and every "Use Rekalla now" button opens
-  // it. Until it's set, the buttons fall back to the email sign-up below.
+  // Where the live web app is deployed. Set APP_URL to your app's address and
+  // every "Get early access" button opens it instead. Until it's set, the
+  // buttons fall back to the email sign-up below.
   (function () {
     var APP_URL = "https://YOUR-REKALLA-APP-URL"; // <-- change after deploying
     if (APP_URL.indexOf("YOUR-REKALLA") !== -1) return; // not set yet
