@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import {
   useFonts,
   Quicksand_400Regular,
@@ -14,6 +15,11 @@ import { TermsGate } from "../components/terms-gate";
 import { WelcomeTour } from "../components/welcome-tour";
 import { configureNotifications } from "../lib/notifications";
 import { colors, font, fonts } from "../lib/theme";
+import {
+  queryPersister,
+  PERSIST_MAX_AGE,
+  shouldPersistQuery,
+} from "../lib/query-persist";
 
 /**
  * Lives inside I18nProvider so the back-button label can be translated.
@@ -63,7 +69,15 @@ export default function RootLayout() {
   const [queryClient] = useState(
     () =>
       new QueryClient({
-        defaultOptions: { queries: { staleTime: 30_000, retry: 1 } },
+        defaultOptions: {
+          queries: {
+            staleTime: 30_000,
+            retry: 1,
+            // Must outlive the persisted cache, or restored entries would be
+            // collected the moment they are rehydrated.
+            gcTime: PERSIST_MAX_AGE,
+          },
+        },
       }),
   );
 
@@ -72,7 +86,14 @@ export default function RootLayout() {
   if (!fontsLoaded) return null;
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{
+        persister: queryPersister,
+        maxAge: PERSIST_MAX_AGE,
+        dehydrateOptions: { shouldDehydrateQuery: shouldPersistQuery },
+      }}
+    >
       <I18nProvider>
       <SessionProvider>
         <StatusBar style="light" />
@@ -81,6 +102,6 @@ export default function RootLayout() {
         <TermsGate onResolved={() => setTermsResolved(true)} />
       </SessionProvider>
       </I18nProvider>
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   );
 }

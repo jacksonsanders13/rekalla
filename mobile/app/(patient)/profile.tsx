@@ -1,5 +1,6 @@
 /** Basic account settings: name, phone, email, log out, legal, delete. */
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -10,8 +11,10 @@ import { a11y, a11yFont } from "../../lib/a11y";
 import { BigButton, BigField } from "../../components/big-ui";
 import { LegalLinks } from "../../components/legal-links";
 import { DeleteAccount } from "../../components/delete-account";
+import { clearPersistedQueries } from "../../lib/query-persist";
 
 export default function Profile() {
+  const queryClient = useQueryClient();
   const { session, profile, refreshProfile } = useSession();
   const [name, setName] = useState(profile?.full_name ?? "");
   const [phone, setPhone] = useState(((profile as any)?.phone as string | undefined) ?? "");
@@ -39,6 +42,11 @@ export default function Profile() {
 
   async function signOut() {
     await supabase.auth.signOut();
+    // The calendar is cached on the device so it reads without a signal.
+    // Clear it here, or the next person to open the app on this phone would
+    // see the previous account's appointments.
+    queryClient.clear();
+    await clearPersistedQueries();
     router.replace("/(auth)/sign-in");
   }
 
