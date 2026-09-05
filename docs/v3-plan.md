@@ -129,12 +129,32 @@ a confirming chime needs an actual audio file and that is a decision to be
 heard, not guessed. Kenney's UI pack (CC0) is the place to look. Pick one, drop
 it in `assets/`, and wiring it through `expo-audio` is a small job.
 
-### M4 — The unmet accessibility work (two days)
+### M4 — The accessibility work — DONE, bar the device pass
 
-- Snapshot tests rendering every screen at the largest accessibility text size,
-  asserting nothing clips and every control has a label. This is an explicit
-  item from the brief that has never been done.
-- A real VoiceOver pass on a device, screen by screen.
+Two halves, because they catch different things.
+
+`scripts/check-a11y.mjs` reads source and fails the build on three absences:
+anything tappable with no label, an image neither labelled nor deliberately
+hidden, and any `fontSize` literal below the 20pt floor. No dependency, and it
+is in `npm run check`.
+
+`__tests__/accessibility.test.tsx` renders the components inside the providers
+at the largest in-app text size and asserts what VoiceOver would hear: that
+every control introduces itself, that a chosen row reports itself as checked
+rather than only being coloured, that the option somebody tapped by mistake is
+never described as wrong, and that text scales past the floor rather than
+being capped. It runs in both palettes.
+
+**What these cannot prove:** clipping. There is no layout engine in the test
+renderer, so a box that would overflow on a real phone renders happily here.
+The device pass with VoiceOver actually on is still outstanding, and it is the
+only thing that will catch it.
+
+Versions matter here: `jest-expo@57` targets React Native 0.86 and this is SDK
+54, so it is pinned to `~54.0.0` with `jest@29` and `react-test-renderer@19.1.0`.
+`expo-font` was checked after every install and remains a single 14.0.12.
+
+`npm run check` now takes about two minutes, most of it jest.
 
 ### M5 — Ship (depends on Apple)
 

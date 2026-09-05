@@ -127,8 +127,11 @@ for (const top of ROOTS) {
   for (const file of walk(join(ROOT, top))) {
     const path = relative(ROOT, file);
     if (!isOurs(path)) continue;
-    // This file lists the terms it is looking for.
-    if (path.split(sep).join("/") === "scripts/check-copy.mjs") continue;
+    // The guards are exempt from each other. This one lists the terms it
+    // looks for, and check-a11y names the retired route folders it skips —
+    // one of which is a directory called "(patient)". Naming a path is not
+    // making a claim.
+    if (/^scripts\/check-[a-z0-9-]+\.mjs$/.test(path.split(sep).join("/"))) continue;
 
     const lines = readFileSync(file, "utf8").split(/\r?\n/);
     lines.forEach((line, index) => {
