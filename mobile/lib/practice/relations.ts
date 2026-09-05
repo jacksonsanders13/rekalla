@@ -105,3 +105,46 @@ export const PLACEMENT_CHOICES: { placement: Placement; label: string }[] = [
 export function bandOrder(placement: Placement): number {
   return placement === BESIDE ? 100 : placement;
 }
+
+/**
+ * What a contact's name gives away.
+ *
+ * Worth knowing why this reads the name rather than the phone's relationship
+ * field: on iOS a related name stored against a contact describes *that
+ * contact's* relatives. A related name of "mother" on Jane's card means Jane's
+ * mother, not that Jane is your mother. It cannot tell us what we need.
+ *
+ * The name usually can. People save family under what they call them —
+ * "Mom", "Grandma Jean", "Uncle Bob" — and that is exactly the word this app
+ * wants, both for the tree and for the question it asks. Whatever is left over
+ * is the name to use in the question, so "Grandma Jean" is asked about as
+ * "Jean" rather than being answered by its own prompt.
+ *
+ * Anything it cannot read comes back null, and the import asks.
+ */
+export interface NameReading {
+  /** The relationship word found in the name, or null. */
+  relationship: string | null;
+  /** What to call them in a question. */
+  displayName: string;
+}
+
+export function readContactName(raw: string): NameReading {
+  const trimmed = raw.trim().replace(/\s+/g, " ");
+  if (!trimmed) return { relationship: null, displayName: raw };
+
+  const words = trimmed.split(" ");
+
+  // Whole words only. A substring match would read "son" out of "Jason" and
+  // "Sonya", and put a stranger's grandmother in the wrong generation.
+  const foundAt = words.findIndex((word) => normalise(word) in WORDS);
+  if (foundAt === -1) return { relationship: null, displayName: trimmed };
+
+  const relationship = normalise(words[foundAt]);
+  const rest = words.filter((_, index) => index !== foundAt);
+
+  return {
+    relationship,
+    displayName: rest.length > 0 ? rest.join(" ") : trimmed,
+  };
+}

@@ -70,10 +70,18 @@ export default function Tree() {
       title="Your family tree"
       onBack={() => router.back()}
       footer={
-        <ChunkyButton
-          label="Add someone"
-          onPress={() => router.push("/add?category=person")}
-        />
+        <>
+          <ChunkyButton
+            label="Add from contacts"
+            hint="Your phone already has their names and photos"
+            onPress={() => router.push("/import")}
+          />
+          <ChunkyButton
+            label="Add someone by hand"
+            tone="secondary"
+            onPress={() => router.push("/add?category=person")}
+          />
+        </>
       }
     >
       {people.length === 0 ? (

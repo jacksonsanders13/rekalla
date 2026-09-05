@@ -55,6 +55,14 @@ export default function Add() {
     <Screen title="What do you want to add?" onBack={() => router.back()}>
       <Hint>I'll start asking you about it today.</Hint>
 
+      <View style={{ paddingTop: space(2) }}>
+        <ChunkyButton
+          label="Add people from contacts"
+          hint="Your phone already has their names and photos"
+          onPress={() => router.push("/import")}
+        />
+      </View>
+
       <View style={{ gap: space(5), paddingTop: space(2) }}>
         {CATEGORY_ORDER.map((key) => (
           <View key={key} style={{ gap: space(1) }}>
