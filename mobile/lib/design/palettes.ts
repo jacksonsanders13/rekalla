@@ -13,8 +13,11 @@
  * Two rules hold in both:
  *
  *   - The bright fill carries DARK text, never white. White on a saturated
- *     green or pink lands near 2.5:1 — it reads fine in a mockup and vanishes
- *     for the person holding the phone.
+ *     fill lands near 2.5:1 — it reads fine in a mockup and vanishes for the
+ *     person holding the phone.
+ *   - The pink is Rekalla's own: #F7A8C8 is the mascot's body and #D4779F is
+ *     the fold he is shaded with, so the buttons and the character are the
+ *     same colour rather than two things that happen to share a screen.
  *   - There is no red. A wrong answer is shown in the warm wash, and red is
  *     absent from the palette so it cannot creep back in later.
  */
@@ -82,9 +85,9 @@ export const dark: Palette = {
   ink: "#F2F7F9",
   inkSoft: "#A9BAC3",
 
-  primary: "#7DD53F",
-  primaryEdge: "#57A324",
-  primaryInk: "#0E1417",
+  primary: "#F7A8C8",
+  primaryEdge: "#D4779F",
+  primaryInk: "#241016",
 
   success: "#16311E",
   successEdge: "#2E6B3C",

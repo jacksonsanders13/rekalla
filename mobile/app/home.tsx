@@ -3,7 +3,7 @@
  *
  * The winding column of large faces is the borrowed idea, and it earns its
  * place here for a reason it does not have elsewhere: the thing being
- * practised is a person, so a picture of them is a better label than any word
+ * practiced is a person, so a picture of them is a better label than any word
  * would be. The next one up is at the top, larger, with START on it.
  *
  * What is not borrowed: no tab bar, no hearts, no timer, nothing that runs
@@ -51,7 +51,7 @@ function Stat({ value, label }: { value: string; label: string }) {
 
 export default function Home() {
   const colors = useTheme();
-  const { ready, items, data, dueCount, daysPractised, currentRun, user } = usePractice();
+  const { ready, items, data, dueCount, daysPracticed, currentRun, user } = usePractice();
 
   const entries = useMemo<PathEntry[]>(() => {
     const byId = new Map(items.map((item) => [item.id, item]));
@@ -74,32 +74,32 @@ export default function Home() {
       footer={
         hasItems ? (
           <ChunkyButton
-            label={somethingDue ? "Practise" : "Practise anyway"}
+            label={somethingDue ? "Practice" : "Practice anyway"}
             tone={somethingDue ? "primary" : "secondary"}
             hint={
               somethingDue
-                ? `${dueCount} ready. Starts a practice session`
-                : "Nothing is due, but you can have a short practice"
+                ? `${dueCount} ready. Starts a session`
+                : "Nothing is due, but you can practice anyway"
             }
             onPress={() => router.push("/practice")}
           />
         ) : (
           <ChunkyButton
-            label="Add someone to remember"
+            label="Add someone"
             onPress={() => router.push("/add")}
           />
         )
       }
     >
-      {daysPractised > 0 ? (
+      {daysPracticed > 0 ? (
         <View style={{ flexDirection: "row", gap: space(3) }}>
           <Stat
-            value={String(daysPractised)}
-            label={daysPractised === 1 ? "day practised" : "days practised"}
+            value={String(daysPracticed)}
+            label={daysPracticed === 1 ? "day practiced" : "days practiced"}
           />
           <Stat
             value={String(currentRun)}
-            label={currentRun === 1 ? "day on the trot" : "days on the trot"}
+            label={currentRun === 1 ? "day in a row" : "days in a row"}
           />
         </View>
       ) : null}
@@ -107,11 +107,11 @@ export default function Home() {
       <AppText size="bodyLarge" weight="bold" center>
         {somethingDue
           ? dueCount === 1
-            ? "One is ready for you"
-            : `${dueCount} are ready for you`
+            ? "1 to practice"
+            : `${dueCount} to practice`
           : hasItems
-            ? "You are up to date"
-            : "Nobody here yet"}
+            ? "All caught up"
+            : "Nothing here yet"}
       </AppText>
 
       {hasItems ? (
@@ -123,8 +123,8 @@ export default function Home() {
       ) : (
         <RekallaSays>
           {user?.setupMode === "helper"
-            ? "Add the people who matter most, and I will start asking about them."
-            : "Add the people who matter most to you, and I will start asking about them."}
+            ? "Add someone and I'll start asking about them."
+            : "Add someone and I'll start asking about them."}
         </RekallaSays>
       )}
 
@@ -132,11 +132,11 @@ export default function Home() {
         <ChunkyButton
           label="Your family tree"
           tone="secondary"
-          hint="Everyone you have added, by generation"
+          hint="Everyone you've added, by generation"
           onPress={() => router.push("/tree")}
         />
         <ChunkyButton
-          label="Add something to remember"
+          label="Add something"
           tone="secondary"
           onPress={() => router.push("/add")}
         />

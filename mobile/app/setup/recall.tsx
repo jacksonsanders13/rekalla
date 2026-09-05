@@ -27,10 +27,10 @@ import type { ItemCategory } from "../../lib/practice/types";
 
 /** How each kind is described when it is being offered, rather than added. */
 const OFFERS: Record<ItemCategory, string> = {
-  person: "The people in my life",
-  routine: "How my day goes",
+  person: "People in my life",
+  routine: "My daily routine",
   place: "Where I keep things",
-  fact: "Names, numbers and facts",
+  fact: "Facts and numbers",
 };
 
 export const SETUP_STEPS = 4;
@@ -64,7 +64,7 @@ export default function Recall() {
           disabled={wants.length === 0}
           hint={
             wants.length === 0
-              ? "Choose at least one to carry on"
+              ? "Pick at least one to continue"
               : "Goes to the next question"
           }
           onPress={() => void onward()}
@@ -72,10 +72,10 @@ export default function Recall() {
       }
     >
       <RekallaSays avatarSize={76}>
-        What would you like to be able to recall?
+        What do you want to remember?
       </RekallaSays>
 
-      <Hint>Choose as many as you like. It decides what we start with.</Hint>
+      <Hint>Pick as many as you want. This sets what you start with.</Hint>
 
       <View style={{ gap: space(4) }}>
         {CATEGORY_ORDER.map((category) => (

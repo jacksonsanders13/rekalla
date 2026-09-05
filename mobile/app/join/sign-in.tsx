@@ -61,11 +61,10 @@ export default function SignIn() {
     return (
       <Screen
         title="Everything is back"
-        footer={<ChunkyButton label="Have a look" onPress={() => router.replace("/home")} />}
+        footer={<ChunkyButton label="Continue" onPress={() => router.replace("/home")} />}
       >
         <RekallaSays avatarSize={84}>
-          Your people are here, along with when each of them next comes round.
-          Carry on where you left off.
+          Your people are back, with their schedules. Pick up where you left off.
         </RekallaSays>
       </Screen>
     );
@@ -77,13 +76,13 @@ export default function SignIn() {
       onBack={() => router.back()}
       footer={
         <ChunkyButton
-          label={busy ? "One moment" : "Sign in"}
+          label={busy ? "Working" : "Sign in"}
           disabled={!canSubmit}
           onPress={() => void submit()}
         />
       }
     >
-      <Hint>The email and password you made your account with.</Hint>
+      <Hint>The email and password you signed up with.</Hint>
 
       <Field
         label="Your email address"
@@ -100,7 +99,7 @@ export default function SignIn() {
         onChangeText={setPassword}
         secure
         autoComplete="password"
-        hint="Shown as you type, so you can check it."
+        hint="Shown as you type so you can check it."
         onSubmitEditing={() => void submit()}
       />
 

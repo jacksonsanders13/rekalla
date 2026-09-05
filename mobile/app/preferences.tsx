@@ -39,7 +39,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 /** "Today at 14:20", or "not yet". */
 function backupWhen(iso: string | null): string {
-  if (!iso) return "Not yet. It goes up when you finish your next practice.";
+  if (!iso) return "Not yet. Happens after your next session.";
   const when = new Date(iso);
   const today = new Date();
   const sameDay =
@@ -76,7 +76,7 @@ export default function Preferences() {
     if (!scheduled) {
       await updateUser({ reminderTime: null });
       setNote(
-        "Rekalla does not have permission to send notifications yet. You can turn that on in the phone's Settings.",
+        "Rekalla can't send notifications yet. Turn that on in your phone's Settings.",
       );
       return;
     }
@@ -88,11 +88,11 @@ export default function Preferences() {
     const bundle = {
       exportedAt: new Date().toISOString(),
       about:
-        "Your Rekalla practice. Photographs are not in here, they are too large to send as text.",
+        "Your Rekalla practice. Photos are not included, they are too large to send as text.",
       you: data.user,
       things: data.items,
       schedule: data.cards,
-      daysPractised: data.progress.practiceDays,
+      daysPracticed: data.progress.practiceDays,
     };
     await Share.share({
       title: "My Rekalla practice",
@@ -114,7 +114,7 @@ export default function Preferences() {
       router.replace("/welcome");
     } catch {
       setNote(
-        "That could not be finished just now. Nothing has been removed. Try again when you are back online.",
+        "That didn't finish. Nothing was deleted. Try again when you're back online.",
       );
       setBusy(false);
       setConfirming(false);
@@ -135,9 +135,8 @@ export default function Preferences() {
           />
         ))}
         <Hint>
-          Dark is where Rekalla starts. Some eyes read dark text on a light
-          ground more easily, so light is here too, and both are held to the
-          same contrast.
+          Dark by default. Light is easier on some eyes. Both are high
+          contrast.
         </Hint>
       </Section>
 
@@ -156,8 +155,7 @@ export default function Preferences() {
           onPress={() => void updateUser({ hapticsOn: false })}
         />
         <Hint>
-          You will feel a small tap when an answer is right. Nothing is ever
-          felt when one is not.
+          A small tap when you get one right. Nothing when you don't.
         </Hint>
       </Section>
 
@@ -172,8 +170,7 @@ export default function Preferences() {
           />
         ))}
         <Hint>
-          Rekalla also follows the text size set on the phone itself. This makes
-          it larger again.
+          Rekalla follows your phone's text size. This makes it bigger still.
         </Hint>
       </Section>
 
@@ -209,10 +206,10 @@ export default function Preferences() {
               }}
             >
               <AppText weight="bold">{email ?? "Signed in"}</AppText>
-              <AppText color={colors.inkSoft}>{`Last copy kept: ${backupWhen(lastPushedAt)}`}</AppText>
+              <AppText color={colors.inkSoft}>{`Last backup: ${backupWhen(lastPushedAt)}`}</AppText>
             </View>
             <ChunkyButton
-              label="Keep a copy now"
+              label="Back up now"
               tone="secondary"
               onPress={() => void backUpQuietly()}
             />
@@ -226,21 +223,21 @@ export default function Preferences() {
         ) : (
           <>
             <Hint>
-              Your practice is on this phone and nowhere else. An account keeps
-              a copy of it, and nothing else.
+              Your practice is on this phone only. An account keeps a backup.
+              That's all it does.
             </Hint>
-            <ChunkyButton label="Keep a copy for me" onPress={() => router.push("/join")} />
+            <ChunkyButton label="Create an account" onPress={() => router.push("/join")} />
           </>
         )}
       </Section>
 
-      <Section title="A copy for yourself">
+      <Section title="Export your data">
         <Hint>
-          Everything you have added, as text you can send to yourself or to
-          somebody in the family. Photographs are not included.
+          Everything you've added, as text you can send to yourself. Photos
+          are not included.
         </Hint>
         <ChunkyButton
-          label="Send me my data"
+          label="Export"
           tone="secondary"
           onPress={() => void exportEverything()}
         />
@@ -254,25 +251,25 @@ export default function Preferences() {
 
       <View style={{ gap: space(4), paddingTop: space(12) }}>
         <AppText size="bodyLarge" weight="bold">
-          {signedIn ? "Close my account" : "Start again"}
+          {signedIn ? "Close my account" : "Start over"}
         </AppText>
         <Hint>
           {signedIn
-            ? `This removes your account, the copy we keep, and everything on this phone. All ${items.length} of them.`
+            ? `Deletes your account, the backup, and everything on this phone. All ${items.length} of them.`
             : items.length === 1
-              ? "This removes the one thing you have added, along with your practice."
-              : `This removes all ${items.length} things you have added, along with your practice.`}
+              ? "Deletes the one thing you've added, and your practice history."
+              : `Deletes all ${items.length} things you've added, and your practice history.`}
         </Hint>
 
         {confirming ? (
           <View style={{ gap: space(6) }}>
             <AppText weight="bold" accessibilityLiveRegion="polite">
-              Remove everything and start again? This cannot be undone.
+              Delete everything and start over? This can't be undone.
             </AppText>
-            <ChunkyButton label="No, keep everything" onPress={() => setConfirming(false)} />
+            <ChunkyButton label="Cancel" onPress={() => setConfirming(false)} />
             <View style={{ paddingTop: space(6) }}>
               <ChunkyButton
-                label={busy ? "One moment" : "Yes, remove everything"}
+                label={busy ? "Working" : "Delete everything"}
                 tone="secondary"
                 disabled={busy}
                 onPress={() => void removeEverything()}
@@ -281,7 +278,7 @@ export default function Preferences() {
           </View>
         ) : (
           <ChunkyButton
-            label={signedIn ? "Close my account" : "Start again"}
+            label={signedIn ? "Close my account" : "Start over"}
             tone="secondary"
             hint="Asks you to confirm first"
             onPress={() => setConfirming(true)}

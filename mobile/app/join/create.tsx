@@ -70,17 +70,16 @@ export default function Create() {
     return (
       <Screen
         title="Nearly there"
-        footer={<ChunkyButton label="Carry on" onPress={() => router.replace("/home")} />}
+        footer={<ChunkyButton label="Continue" onPress={() => router.replace("/home")} />}
       >
         <RekallaSays avatarSize={84}>
           <View style={{ gap: space(3) }}>
             <AppText size="body">
-              {`Your account is made. There is an email on its way to ${email.trim()}, with a link in it to confirm the address.`}
+              {`Account created. Check ${email.trim()} for a link to confirm the address.`}
             </AppText>
             <AppText size="body">
-              Nothing is waiting on that. Carry on practising, and once you have
-              tapped the link, sign in from Settings and I will start keeping a
-              copy.
+              You don't have to wait. Keep practicing. Once you've tapped the
+              link, sign in from Settings and backups start.
             </AppText>
           </View>
         </RekallaSays>
@@ -94,20 +93,19 @@ export default function Create() {
       onBack={() => router.back()}
       footer={
         <ChunkyButton
-          label={busy ? "One moment" : "Create my account"}
+          label={busy ? "Working" : "Create account"}
           disabled={!canSubmit}
           hint={
             canSubmit
-              ? "Makes the account and keeps a copy of your practice"
-              : "Fill in an email address and a password of at least eight characters"
+              ? "Creates the account and backs up your practice"
+              : "Enter an email and a password of at least 8 characters"
           }
           onPress={() => void create()}
         />
       }
     >
       <Hint>
-        Only used to keep your practice safe, and to let you back in. Nothing is
-        sent to you except the odd thing about your own account.
+        Used to back up your practice and let you sign back in. Nothing else.
       </Hint>
 
       <Field
@@ -128,8 +126,8 @@ export default function Create() {
         autoComplete="new-password"
         hint={
           longEnough
-            ? "That is long enough."
-            : `${MIN_PASSWORD_LENGTH} characters or more. It is shown as you type, so you can check it.`
+            ? "Long enough."
+            : `${MIN_PASSWORD_LENGTH} characters or more. Shown as you type so you can check it.`
         }
         onSubmitEditing={() => void create()}
       />

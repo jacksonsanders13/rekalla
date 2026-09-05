@@ -11,7 +11,7 @@
  *   1. A miss drops the item back to the last rung it was cleared at, never
  *      to the bottom. Starting from scratch every time someone stumbles is
  *      demoralising and it undoes work that was genuinely done.
- *   2. An item's very first outing is an introduction. It is practised
+ *   2. An item's very first outing is an introduction. It is practiced
  *      several times inside that one session (see session.ts) and then lands
  *      on rung 0, one day later. Treating the introduction as a review would
  *      skip rung 0 entirely, since a success advances the index before the
@@ -44,7 +44,7 @@ export function startOfLocalDay(date: Date): Date {
 
 /**
  * Due dates land at the start of a day rather than at the clock time of the
- * last session. Someone who practises at three in the afternoon and then
+ * last session. Someone who practices at three in the afternoon and then
  * picks the phone up at nine the next morning should find their practice
  * waiting, not be told to come back later. Built from calendar fields rather
  * than by adding milliseconds, so a clock change does not shift the day.
@@ -67,7 +67,7 @@ export function localDayKey(date: Date): string {
 
 /**
  * A brand new item, ready to be introduced. It is due immediately: the point
- * of adding something is to practise it now.
+ * of adding something is to practice it now.
  */
 export function newCard(
   id: string,
@@ -150,7 +150,7 @@ export function applyIncorrect(card: ScheduledCard, now: Date): ScheduledCard {
 /**
  * The one entry point the app should call when an item's first attempt in a
  * session resolves. Applied as soon as that attempt resolves rather than at
- * the end, so leaving halfway through keeps everything already practised.
+ * the end, so leaving halfway through keeps everything already practiced.
  */
 export function settleCard(
   card: ScheduledCard,

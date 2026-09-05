@@ -25,9 +25,9 @@ test("the words people actually use at home are understood", () => {
   assert.equal(inferPlacement("mother-in-law"), -1);
 });
 
-test("friends and neighbours sit beside the family rather than on it", () => {
+test("friends and neighbors sit beside the family rather than on it", () => {
   assert.equal(inferPlacement("friend"), BESIDE);
-  assert.equal(inferPlacement("next door neighbour"), BESIDE);
+  assert.equal(inferPlacement("next door neighbor"), BESIDE);
   assert.equal(bandOrder(BESIDE) > bandOrder(3), true);
 });
 

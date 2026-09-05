@@ -116,8 +116,8 @@ export interface ReviewLog {
  * so there is nothing here that could be rendered as a failure rate.
  */
 export interface Progress {
-  /** Local calendar days on which at least one item was practised, "YYYY-MM-DD". */
+  /** Local calendar days on which at least one item was practiced, "YYYY-MM-DD". */
   practiceDays: string[];
-  /** Running total of items practised, for the home screen. */
-  cardsPractised: number;
+  /** Running total of items practiced, for the home screen. */
+  cardsPracticed: number;
 }

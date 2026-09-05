@@ -7,10 +7,9 @@
  * life on the spot, and it is what makes the questions answerable without a
  * model to grade them.
  *
- * Every field carries a line from Rekalla saying what he wants it for. A form
- * that collects four things and explains none of them is a form people give
- * up on, and it is also the shape of every scam this audience is warned
- * about. Saying why is not decoration here.
+ * Every field says what it is for. A form that asks for four things and
+ * explains none of them is a form people quit, and it is also the shape of
+ * every scam this audience gets warned about.
  */
 import type { ItemCategory } from "./types";
 
@@ -41,9 +40,9 @@ export interface CategoryTemplate {
 function detailField(example: string, explain: string): TemplateField {
   return {
     key: "detail",
-    question: "Anything you would like me to say back?",
+    question: "Anything to add?",
     explain,
-    hint: "One line. You will see it when you get the answer right.",
+    hint: "One line, shown when you get it right.",
     kind: "text",
     placeholder: example,
     optional: true,
@@ -54,14 +53,13 @@ export const TEMPLATES: Record<ItemCategory, CategoryTemplate> = {
   person: {
     category: "person",
     label: "A person",
-    blurb: "Their photo, their name, and who they are to you",
+    blurb: "Photo, name, and who they are to you",
     fields: [
       {
         key: "photo",
         question: "Add a photo",
-        explain:
-          "A photo is the thing I lean on most. I will show it to you and ask who it is, which is the whole exercise really.",
-        hint: "A clear picture of their face works best. You can add one later instead.",
+        explain: "I'll show you this photo and ask who it is. That's the main exercise.",
+        hint: "A clear photo of their face works best. You can skip this.",
         kind: "photo",
         optional: true,
       },
@@ -69,7 +67,7 @@ export const TEMPLATES: Record<ItemCategory, CategoryTemplate> = {
         key: "name",
         question: "What is their name?",
         explain:
-          "This is the answer you will be picking out. Whatever you actually call them is the right thing to put, not their full name on paper.",
+          "This is the answer you'll pick out. Use whatever you actually call them, not their full name.",
         kind: "text",
         placeholder: "Ellie",
       },
@@ -77,14 +75,14 @@ export const TEMPLATES: Record<ItemCategory, CategoryTemplate> = {
         key: "relationship",
         question: "Who are they to you?",
         explain:
-          "Two reasons. I can ask you about it as well as their name, and it tells me where to put them on your family tree.",
-        hint: "For example: granddaughter, son, neighbour.",
+          "So I can ask about this too, and so I know where to put them on your family tree.",
+        hint: "For example: granddaughter, son, neighbor.",
         kind: "text",
         placeholder: "Granddaughter",
       },
       detailField(
-        "She lives in Leeds and plays the violin",
-        "When you get them right, I will say this back to you. It is nice to hear, and it gives the name something to hang on.",
+        "She plays violin and lives in Denver",
+        "I'll show this when you get them right. It gives the name something to stick to.",
       ),
     ],
     buildPrompt: () => "Who is this?",
@@ -94,13 +92,13 @@ export const TEMPLATES: Record<ItemCategory, CategoryTemplate> = {
   routine: {
     category: "routine",
     label: "Something you do",
-    blurb: "A part of your day, and when it happens",
+    blurb: "Something you do, and when",
     fields: [
       {
         key: "cue",
         question: "When does it happen?",
         explain:
-          "I will use this as the question. Something that already happens every day works best, because that is what reminds you.",
+          "This becomes the question. Something that already happens every day works best.",
         hint: "For example: after breakfast, before bed.",
         kind: "text",
         placeholder: "After breakfast",
@@ -108,13 +106,13 @@ export const TEMPLATES: Record<ItemCategory, CategoryTemplate> = {
       {
         key: "action",
         question: "What do you do then?",
-        explain: "And this is the answer you will be picking out.",
+        explain: "This is the answer.",
         kind: "text",
         placeholder: "Take the dog out",
       },
       detailField(
-        "His lead is on the hook by the back door",
-        "Anything that helps when the moment comes. I will say it back when you get it right.",
+        "His leash is on the hook by the back door",
+        "Anything that helps in the moment.",
       ),
     ],
     buildPrompt: (values) => `What do you do ${values.cue?.trim().toLowerCase()}?`,
@@ -129,8 +127,7 @@ export const TEMPLATES: Record<ItemCategory, CategoryTemplate> = {
       {
         key: "thing",
         question: "What is it?",
-        explain:
-          "The thing you find yourself hunting for. I will ask you where it lives.",
+        explain: "Something you go looking for. I'll ask you where it is.",
         hint: "For example: your keys, your reading glasses.",
         kind: "text",
         placeholder: "My keys",
@@ -139,13 +136,13 @@ export const TEMPLATES: Record<ItemCategory, CategoryTemplate> = {
         key: "place",
         question: "Where do you keep it?",
         explain:
-          "This is the answer. Worth putting where you would like it to live, if it does not have a home yet.",
+          "This is the answer. If it doesn't have a spot yet, pick one now.",
         kind: "text",
         placeholder: "In the blue bowl by the front door",
       },
       detailField(
         "I put them there as soon as I come in",
-        "Anything that makes it stick. I will say it back when you get it right.",
+        "Anything that makes it stick.",
       ),
     ],
     buildPrompt: (values) => `Where do you keep ${values.thing?.trim().toLowerCase()}?`,
@@ -159,23 +156,22 @@ export const TEMPLATES: Record<ItemCategory, CategoryTemplate> = {
     fields: [
       {
         key: "subject",
-        question: "What is it you want to remember?",
-        explain: "I will turn this into the question I ask you.",
+        question: "What do you want to remember?",
+        explain: "This becomes the question I ask you.",
         hint: "For example: my address, my daughter's phone number.",
         kind: "text",
         placeholder: "My address",
       },
       {
         key: "value",
-        question: "And what is the answer?",
-        explain:
-          "Exactly as you would want to say it. This is what you will be picking out.",
+        question: "What's the answer?",
+        explain: "The answer, exactly as you'd say it out loud.",
         kind: "text",
-        placeholder: "14 Mill Lane, Harrogate",
+        placeholder: "1412 Oak Street, Denver",
       },
       detailField(
-        "The green door, second house along",
-        "Anything else worth hearing. I will say it back when you get it right.",
+        "The green door, second house down",
+        "Anything else worth remembering.",
       ),
     ],
     buildPrompt: (values) => `What is ${values.subject?.trim().toLowerCase()}?`,

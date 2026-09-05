@@ -69,8 +69,8 @@ export async function setDailyReminder(time: string | null): Promise<boolean> {
 
   await Notifications.scheduleNotificationAsync({
     content: {
-      title: "Time to practise",
-      body: "A few minutes with Rekalla, whenever you are ready.",
+      title: "Time to practice",
+      body: "A few minutes with Rekalla.",
       sound: false,
     },
     trigger: {

@@ -31,13 +31,13 @@ export default function Explain() {
 
   return (
     <Screen
-      title="Here is how this works"
+      title="How this works"
       onBack={() => router.back()}
       progress={SETUP_STEPS / SETUP_STEPS}
       footer={
         <ChunkyButton
-          label={isPerson ? "Let's add someone" : "Let's add the first one"}
-          hint="Starts the first one off"
+          label={isPerson ? "Add someone" : "Add the first one"}
+          hint="Start adding"
           onPress={() => router.push("/setup/first-item")}
         />
       }
@@ -45,17 +45,16 @@ export default function Explain() {
       <RekallaSays avatarSize={84}>
         <View style={{ gap: space(3) }}>
           <AppText size="body">
-            You tell me about something you want to keep hold of. A face and a
-            name, a part of your day, wherever a thing lives.
+            You tell me about something. A face and a name, part of your day,
+            where you keep something.
           </AppText>
           <AppText size="body">
-            Then I ask you about it. Today, tomorrow, a few days after that,
-            leaving longer each time you get one right.
+            Then I ask you about it. Today, tomorrow, then further apart each
+            time you get it right.
           </AppText>
           <AppText size="body">
-            If one does not come to you, I show you the answer straight away and
-            we go round again. There is nothing to get wrong here, and nothing
-            is marked.
+            If you can't remember, I show you the answer and ask again.
+            Nothing is scored.
           </AppText>
         </View>
       </RekallaSays>
@@ -74,11 +73,10 @@ export default function Explain() {
           {`Next: ${template.label.toLowerCase()}`}
         </AppText>
         <AppText color={colors.inkSoft}>
-          {`${template.fields.length} short questions, one to a screen. Any of them can be left out.`}
+          {`${template.fields.length} quick questions, one per screen. Skip any of them.`}
         </AppText>
         <AppText color={colors.inkSoft}>
-          Then we practise it straight away, so you can see what all this is
-          for. It takes about a minute.
+          Then you practice it right away. Takes about a minute.
         </AppText>
       </View>
     </Screen>

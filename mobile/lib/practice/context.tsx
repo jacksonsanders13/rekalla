@@ -28,7 +28,7 @@ import {
 } from "./store";
 import { deletePhoto, savePhoto } from "./photos";
 import { isDue, localDayKey, newCard, settleCard } from "./scheduler";
-import { currentRun, daysPractised, recordPracticeDay } from "./progress";
+import { currentRun, daysPracticed, recordPracticeDay } from "./progress";
 import { inferPlacement } from "./relations";
 import {
   deleteAccountEverywhere,
@@ -53,9 +53,9 @@ interface PracticeApi {
   data: PracticeData;
   user: LocalUser | null;
   items: MemoryItem[];
-  /** Items ready to practise right now, new ones included. */
+  /** Items ready to practice right now, new ones included. */
   dueCount: number;
-  daysPractised: number;
+  daysPracticed: number;
   currentRun: number;
   /** Creates the local user if there is not one yet. Safe to call twice. */
   ensureUser(): Promise<LocalUser>;
@@ -222,7 +222,7 @@ export function PracticeProvider({
 
   /**
    * Called once per item per session, the moment its first attempt resolves,
-   * so leaving halfway through keeps everything practised up to that point.
+   * so leaving halfway through keeps everything practiced up to that point.
    */
   const settle = useCallback(
     async (cardId: string, wasCorrect: boolean) => {
@@ -234,8 +234,8 @@ export function PracticeProvider({
         if (!card) return previous;
 
         const updated = settleCard(card, wasCorrect, now);
-        const practisedIds =
-          previous.practisedToday.day === day ? previous.practisedToday.cardIds : [];
+        const practicedIds =
+          previous.practicedToday.day === day ? previous.practicedToday.cardIds : [];
 
         return {
           ...previous,
@@ -252,13 +252,13 @@ export function PracticeProvider({
               intervalIndexAtReview: card.intervalIndex,
             },
           ],
-          practisedToday: {
+          practicedToday: {
             day,
-            cardIds: practisedIds.includes(cardId) ? practisedIds : [...practisedIds, cardId],
+            cardIds: practicedIds.includes(cardId) ? practicedIds : [...practicedIds, cardId],
           },
           progress: {
             practiceDays: recordPracticeDay(previous.progress.practiceDays, day),
-            cardsPractised: previous.progress.cardsPractised + 1,
+            cardsPracticed: previous.progress.cardsPracticed + 1,
           },
         };
       });
@@ -320,7 +320,7 @@ export function PracticeProvider({
       dueCount: data.cards.filter(
         (card) => activeItemIds.has(card.memoryItemId) && isDue(card, now),
       ).length,
-      daysPractised: daysPractised(data.progress.practiceDays),
+      daysPracticed: daysPracticed(data.progress.practiceDays),
       currentRun: currentRun(data.progress.practiceDays, localDayKey(now)),
     };
   }, [data]);
@@ -332,7 +332,7 @@ export function PracticeProvider({
       user: data.user,
       items: data.items,
       dueCount: derived.dueCount,
-      daysPractised: derived.daysPractised,
+      daysPracticed: derived.daysPracticed,
       currentRun: derived.currentRun,
       ensureUser,
       updateUser,

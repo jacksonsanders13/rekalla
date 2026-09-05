@@ -29,18 +29,18 @@ export default function More() {
   );
 
   return (
-    <Screen title="That's the whole of it">
+    <Screen title="That's how it works">
       <RekallaSays avatarSize={84}>
         <View style={{ gap: space(3) }}>
           <AppText size="body">
             {first
-              ? `That is what practice looks like. ${first.answer} will come back tomorrow, then in two days, then further apart each time you get it.`
-              : "That is what practice looks like, and it gets further apart each time you get one right."}
+              ? `${first.answer} comes back tomorrow, then in 2 days, then further apart each time you get it right.`
+              : "It comes back tomorrow, then further apart each time you get it right."}
           </AppText>
           <AppText size="body">
             {next
-              ? `You said you wanted ${TEMPLATES[next].label.toLowerCase()} too. We can do that now, or any time.`
-              : "Add as much or as little as you like, whenever it suits. There is no hurry and nothing to finish."}
+              ? `You also picked ${TEMPLATES[next].label.toLowerCase()}. Add it now, or later.`
+              : "Add more whenever you want. There's nothing to finish."}
           </AppText>
         </View>
       </RekallaSays>
@@ -48,11 +48,11 @@ export default function More() {
       <View style={{ gap: space(5), paddingTop: space(2) }}>
         <ChunkyButton
           label="Continue"
-          hint="Goes on to setting a reminder"
+          hint="Next"
           onPress={() => router.replace("/setup/reminder")}
         />
         <ChunkyButton
-          label={next ? `Add ${TEMPLATES[next].label.toLowerCase()} first` : "Add something else first"}
+          label={next ? `Add ${TEMPLATES[next].label.toLowerCase()} first` : "Add something else"}
           tone="secondary"
           onPress={() =>
             router.push(
@@ -66,8 +66,8 @@ export default function More() {
 
       <AppText color={colors.inkSoft} center>
         {items.length === 1
-          ? "One person on your tree so far."
-          : `${items.length} on your tree so far.`}
+          ? "1 on your tree."
+          : `${items.length} on your tree.`}
       </AppText>
     </Screen>
   );

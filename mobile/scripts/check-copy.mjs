@@ -53,7 +53,7 @@ const PARTIAL = [
 
 /**
  * Words that carry a clinical framing we have no business using, or that
- * describe the person as a case rather than as someone practising.
+ * describe the person as a case rather than as someone practicing.
  */
 const WORDS = [
   "dementia",
@@ -78,6 +78,29 @@ const WORDS = [
   "symptom",
   "symptoms",
 ];
+
+/**
+ * Spellings and turns of phrase this app does not use.
+ *
+ * NOTE TO ANYONE RUNNING A FIND-AND-REPLACE: exclude this file. It has to
+ * contain the spellings it rejects, and a sweep across the tree once rewrote
+ * these rules into rejecting the correct ones instead.
+ *
+ * Not pedantry. The audience is American, and "practiced" reads as a typo
+ * while "days on the trot" reads as nothing at all — both were shipped and
+ * both had to be pointed out. The writing is meant to be plain and direct, so
+ * the ornamental ones go here too.
+ */
+const VOICE = [
+  { find: /\bpractis(e|ed|ing|es)\b/i, say: "the American spelling" },
+  { find: /\bon the trot\b/i, say: "in a row" },
+  { find: /\bwhilst\b/i, say: "while" },
+  { find: /\bamongst\b/i, say: "among" },
+  { find: /\bneighbour/i, say: "neighbor" },
+  { find: /\brealise\b|\bapologis/i, say: "the American spelling" },
+  { find: /\bshall\s+(i|we|rekalla)\b/i, say: "want, or should" },
+  { find: /\bcomes?\s+round again\b/i, say: "comes back" },
+]
 
 /** Whole claims, which can be made without using any single banned word. */
 const PHRASES = [
@@ -145,6 +168,15 @@ for (const top of ROOTS) {
           findings.push({ path, line: index + 1, found: hit[0], text: line.trim() });
         }
       }
+      for (const rule of VOICE) {
+        const hit = line.match(rule.find);
+        if (hit) {
+          findings.push({
+            path, line: index + 1, found: hit[0], text: line.trim(),
+            instead: rule.say,
+          });
+        }
+      }
     });
   }
 }
@@ -159,10 +191,13 @@ console.error(
 );
 for (const finding of findings) {
   const unix = finding.path.split(sep).join("/");
-  console.error(`  ${unix}:${finding.line}  "${finding.found}"`);
+  console.error(
+    `  ${unix}:${finding.line}  "${finding.found}"` +
+      (finding.instead ? `  — use ${finding.instead}` : ""),
+  );
   console.error(`    ${finding.text.slice(0, 120)}`);
 }
 console.error(
-  "\nEvery claim has to be about the particular thing someone is practising.",
+  "\nEvery claim has to be about the specific thing someone is practicing.",
 );
 process.exit(1);

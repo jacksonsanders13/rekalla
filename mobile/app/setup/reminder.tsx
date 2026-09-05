@@ -28,7 +28,7 @@ export default function Reminder() {
     if (!scheduled) {
       await updateUser({ reminderTime: null });
       setNote(
-        "Rekalla does not have permission to send notifications yet. You can turn that on in the phone's Settings, and choose a time again from Settings here.",
+        "Rekalla can't send notifications yet. Turn that on in your phone's Settings, then pick a time again here.",
       );
       setBusy(false);
       return;
@@ -38,10 +38,9 @@ export default function Reminder() {
   }
 
   return (
-    <Screen title="Shall Rekalla remind you?" onBack={() => router.back()}>
+    <Screen title="Want a daily reminder?" onBack={() => router.back()}>
       <Hint>
-        One reminder a day, at a time you pick. You can change it or turn it off
-        whenever you like.
+        One a day, at a time you pick. Change it or turn it off anytime.
       </Hint>
 
       <View style={{ gap: space(4), paddingTop: space(2) }}>
@@ -55,7 +54,7 @@ export default function Reminder() {
           />
         ))}
         <ChunkyButton
-          label="No reminder, thank you"
+          label="No reminder"
           tone="secondary"
           disabled={busy}
           onPress={() => void choose(null)}
