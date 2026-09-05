@@ -40,8 +40,12 @@ including the first practice session, with no account at all.
 
 ## Working here
 
-- `cd mobile && npm run check` — copy guard, then typecheck, then 45 unit tests.
-  Run it before every commit.
+- `cd mobile && npm run check` — copy guard, accessibility guard, typecheck, 51
+  logic tests, then 11 rendering tests. Takes about two minutes, most of it
+  jest. Run it before every commit.
+- To look at it in a browser: `npx expo export --platform web --output-dir
+  /tmp/rekalla-web` then serve that folder. The Metro **dev** server needs more
+  memory than this box has and gets killed; the static export does not.
 - Scheduling lives in `mobile/lib/practice/`. Those modules are pure — no React,
   no storage, no native imports — so Node runs them and their tests directly
   with no test runner dependency. Keep them that way.
