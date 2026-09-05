@@ -47,7 +47,13 @@
           "color": "#7DD53F"
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "expo-contacts",
+        {
+          "contactsPermission": "Rekalla uses your contacts so you can pick the people you want to practice remembering. Nothing leaves your phone."
+        }
+      ]
     ],
     "extra": {
       "eas": {
