@@ -57,7 +57,8 @@ interface PracticeApi {
   dueCount: number;
   daysPractised: number;
   currentRun: number;
-  beginSetup(setupMode: SetupMode): Promise<LocalUser>;
+  /** Creates the local user if there is not one yet. Safe to call twice. */
+  ensureUser(): Promise<LocalUser>;
   updateUser(patch: Partial<LocalUser>): Promise<void>;
   addItem(input: AddItemInput): Promise<MemoryItem>;
   updateItem(itemId: string, patch: Partial<MemoryItem>): Promise<void>;
@@ -124,15 +125,18 @@ export function PracticeProvider({
     [store],
   );
 
-  const beginSetup = useCallback(
-    async (setupMode: SetupMode) => {
+  const ensureUser = useCallback(
+    async () => {
+      const existing = latest.current.user;
+      if (existing) return existing;
+
       const user: LocalUser = {
         id: makeId("user"),
         displayName: "",
         createdAt: new Date().toISOString(),
         dailyGoalCards: DEFAULT_DAILY_GOAL,
         reminderTime: null,
-        setupMode,
+        setupMode: "self",
         textScale: 1,
         soundOn: false,
         wants: [],
@@ -329,7 +333,7 @@ export function PracticeProvider({
       dueCount: derived.dueCount,
       daysPractised: derived.daysPractised,
       currentRun: derived.currentRun,
-      beginSetup,
+      ensureUser,
       updateUser,
       addItem,
       updateItem,
@@ -346,7 +350,7 @@ export function PracticeProvider({
       ready,
       data,
       derived,
-      beginSetup,
+      ensureUser,
       updateUser,
       addItem,
       updateItem,

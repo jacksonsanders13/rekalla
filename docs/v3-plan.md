@@ -89,26 +89,23 @@ Light is not decoration. Plenty of older eyes, cataracts especially, read dark
 text on a light ground more easily than the reverse, so the choice belongs to
 the person using it.
 
-### M2 — The onboarding, rebuilt (two to three days)
+### M2 — The onboarding, rebuilt — DONE
 
-Route order becomes: `welcome → recall → who → goal → promise → person →
-practice → more → reminder → join → home`.
+Route order is now `welcome → recall → who → goal → explain → first-item →
+practice → more → reminder → join → home`, with a progress bar across the four
+questions and a Continue that stays dead until something is chosen.
 
-- **`recall`** is the important one and the reason for the whole change:
-  *"What would you like to be able to recall?"* as a multi-select over the four
-  categories, each with an icon and a one-line blurb. Store on
-  `LocalUser.wants` (the field already exists). It must actually drive
-  behaviour — the first template offered is the first thing they picked, and
-  the screen after their first session offers the next one by name. A question
-  that changes nothing is a survey, and people can tell.
-- **`goal`** sets `dailyGoalCards`: Gentle 5 / Steady 10 / Keen 15 / Serious 20.
-- New components: a top bar (close, then a continuous rounded progress bar), a
-  selectable option row with an icon slot and a tick, and a pinned Continue
-  that stays disabled until something is chosen.
-- Keep the per-field Rekalla explanations already in `templates.ts`.
+`recall` drives behaviour rather than collecting an opinion: the first thing
+picked decides which template `first-item` fills in, `explain` names it, and
+`more` offers the next unmet choice by name. Adding from the middle of setup
+carries `after=setup` so the reminder and the offer to save are not skipped.
 
-The working prototype is the reference — it has all of this and the exact copy:
-https://claude.ai/code/artifact/a5a65216-a7be-437c-a1c5-490c4243e673
+Built without hearts, timed rounds or a resetting streak. That question was
+put twice and never answered; the brief forbids all three, so the brief won.
+Reopen it deliberately if it should change.
+
+`setup/person.tsx` became `setup/first-item.tsx`, since it is no longer always
+a person.
 
 ### M3 — How it feels (one to two days)
 

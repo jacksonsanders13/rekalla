@@ -35,6 +35,11 @@ interface ScreenProps {
   contentStyle?: StyleProp<ViewStyle>;
   /** Fills the width edge to edge; used by the practice screen for photos. */
   bleed?: boolean;
+  /**
+   * 0 to 1. Draws a bar beside Back, for a run of screens with an end in
+   * sight. A bar, never a number: "step 2 of 5" is a thing to keep track of.
+   */
+  progress?: number;
 }
 
 export function Screen({
@@ -45,6 +50,7 @@ export function Screen({
   footer,
   contentStyle,
   bleed = false,
+  progress,
 }: ScreenProps) {
   const colors = useTheme();
   return (
@@ -54,8 +60,18 @@ export function Screen({
         // Keeps the pinned action above the keyboard rather than under it.
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        {onBack ? (
-          <View style={{ paddingHorizontal: space(3), paddingTop: space(1) }}>
+        {onBack || progress !== undefined ? (
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: space(3),
+              paddingHorizontal: space(3),
+              paddingTop: space(1),
+              paddingRight: space(6),
+            }}
+          >
+            {onBack ? (
             <Pressable
               onPress={onBack}
               accessibilityRole="button"
@@ -71,6 +87,30 @@ export function Screen({
                 {`‹  ${backLabel}`}
               </AppText>
             </Pressable>
+            ) : null}
+
+            {progress !== undefined ? (
+              <View
+                accessibilityRole="progressbar"
+                accessibilityLabel="How far through setting up you are"
+                style={{
+                  flex: 1,
+                  height: 14,
+                  borderRadius: 7,
+                  backgroundColor: colors.line,
+                  overflow: "hidden",
+                }}
+              >
+                <View
+                  style={{
+                    width: `${Math.round(Math.max(0, Math.min(1, progress)) * 100)}%`,
+                    height: "100%",
+                    borderRadius: 7,
+                    backgroundColor: colors.primary,
+                  }}
+                />
+              </View>
+            ) : null}
           </View>
         ) : null}
 

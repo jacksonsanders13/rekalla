@@ -24,10 +24,14 @@ import { useTheme } from "../lib/design/theme";
 export default function Add() {
   const colors = useTheme();
   const { addItem } = usePractice();
-  const params = useLocalSearchParams<{ category?: string }>();
+  const params = useLocalSearchParams<{ category?: string; after?: string }>();
 
   // The tree adds people directly, so it skips the picker.
   const preset = CATEGORY_ORDER.find((key) => key === params.category) ?? null;
+  // Reached from the middle of setting up, the session afterwards has to
+  // return there rather than dropping somebody on Home with the reminder and
+  // the offer to save never having been shown.
+  const after = params.after === "setup" ? "setup" : "home";
   const [category, setCategory] = useState<ItemCategory | null>(preset);
 
   if (category) {
@@ -40,7 +44,7 @@ export default function Add() {
           const item = await addItem({ category, values, photoBase64 });
           router.replace({
             pathname: "/practice",
-            params: { mode: "intro", itemId: item.id, after: "home" },
+            params: { mode: "intro", itemId: item.id, after },
           });
         }}
       />

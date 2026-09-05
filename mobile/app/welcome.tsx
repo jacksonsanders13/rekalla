@@ -16,9 +16,9 @@ export default function Welcome() {
     <Screen
       footer={
         <ChunkyButton
-          label="Continue"
+          label="Get started"
           hint="Goes to the next step of setting up"
-          onPress={() => router.push("/setup/who")}
+          onPress={() => router.push("/setup/recall")}
         />
       }
       contentStyle={{ paddingTop: space(8) }}

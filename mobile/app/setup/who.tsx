@@ -9,36 +9,53 @@ import { View } from "react-native";
 import { router } from "expo-router";
 import { Screen } from "../../components/practice/screen";
 import { ChunkyButton } from "../../components/practice/chunky-button";
+import { ChoiceRow } from "../../components/practice/choice-row";
+import { RekallaSays } from "../../components/practice/rekalla-says";
 import { Hint } from "../../components/practice/text";
 import { usePractice } from "../../lib/practice/context";
 import { space } from "../../lib/design/tokens";
+import { SETUP_STEPS } from "./recall";
 import type { SetupMode } from "../../lib/practice/types";
 
 export default function Who() {
-  const { beginSetup } = usePractice();
+  const { user, ensureUser, updateUser } = usePractice();
+  const mode = user?.setupMode ?? "self";
 
-  async function choose(mode: SetupMode) {
-    await beginSetup(mode);
-    router.push("/setup/explain");
+  async function choose(next: SetupMode) {
+    await ensureUser();
+    await updateUser({ setupMode: next });
   }
 
   return (
-    <Screen title="Who is setting this up?" onBack={() => router.back()}>
+    <Screen
+      onBack={() => router.back()}
+      progress={2 / SETUP_STEPS}
+      footer={
+        <ChunkyButton
+          label="Continue"
+          hint="Goes to the next question"
+          onPress={() => router.push("/setup/goal")}
+        />
+      }
+    >
+      <RekallaSays avatarSize={76}>And who is this for?</RekallaSays>
+
       <Hint>
         This only changes how Rekalla words things. Either way, the practice
         belongs to the person doing it.
       </Hint>
 
-      <View style={{ gap: space(6), paddingTop: space(2) }}>
-        <ChunkyButton
-          label="I am setting this up for myself"
-          tone="secondary"
-          onPress={() => choose("self")}
+      <View style={{ gap: space(4) }}>
+        <ChoiceRow
+          label="It is for me"
+          selected={mode === "self"}
+          onPress={() => void choose("self")}
         />
-        <ChunkyButton
+        <ChoiceRow
           label="I am helping someone set it up"
-          tone="secondary"
-          onPress={() => choose("helper")}
+          sublabel="You will be adding things on their behalf"
+          selected={mode === "helper"}
+          onPress={() => void choose("helper")}
         />
       </View>
     </Screen>

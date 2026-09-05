@@ -13,13 +13,20 @@ import { ChunkyButton } from "../../components/practice/chunky-button";
 import { RekallaSays } from "../../components/practice/rekalla-says";
 import { AppText } from "../../components/practice/text";
 import { usePractice } from "../../lib/practice/context";
+import { TEMPLATES } from "../../lib/practice/templates";
 import { space } from "../../lib/design/tokens";
 import { useTheme } from "../../lib/design/theme";
 
 export default function More() {
   const colors = useTheme();
-  const { items } = usePractice();
+  const { items, user } = usePractice();
   const first = items[items.length - 1];
+
+  // The next thing they said they wanted and have not added yet. Naming it
+  // is the whole reason the first question was worth asking.
+  const next = (user?.wants ?? []).find(
+    (want) => !items.some((item) => item.category === want),
+  );
 
   return (
     <Screen title="That's the whole of it">
@@ -31,8 +38,9 @@ export default function More() {
               : "That is what practice looks like, and it gets further apart each time you get one right."}
           </AppText>
           <AppText size="body">
-            The rest of your family goes on your tree, whenever you like. One
-            person or twenty, there is no hurry and nothing to finish.
+            {next
+              ? `You said you wanted ${TEMPLATES[next].label.toLowerCase()} too. We can do that now, or any time.`
+              : "Add as much or as little as you like, whenever it suits. There is no hurry and nothing to finish."}
           </AppText>
         </View>
       </RekallaSays>
@@ -44,9 +52,15 @@ export default function More() {
           onPress={() => router.replace("/setup/reminder")}
         />
         <ChunkyButton
-          label="Add someone else first"
+          label={next ? `Add ${TEMPLATES[next].label.toLowerCase()} first` : "Add something else first"}
           tone="secondary"
-          onPress={() => router.push("/setup/person")}
+          onPress={() =>
+            router.push(
+              next
+                ? `/add?category=${next}&after=setup`
+                : "/add?after=setup",
+            )
+          }
         />
       </View>
 
