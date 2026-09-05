@@ -40,6 +40,9 @@ create table if not exists public.practice_profiles (
   -- 'dark' | 'light'. Dark is the app's home state; light is a real need for
   -- some eyes rather than a preference, so it travels with the account.
   theme            text        not null default 'dark',
+
+  -- The tap felt on a correct answer. Nothing is ever felt on a wrong one.
+  haptics_on       boolean     not null default true,
   updated_at       timestamptz not null default now()
 );
 

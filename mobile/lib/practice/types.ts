@@ -42,6 +42,8 @@ export interface LocalUser {
   soundOn: boolean;
   /** Dark unless they say otherwise. Light is a real need for some eyes. */
   theme: ThemeName;
+  /** The tap you feel on a correct answer. On unless it is unwelcome. */
+  hapticsOn: boolean;
   /** What they said they wanted to recall, during setup. */
   wants: ItemCategory[];
 }

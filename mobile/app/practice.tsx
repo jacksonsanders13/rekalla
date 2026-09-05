@@ -21,6 +21,7 @@ import { AppText, Title } from "../components/practice/text";
 import { RekallaAvatar } from "../components/rekalla-avatar";
 import { radius, space } from "../lib/design/tokens";
 import { useReduceMotion } from "../lib/design/motion";
+import { feltRight, feltTap } from "../lib/design/feedback";
 import { DEFAULT_DAILY_GOAL, usePractice } from "../lib/practice/context";
 import { localDayKey } from "../lib/practice/scheduler";
 import {
@@ -97,6 +98,14 @@ export default function Practice() {
   function choose(option: string) {
     if (!state) return;
     const outcome = answerQuestion(state, option);
+
+    // The neutral tap acknowledges the choice; the celebratory one only ever
+    // follows a correct answer. A miss is deliberately silent — see
+    // lib/design/feedback.ts.
+    const haptics = user?.hapticsOn ?? true;
+    void feltTap(haptics);
+    if (outcome.wasCorrect) void feltRight(haptics);
+
     setState(outcome.state);
     if (outcome.settle) {
       setPractisedCount((count) => count + 1);

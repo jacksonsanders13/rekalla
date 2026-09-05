@@ -141,6 +141,7 @@ export function PracticeProvider({
         soundOn: false,
         wants: [],
         theme: DEFAULT_THEME,
+        hapticsOn: true,
       };
       mutate((previous) => ({ ...previous, user }));
       return user;

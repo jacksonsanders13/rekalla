@@ -141,6 +141,26 @@ export default function Preferences() {
         </Hint>
       </Section>
 
+      <Section title="The tap you feel">
+        <ChunkyButton
+          label="On"
+          tone={user?.hapticsOn !== false ? "primary" : "secondary"}
+          selected={user?.hapticsOn !== false}
+          hint="A small tap when you get one right"
+          onPress={() => void updateUser({ hapticsOn: true })}
+        />
+        <ChunkyButton
+          label="Off"
+          tone={user?.hapticsOn === false ? "primary" : "secondary"}
+          selected={user?.hapticsOn === false}
+          onPress={() => void updateUser({ hapticsOn: false })}
+        />
+        <Hint>
+          You will feel a small tap when an answer is right. Nothing is ever
+          felt when one is not.
+        </Hint>
+      </Section>
+
       <Section title="Text size">
         {TEXT_SCALE_CHOICES.map((choice) => (
           <ChunkyButton

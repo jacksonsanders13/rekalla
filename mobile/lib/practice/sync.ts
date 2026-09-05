@@ -47,6 +47,7 @@ interface ProfileRow {
   text_scale: number;
   sound_on: boolean;
   theme: string;
+  haptics_on: boolean;
 }
 
 interface ItemRow {
@@ -150,6 +151,7 @@ export async function pushEverything(
       text_scale: user.textScale,
       sound_on: user.soundOn,
       theme: user.theme,
+      haptics_on: user.hapticsOn,
     };
     const { error } = await db.from("practice_profiles").upsert(profile);
     if (error) throw error;
@@ -272,6 +274,7 @@ export async function pullEverything(userId: string): Promise<PracticeData | nul
         soundOn: Boolean(profileRow.sound_on),
         wants: [],
         theme: profileRow.theme === "light" ? "light" : "dark",
+        hapticsOn: profileRow.haptics_on !== false,
       }
     : null;
 

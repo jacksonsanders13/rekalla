@@ -6,10 +6,12 @@
  * quiet. There is no red, no shake, no cross and no sound: the person is told
  * what the answer is, and then asked again.
  */
-import { Pressable, View } from "react-native";
+import { useEffect, useRef } from "react";
+import { Animated, Pressable, View } from "react-native";
 import { BUTTON_EDGE, TAP_MIN, radius, space } from "../../lib/design/tokens";
 import { AppText } from "./text";
 import { useTheme, type Palette } from "../../lib/design/theme";
+import { useReduceMotion } from "../../lib/design/motion";
 
 export type OptionState =
   /** Not answered yet. */
@@ -74,10 +76,30 @@ export function OptionButton({
   disabled?: boolean;
 }) {
   const colors = useTheme();
+  const reduceMotion = useReduceMotion();
   const palette = statesFor(colors)[state];
   const spoken = SPOKEN[state];
 
+  // A small lift on the answer that was right. It carries nothing on its own
+  // — the wash and the words already say it — so Reduce Motion simply gets
+  // the finished state with no loss.
+  const lift = useRef(new Animated.Value(1)).current;
+  useEffect(() => {
+    if (state !== "chosen-correct" || reduceMotion) {
+      lift.setValue(1);
+      return;
+    }
+    lift.setValue(0.97);
+    Animated.spring(lift, {
+      toValue: 1,
+      friction: 5,
+      tension: 120,
+      useNativeDriver: true,
+    }).start();
+  }, [state, reduceMotion, lift]);
+
   return (
+    <Animated.View style={{ width: "100%", transform: [{ scale: lift }] }}>
     <Pressable
       onPress={onPress}
       disabled={disabled}
@@ -114,5 +136,6 @@ export function OptionButton({
         </View>
       )}
     </Pressable>
+    </Animated.View>
   );
 }

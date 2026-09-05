@@ -107,10 +107,27 @@ Reopen it deliberately if it should change.
 `setup/person.tsx` became `setup/first-item.tsx`, since it is no longer always
 a person.
 
-### M3 — How it feels (one to two days)
+### M3 — How it feels — MOSTLY DONE
 
-The chunky press state and colour washes are done. What is missing is the
-spring, the tap you can feel, and the sound.
+Haptics are in, via `lib/design/feedback.ts`. Two signals and a deliberate
+absence: a neutral tap acknowledges the choice, a celebratory one follows a
+correct answer, and **nothing at all fires on a wrong one**. A buzz is a
+judgement, and this app does not pass judgement on somebody for not recalling
+the thing they came here because they cannot recall.
+
+On by default, switchable in Settings, stored on `LocalUser.hapticsOn` and
+carried in the migration. The correct option also lifts on a spring, which
+Reduce Motion drops with no loss because the wash and the words already say it.
+
+`react-native-reanimated` and `moti` were **not** added. React Native's own
+`Animated` already does these springs on the native driver, and the difference
+did not justify two dependencies in a tree that took nine builds to stabilise.
+Revisit only if something genuinely needs gesture-driven animation.
+
+**Still open: sound.** `LocalUser.soundOn` exists and nothing reads it, because
+a confirming chime needs an actual audio file and that is a decision to be
+heard, not guessed. Kenney's UI pack (CC0) is the place to look. Pick one, drop
+it in `assets/`, and wiring it through `expo-audio` is a small job.
 
 ### M4 — The unmet accessibility work (two days)
 
