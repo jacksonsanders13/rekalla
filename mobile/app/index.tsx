@@ -1,23 +1,25 @@
-import { Redirect } from "expo-router";
-import { useSession } from "../lib/session";
-import { Screen, Loading } from "../components/ui";
+/**
+ * Where the app opens.
+ *
+ * Someone who has been here before lands on Home. Someone who has not starts
+ * at the welcome screen, and gets all the way through setting up and their
+ * first practice without being asked to make an account.
+ */
+import { useEffect } from "react";
+import { View } from "react-native";
+import { router } from "expo-router";
+import { usePractice } from "../lib/practice/context";
+import { colors } from "../lib/design/tokens";
 
-/** Entry gate: route to the right home for the signed-in role. */
 export default function Index() {
-  const { session, loading } = useSession();
+  const { ready, user } = usePractice();
 
-  if (loading) {
-    return (
-      <Screen scroll={false}>
-        <Loading />
-      </Screen>
-    );
-  }
+  useEffect(() => {
+    if (!ready) return;
+    router.replace(user ? "/home" : "/welcome");
+  }, [ready, user]);
 
-  if (!session) {
-    return <Redirect href="/(auth)/sign-up" />;
-  }
-
-  // v2 single-user product: everyone is the older adult; the assistant is home.
-  return <Redirect href="/(patient)/assistant" />;
+  // A plain field of the app's own background, for the fraction of a second
+  // before the answer is known. Nothing flashes, nothing spins.
+  return <View style={{ flex: 1, backgroundColor: colors.paper }} />;
 }

@@ -1,6 +1,15 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true
-  }
+    "strict": true,
+    // The pure practice modules import each other with an explicit .ts, which
+    // is what lets Node run them, and their tests, with no build step and no
+    // test-runner dependency. Metro resolves the exact path too.
+    "allowImportingTsExtensions": true
+  },
+  // Tests are run by Node's own runner, which strips types rather than
+  // checking them. Checking them here would need @types/node in this package,
+  // and the dependency tree of the app that goes to TestFlight is not a place
+  // to add something for the sake of a test file.
+  "exclude": ["**/*.test.ts"]
 }

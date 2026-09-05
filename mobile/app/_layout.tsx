@@ -1,69 +1,90 @@
-import { useEffect, useState } from "react";
+/**
+ * The shell.
+ *
+ * Screens draw their own heading and their own Back control, so there is no
+ * navigation bar here: one task on screen at a time, and nothing along the
+ * top competing with it. There is no tab bar either. Home is a short list of
+ * large destinations, which is easier to hit and easier to hold in mind than
+ * five small icons.
+ *
+ * Screens from the earlier app are still in this folder and are no longer
+ * reachable: nothing routes to them, and they go once this one is on
+ * TestFlight.
+ */
+import { useEffect } from "react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { SessionProvider } from "../lib/session";
-import { I18nProvider, useT } from "../lib/i18n";
-import { TermsGate } from "../components/terms-gate";
-import { WelcomeTour } from "../components/welcome-tour";
-import { configureNotifications } from "../lib/notifications";
-import { colors, font } from "../lib/theme";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import {
+  useFonts,
+  Quicksand_600SemiBold,
+  Quicksand_700Bold,
+} from "@expo-google-fonts/quicksand";
+import { PracticeProvider, usePractice } from "../lib/practice/context";
+import { AuthProvider, useAuth } from "../lib/practice/auth";
+import { configureNotificationHandler } from "../lib/practice/reminders";
+import { colors } from "../lib/design/tokens";
+import { useReduceMotion } from "../lib/design/motion";
 
 /**
- * Lives inside I18nProvider so the back-button label can be translated.
- * Without an explicit headerBackTitle, a pushed screen labels its back button
- * with the previous route's name — and for a route group that renders
- * literally as "(patient)", brackets and all.
+ * One catch-up backup a launch, for anything practised while the phone was
+ * offline. It renders nothing and it cannot fail loudly: a copy that did not
+ * go up is a copy that has not gone up yet.
  */
+function BackupOnLaunch() {
+  const { ready, backedUpTo, backUpQuietly } = usePractice();
+  const { session } = useAuth();
+
+  useEffect(() => {
+    if (!ready || !backedUpTo || !session) return;
+    void backUpQuietly();
+    // Deliberately once a launch, not once a change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, backedUpTo, session?.user.id]);
+
+  return null;
+}
+
 function AppStack() {
-  const t = useT();
+  const reduceMotion = useReduceMotion();
 
   return (
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: colors.base },
-        headerTintColor: colors.label,
-        headerTitleStyle: { fontWeight: "700", fontSize: font.xl },
-        contentStyle: { backgroundColor: colors.base },
-        headerBackTitle: t("common.back"),
+        headerShown: false,
+        contentStyle: { backgroundColor: colors.paper },
+        // With Reduce Motion on there is no slide. Nothing is carried by the
+        // transition, so nothing is lost by removing it.
+        animation: reduceMotion ? "none" : "slide_from_right",
+        gestureEnabled: !reduceMotion,
       }}
-    >
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      <Stack.Screen name="(patient)" options={{ headerShown: false }} />
-      <Stack.Screen name="(caregiver)" options={{ headerShown: false }} />
-      <Stack.Screen name="connect" />
-      <Stack.Screen name="settings" />
-      <Stack.Screen name="patient/[id]" options={{ title: "" }} />
-      <Stack.Screen name="profile-section" options={{ title: "" }} />
-    </Stack>
+    />
   );
 }
 
 export default function RootLayout() {
-  const [termsResolved, setTermsResolved] = useState(false);
+  const [fontsLoaded] = useFonts({
+    Quicksand_600SemiBold,
+    Quicksand_700Bold,
+  });
 
   useEffect(() => {
-    configureNotifications();
+    configureNotificationHandler();
   }, []);
 
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: { queries: { staleTime: 30_000, retry: 1 } },
-      }),
-  );
+  // Held until the face is ready, so no text renders in the system font and
+  // then jumps to a different size under someone's eyes.
+  if (!fontsLoaded) return null;
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <I18nProvider>
-      <SessionProvider>
-        <StatusBar style="light" />
-        <AppStack />
-        <WelcomeTour enabled={termsResolved} />
-        <TermsGate onResolved={() => setTermsResolved(true)} />
-      </SessionProvider>
-      </I18nProvider>
-    </QueryClientProvider>
+    <SafeAreaProvider>
+      <AuthProvider>
+        <PracticeProvider>
+          <StatusBar style="dark" />
+          <AppStack />
+          <BackupOnLaunch />
+        </PracticeProvider>
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 }

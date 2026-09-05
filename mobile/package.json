@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "dependencies": {
+    "@expo-google-fonts/quicksand": "^0.4.1",
     "@expo/vector-icons": "^15.0.3",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@supabase/supabase-js": "^2.110.2",
@@ -13,6 +14,7 @@
     "expo-constants": "~18.0.13",
     "expo-device": "~8.0.10",
     "expo-font": "~14.0.12",
+    "expo-image-manipulator": "~14.0.8",
     "expo-image-picker": "~17.0.11",
     "expo-linking": "~8.0.12",
     "expo-localization": "~17.0.9",
@@ -36,7 +38,10 @@
     "start": "expo start",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test lib/practice/scheduler.test.ts lib/practice/session.test.ts lib/practice/progress.test.ts lib/practice/relations.test.ts",
+    "check:copy": "node scripts/check-copy.mjs",
+    "check": "npm run check:copy && npm run typecheck && npm run test"
   },
   "private": true
 }
