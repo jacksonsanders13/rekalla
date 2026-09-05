@@ -9,7 +9,16 @@
  * Local only. Nothing is sent from a server, so the reminder works with no
  * account and no signal.
  */
+import { Platform } from "react-native";
 import * as Notifications from "expo-notifications";
+
+/**
+ * Scheduling has no web implementation, and the browser is only ever a
+ * preview here: the reminder is a phone feature. Guarding at the edge keeps
+ * `expo start --web` usable for looking at screens without every caller
+ * having to know which platform it is on.
+ */
+const SCHEDULING_AVAILABLE = Platform.OS !== "web";
 
 /**
  * Whole times of day rather than a spinner. Easier to hit, easier to read
@@ -28,6 +37,7 @@ export function reminderLabel(value: string | null): string {
 }
 
 export function configureNotificationHandler(): void {
+  if (!SCHEDULING_AVAILABLE) return;
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
       shouldShowBanner: true,
@@ -44,6 +54,9 @@ export function configureNotificationHandler(): void {
  * leaving someone expecting a reminder that will never come.
  */
 export async function setDailyReminder(time: string | null): Promise<boolean> {
+  // In the browser the choice is remembered and simply never fires.
+  if (!SCHEDULING_AVAILABLE) return true;
+
   await Notifications.cancelAllScheduledNotificationsAsync();
   if (!time) return true;
 
