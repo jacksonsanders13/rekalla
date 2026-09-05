@@ -13,9 +13,11 @@ import { Screen } from "../../components/practice/screen";
 import { ChunkyButton } from "../../components/practice/chunky-button";
 import { RekallaSays } from "../../components/practice/rekalla-says";
 import { AppText } from "../../components/practice/text";
-import { colors, radius, space } from "../../lib/design/tokens";
+import { radius, space } from "../../lib/design/tokens";
+import { useTheme } from "../../lib/design/theme";
 
 export default function Explain() {
+  const colors = useTheme();
   return (
     <Screen
       title="Here is how this works"

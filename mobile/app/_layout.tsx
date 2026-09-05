@@ -11,7 +11,7 @@
  * reachable: nothing routes to them, and they go once this one is on
  * TestFlight.
  */
-import { useEffect } from "react";
+import { useEffect, type ReactNode } from "react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -23,8 +23,14 @@ import {
 import { PracticeProvider, usePractice } from "../lib/practice/context";
 import { AuthProvider, useAuth } from "../lib/practice/auth";
 import { configureNotificationHandler } from "../lib/practice/reminders";
-import { colors } from "../lib/design/tokens";
+
 import { useReduceMotion } from "../lib/design/motion";
+import {
+  DEFAULT_THEME,
+  ThemeProvider,
+  useTheme,
+  useThemeName,
+} from "../lib/design/theme";
 
 /**
  * One catch-up backup a launch, for anything practised while the phone was
@@ -45,10 +51,23 @@ function BackupOnLaunch() {
   return null;
 }
 
+/**
+ * Sits inside PracticeProvider so it can read the choice off the user, and
+ * wraps everything that draws, so a change repaints the whole app at once.
+ */
+function Themed({ children }: { children: ReactNode }) {
+  const { user } = usePractice();
+  return <ThemeProvider name={user?.theme ?? DEFAULT_THEME}>{children}</ThemeProvider>;
+}
+
 function AppStack() {
+  const colors = useTheme();
+  const themeName = useThemeName();
   const reduceMotion = useReduceMotion();
 
   return (
+    <>
+    <StatusBar style={themeName === "dark" ? "light" : "dark"} />
     <Stack
       screenOptions={{
         headerShown: false,
@@ -59,6 +78,7 @@ function AppStack() {
         gestureEnabled: !reduceMotion,
       }}
     />
+    </>
   );
 }
 
@@ -80,8 +100,9 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <AuthProvider>
         <PracticeProvider>
-          <StatusBar style="dark" />
-          <AppStack />
+          <Themed>
+            <AppStack />
+          </Themed>
           <BackupOnLaunch />
         </PracticeProvider>
       </AuthProvider>

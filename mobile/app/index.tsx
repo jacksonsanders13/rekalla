@@ -9,9 +9,10 @@ import { useEffect } from "react";
 import { View } from "react-native";
 import { router } from "expo-router";
 import { usePractice } from "../lib/practice/context";
-import { colors } from "../lib/design/tokens";
+import { useTheme } from "../lib/design/theme";
 
 export default function Index() {
+  const colors = useTheme();
   const { ready, user } = usePractice();
 
   useEffect(() => {

@@ -13,9 +13,10 @@
 import { View } from "react-native";
 import { PersonNode } from "./person-node";
 import { AppText } from "./text";
-import { colors, radius, space } from "../../lib/design/tokens";
+import { radius, space } from "../../lib/design/tokens";
 import { ladderProgress } from "../../lib/practice/scheduler";
 import type { MemoryItem, ScheduledCard } from "../../lib/practice/types";
+import { useTheme } from "../../lib/design/theme";
 
 /** How far each node sits off the centre line, in points. */
 function offsetFor(index: number): number {
@@ -37,6 +38,7 @@ export function PracticePath({
   onStart: () => void;
   onOpen: (itemId: string) => void;
 }) {
+  const colors = useTheme();
   if (entries.length === 0) return null;
 
   return (

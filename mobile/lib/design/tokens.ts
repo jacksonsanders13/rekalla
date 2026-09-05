@@ -15,15 +15,15 @@
  *     red is not in the palette at all so it cannot creep back in.
  */
 
-import { light, type Palette } from "./palettes.ts";
-
 /**
- * The colours in play. Sourced from the palettes module so there is one place
- * a value is written and one test that checks it. Swapping this for `dark`
- * is the whole of the theme change in docs/v3-plan.md, M1 — every screen
- * already reads through these names.
+ * Colour deliberately does not live here any more. It is a hook —
+ * `useTheme()` from ./theme — because the app has two palettes and the person
+ * using it chooses. A static export here would be a way for a screen to
+ * silently pin itself to one theme, so there is not one.
+ *
+ * The palettes themselves are in ./palettes, and contrast.test.ts holds both
+ * of them to 7:1.
  */
-export const colors: Palette = light;
 
 /**
  * Type scale. 20 is the floor for anything a person reads, and a primary

@@ -75,32 +75,19 @@ measured **6.97:1**, which no eye would have caught. The blue is now `#4CBEFF`.
 
 Still to answer: the hearts/timers/streak question above.
 
-### M1 — Dark theme (one to two days)
+### M1 — Dark theme — DONE
 
-Dark becomes the app's home state, light stays as a setting.
+Dark is the app's home state; light is a setting on `LocalUser.theme`, synced
+with the account. Colour is now `useTheme()` rather than a module constant, and
+the static `colors` export is gone on purpose — it was the one way a screen
+could silently pin itself to a single palette.
 
-Restructure `mobile/lib/design/tokens.ts` from a flat `colors` object into two
-palettes behind a `useTheme()` hook, with the choice stored on `LocalUser`
-(there is already a `textScale` field to follow as a pattern). Every screen
-reads tokens already, so this is mostly mechanical.
+The three module-scope colour tables (button tones, option states, node tones)
+became functions of the palette. `contrast.test.ts` holds both themes to 7:1.
 
-**Use these values — they are validated at 7:1 and already proven in the
-prototype**, so do not re-derive them:
-
-```
-bg        #12181C     surface #1B2429     raised  #232E34     line #35434B
-ink       #F2F7F9     16.2:1 on bg
-inkSoft   #A9BAC3      8.9:1 on bg
-primary   #7DD53F     with primaryInk #0E1417 → 9.9:1
-primaryEdge #57A324
-good      #16311E  /  goodInk #B7EFA0      10.7:1   (correct)
-tell      #33280E  /  tellInk #FFD98A      10.7:1   (the answer, after a miss)
-focus     #4CB4FF                           7.9:1
-```
-
-The bright green carries **dark** text, never white. White on a saturated green
-is about 2.5:1 — it looks right in a mockup and vanishes for the person holding
-the phone. There is deliberately no red in either palette.
+Light is not decoration. Plenty of older eyes, cataracts especially, read dark
+text on a light ground more easily than the reverse, so the choice belongs to
+the person using it.
 
 ### M2 — The onboarding, rebuilt (two to three days)
 

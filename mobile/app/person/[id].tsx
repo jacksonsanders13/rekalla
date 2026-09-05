@@ -16,7 +16,8 @@ import { settledPhrase } from "../../components/practice/person-node";
 import { usePractice } from "../../lib/practice/context";
 import { ladderProgress } from "../../lib/practice/scheduler";
 import { PLACEMENT_CHOICES, bandHeading } from "../../lib/practice/relations";
-import { colors, radius, space } from "../../lib/design/tokens";
+import { radius, space } from "../../lib/design/tokens";
+import { useTheme } from "../../lib/design/theme";
 
 /** "In 4 days", "Tomorrow", "Ready now". Never a date to work out. */
 function nextUp(dueAt: string): string {
@@ -37,6 +38,7 @@ function nextUp(dueAt: string): string {
 }
 
 export default function Person() {
+  const colors = useTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { items, data, updateItem, removeItem } = usePractice();
   const [confirmingRemoval, setConfirmingRemoval] = useState(false);

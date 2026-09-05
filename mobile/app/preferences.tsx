@@ -21,8 +21,10 @@ import { AppText, Hint } from "../components/practice/text";
 import { useAuth } from "../lib/practice/auth";
 import { usePractice } from "../lib/practice/context";
 import { TEXT_SCALE_CHOICES } from "../lib/design/text-scale";
+import { THEME_CHOICES } from "../lib/design/theme";
 import { REMINDER_CHOICES, setDailyReminder } from "../lib/practice/reminders";
-import { colors, radius, space } from "../lib/design/tokens";
+import { radius, space } from "../lib/design/tokens";
+import { useTheme } from "../lib/design/theme";
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -49,6 +51,7 @@ function backupWhen(iso: string | null): string {
 }
 
 export default function Preferences() {
+  const colors = useTheme();
   const {
     user,
     items,
@@ -120,6 +123,24 @@ export default function Preferences() {
 
   return (
     <Screen title="Settings" onBack={() => router.back()}>
+      <Section title="How it looks">
+        {THEME_CHOICES.map((choice) => (
+          <ChunkyButton
+            key={choice.name}
+            label={choice.label}
+            tone={user?.theme === choice.name ? "primary" : "secondary"}
+            selected={user?.theme === choice.name}
+            hint={choice.hint}
+            onPress={() => void updateUser({ theme: choice.name })}
+          />
+        ))}
+        <Hint>
+          Dark is where Rekalla starts. Some eyes read dark text on a light
+          ground more easily, so light is here too, and both are held to the
+          same contrast.
+        </Hint>
+      </Section>
+
       <Section title="Text size">
         {TEXT_SCALE_CHOICES.map((choice) => (
           <ChunkyButton

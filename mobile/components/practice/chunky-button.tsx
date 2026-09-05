@@ -10,14 +10,9 @@
  * to wrap onto as many lines as it needs.
  */
 import { Pressable, View, type StyleProp, type ViewStyle } from "react-native";
-import {
-  BUTTON_EDGE,
-  TAP_MIN,
-  colors,
-  radius,
-  space,
-} from "../../lib/design/tokens";
+import { BUTTON_EDGE, TAP_MIN, radius, space } from "../../lib/design/tokens";
 import { AppText } from "./text";
+import { useTheme, type Palette } from "../../lib/design/theme";
 
 export type ButtonTone = "primary" | "secondary";
 
@@ -33,20 +28,23 @@ interface ChunkyButtonProps {
   style?: StyleProp<ViewStyle>;
 }
 
-const TONES = {
-  primary: {
-    face: colors.primary,
-    edge: colors.primaryEdge,
-    text: colors.primaryInk,
-    border: "transparent",
-  },
-  secondary: {
-    face: colors.card,
-    edge: colors.cardEdge,
-    text: colors.ink,
-    border: colors.line,
-  },
-} as const;
+/** The two weights a button comes in, resolved against the palette in force. */
+function tonesFor(colors: Palette) {
+  return {
+    primary: {
+      face: colors.primary,
+      edge: colors.primaryEdge,
+      text: colors.primaryInk,
+      border: "transparent",
+    },
+    secondary: {
+      face: colors.card,
+      edge: colors.cardEdge,
+      text: colors.ink,
+      border: colors.line,
+    },
+  } as const;
+}
 
 export function ChunkyButton({
   label,
@@ -57,7 +55,8 @@ export function ChunkyButton({
   selected,
   style,
 }: ChunkyButtonProps) {
-  const palette = TONES[tone];
+  const colors = useTheme();
+  const palette = tonesFor(colors)[tone];
 
   return (
     <Pressable

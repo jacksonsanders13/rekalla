@@ -26,10 +26,12 @@ import { AppText } from "../components/practice/text";
 import { usePractice } from "../lib/practice/context";
 import { ladderProgress } from "../lib/practice/scheduler";
 import { BANDS } from "../lib/practice/relations";
-import { colors, space } from "../lib/design/tokens";
+import { space } from "../lib/design/tokens";
 import type { MemoryItem } from "../lib/practice/types";
+import { useTheme } from "../lib/design/theme";
 
 export default function Tree() {
+  const colors = useTheme();
   const { ready, items, data, user } = usePractice();
 
   const people = useMemo(

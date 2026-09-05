@@ -19,7 +19,7 @@ import { ProgressDots } from "../components/practice/progress-dots";
 import { MemoryPhoto } from "../components/practice/memory-photo";
 import { AppText, Title } from "../components/practice/text";
 import { RekallaAvatar } from "../components/rekalla-avatar";
-import { colors, radius, space } from "../lib/design/tokens";
+import { radius, space } from "../lib/design/tokens";
 import { useReduceMotion } from "../lib/design/motion";
 import { DEFAULT_DAILY_GOAL, usePractice } from "../lib/practice/context";
 import { localDayKey } from "../lib/practice/scheduler";
@@ -34,11 +34,13 @@ import {
   type SessionState,
 } from "../lib/practice/session";
 import type { PracticeQuestion } from "../lib/practice/card-generator";
+import { useTheme } from "../lib/design/theme";
 
 /** The first outing after setup is shorter, and about one person. */
 const INTRO_SHOWINGS = 3;
 
 export default function Practice() {
+  const colors = useTheme();
   const params = useLocalSearchParams<{
     mode?: string;
     itemId?: string;
@@ -197,6 +199,7 @@ function Feedback({
   detail: string | null;
   reduceMotion: boolean;
 }) {
+  const colors = useTheme();
   const correct = phase === "correct";
   const scale = useRef(new Animated.Value(reduceMotion ? 1 : 0.96)).current;
 
@@ -268,6 +271,8 @@ function Finished({
   isIntro: boolean;
   onDone: () => void;
 }) {
+  const colors = useTheme();
+
   return (
     <Screen
       footer={<ChunkyButton label={isIntro ? "Continue" : "Done"} onPress={onDone} />}

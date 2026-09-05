@@ -36,6 +36,10 @@ create table if not exists public.practice_profiles (
   setup_mode       text        not null default 'self',
   text_scale       numeric     not null default 1,
   sound_on         boolean     not null default false,
+
+  -- 'dark' | 'light'. Dark is the app's home state; light is a real need for
+  -- some eyes rather than a preference, so it travels with the account.
+  theme            text        not null default 'dark',
   updated_at       timestamptz not null default now()
 );
 

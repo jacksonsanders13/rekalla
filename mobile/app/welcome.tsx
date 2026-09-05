@@ -7,9 +7,11 @@ import { Screen } from "../components/practice/screen";
 import { ChunkyButton } from "../components/practice/chunky-button";
 import { AppText, Title } from "../components/practice/text";
 import { RekallaAvatar } from "../components/rekalla-avatar";
-import { colors, space } from "../lib/design/tokens";
+import { space } from "../lib/design/tokens";
+import { useTheme } from "../lib/design/theme";
 
 export default function Welcome() {
+  const colors = useTheme();
   return (
     <Screen
       footer={

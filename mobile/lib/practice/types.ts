@@ -10,6 +10,7 @@
  * JSON.stringify into storage and comes back identical.
  */
 import type { Placement } from "./relations.ts";
+import type { ThemeName } from "../design/palettes.ts";
 
 /** What kind of thing the person wants to be able to recall. */
 export type ItemCategory = "person" | "routine" | "place" | "fact";
@@ -39,6 +40,8 @@ export interface LocalUser {
   textScale: number;
   /** Confirming sound on a correct answer. Off until asked for. */
   soundOn: boolean;
+  /** Dark unless they say otherwise. Light is a real need for some eyes. */
+  theme: ThemeName;
   /** What they said they wanted to recall, during setup. */
   wants: ItemCategory[];
 }

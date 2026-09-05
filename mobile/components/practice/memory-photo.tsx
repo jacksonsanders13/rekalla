@@ -6,11 +6,13 @@
  * using it. Sighted and non-sighted users get the same question.
  */
 import { View, Image } from "react-native";
-import { colors, radius, space } from "../../lib/design/tokens";
+import { radius, space } from "../../lib/design/tokens";
 import { usePhotoUri } from "../../lib/practice/photos";
 import { AppText } from "./text";
+import { useTheme } from "../../lib/design/theme";
 
 export function MemoryPhoto({ photoKey }: { photoKey: string | null }) {
+  const colors = useTheme();
   const uri = usePhotoUri(photoKey);
   if (!photoKey) return null;
 

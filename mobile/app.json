@@ -6,12 +6,12 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "rekalla",
-    "userInterfaceStyle": "light",
-    "backgroundColor": "#FFFDF9",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#12181C",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#FFFDF9"
+      "backgroundColor": "#12181C"
     },
     "ios": {
       "supportsTablet": false,
@@ -24,7 +24,7 @@
       "package": "com.jacksonsanders.rekalla",
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
-        "backgroundColor": "#FFFDF9"
+        "backgroundColor": "#12181C"
       }
     },
     "web": {
@@ -44,7 +44,7 @@
       [
         "expo-notifications",
         {
-          "color": "#A3134B"
+          "color": "#7DD53F"
         }
       ],
       "expo-font"

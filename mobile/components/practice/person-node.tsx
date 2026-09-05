@@ -8,9 +8,10 @@
  */
 import { Pressable, View, Image } from "react-native";
 import Svg, { Circle } from "react-native-svg";
-import { colors, space } from "../../lib/design/tokens";
+import { space } from "../../lib/design/tokens";
 import { usePhotoUri } from "../../lib/practice/photos";
 import { AppText } from "./text";
+import { useTheme, type Palette } from "../../lib/design/theme";
 
 export type NodeTone = "person" | "you" | "next";
 
@@ -27,11 +28,14 @@ export function settledPhrase(progress: number): string {
   return "second nature";
 }
 
-const TONES = {
-  person: { ring: colors.primary, border: colors.line, fill: colors.card },
-  you: { ring: colors.focus, border: colors.focus, fill: colors.card },
-  next: { ring: colors.primary, border: colors.primary, fill: colors.card },
-} as const;
+/** Ring and fill for each kind of node, against the palette in force. */
+function tonesFor(colors: Palette) {
+  return {
+    person: { ring: colors.primary, border: colors.line, fill: colors.card },
+    you: { ring: colors.focus, border: colors.focus, fill: colors.card },
+    next: { ring: colors.primary, border: colors.primary, fill: colors.card },
+  } as const;
+}
 
 export function PersonNode({
   name,
@@ -53,8 +57,9 @@ export function PersonNode({
   onPress?: () => void;
   width?: number;
 }) {
+  const colors = useTheme();
   const uri = usePhotoUri(photoKey ?? null);
-  const palette = TONES[tone];
+  const palette = tonesFor(colors)[tone];
 
   const stroke = 8;
   const ringRadius = (size - stroke) / 2;
@@ -156,6 +161,7 @@ export function AddNode({
   size?: number;
   width?: number;
 }) {
+  const colors = useTheme();
   return (
     <Pressable
       onPress={onPress}

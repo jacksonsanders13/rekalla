@@ -6,9 +6,11 @@
  * is telling the truth: there is one more thing to do than there was.
  */
 import { View } from "react-native";
-import { colors, space } from "../../lib/design/tokens";
+import { space } from "../../lib/design/tokens";
+import { useTheme } from "../../lib/design/theme";
 
 export function ProgressDots({ total, done }: { total: number; done: number }) {
+  const colors = useTheme();
   if (total <= 0) return null;
 
   return (

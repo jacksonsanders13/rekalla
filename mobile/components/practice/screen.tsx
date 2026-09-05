@@ -20,8 +20,9 @@ import {
   type ViewStyle,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { TAP_MIN, colors, space } from "../../lib/design/tokens";
+import { TAP_MIN, space } from "../../lib/design/tokens";
 import { AppText, Title } from "./text";
+import { useTheme } from "../../lib/design/theme";
 
 interface ScreenProps {
   title?: string;
@@ -45,6 +46,7 @@ export function Screen({
   contentStyle,
   bleed = false,
 }: ScreenProps) {
+  const colors = useTheme();
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.paper }} edges={["top", "bottom"]}>
       <KeyboardAvoidingView

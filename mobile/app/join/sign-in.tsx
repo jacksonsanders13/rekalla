@@ -16,9 +16,11 @@ import { RekallaSays } from "../../components/practice/rekalla-says";
 import { AppText, Hint } from "../../components/practice/text";
 import { useAuth } from "../../lib/practice/auth";
 import { usePractice } from "../../lib/practice/context";
-import { colors, radius, space } from "../../lib/design/tokens";
+import { radius, space } from "../../lib/design/tokens";
+import { useTheme } from "../../lib/design/theme";
 
 export default function SignIn() {
+  const colors = useTheme();
   const { signIn } = useAuth();
   const { linkAccount } = usePractice();
 

@@ -10,7 +10,8 @@ import type { ReactNode } from "react";
 import { View } from "react-native";
 import { RekallaAvatar } from "../rekalla-avatar";
 import { AppText } from "./text";
-import { colors, radius, space } from "../../lib/design/tokens";
+import { radius, space } from "../../lib/design/tokens";
+import { useTheme } from "../../lib/design/theme";
 
 export function RekallaSays({
   children,
@@ -19,6 +20,7 @@ export function RekallaSays({
   children: ReactNode;
   avatarSize?: number;
 }) {
+  const colors = useTheme();
   return (
     <View style={{ flexDirection: "row", alignItems: "flex-start", gap: space(2) }}>
       <View style={{ paddingTop: space(2) }}>

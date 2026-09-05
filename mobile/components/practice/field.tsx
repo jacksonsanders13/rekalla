@@ -9,17 +9,10 @@
  */
 import { useState } from "react";
 import { Pressable, TextInput, View, type KeyboardTypeOptions } from "react-native";
-import {
-  TAP_MIN,
-  colors,
-  fonts,
-  lineHeightFor,
-  radius,
-  space,
-  type as typeScale,
-} from "../../lib/design/tokens";
+import { TAP_MIN, fonts, lineHeightFor, radius, space, type as typeScale } from "../../lib/design/tokens";
 import { useTextScale } from "../../lib/design/text-scale";
 import { AppText } from "./text";
+import { useTheme } from "../../lib/design/theme";
 
 export function Field({
   label,
@@ -42,6 +35,7 @@ export function Field({
   autoComplete?: "email" | "password" | "new-password" | "off";
   onSubmitEditing?: () => void;
 }) {
+  const colors = useTheme();
   const scale = useTextScale();
   const [hidden, setHidden] = useState(false);
   const size = Math.round(typeScale.bodyLarge * scale);

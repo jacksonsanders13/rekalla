@@ -18,6 +18,7 @@ import {
   type ReactNode,
 } from "react";
 import { TextScaleProvider } from "../design/text-scale";
+import { DEFAULT_THEME } from "../design/theme";
 import {
   asyncStorageStore,
   emptyData,
@@ -135,6 +136,7 @@ export function PracticeProvider({
         textScale: 1,
         soundOn: false,
         wants: [],
+        theme: DEFAULT_THEME,
       };
       mutate((previous) => ({ ...previous, user }));
       return user;

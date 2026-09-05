@@ -7,14 +7,9 @@
  * what the answer is, and then asked again.
  */
 import { Pressable, View } from "react-native";
-import {
-  BUTTON_EDGE,
-  TAP_MIN,
-  colors,
-  radius,
-  space,
-} from "../../lib/design/tokens";
+import { BUTTON_EDGE, TAP_MIN, radius, space } from "../../lib/design/tokens";
 import { AppText } from "./text";
+import { useTheme, type Palette } from "../../lib/design/theme";
 
 export type OptionState =
   /** Not answered yet. */
@@ -28,43 +23,35 @@ export type OptionState =
   /** Another option, once the question is answered. */
   | "settled";
 
-const STATES = {
-  idle: {
-    face: colors.card,
-    edge: colors.cardEdge,
-    border: colors.line,
-    text: colors.ink,
-    mark: "",
-  },
-  "chosen-correct": {
-    face: colors.success,
-    edge: colors.successEdge,
-    border: colors.successEdge,
-    text: colors.successInk,
-    mark: "✓  ",
-  },
-  "shown-answer": {
-    face: colors.reveal,
-    edge: colors.revealEdge,
-    border: colors.revealEdge,
-    text: colors.revealInk,
-    mark: "✓  ",
-  },
-  "chosen-other": {
-    face: colors.card,
-    edge: colors.cardEdge,
-    border: colors.line,
-    text: colors.inkSoft,
-    mark: "",
-  },
-  settled: {
-    face: colors.card,
-    edge: colors.cardEdge,
-    border: colors.line,
-    text: colors.inkSoft,
-    mark: "",
-  },
-} as const;
+/**
+ * How each state looks, against the palette in force. The important one is
+ * what is absent: nothing here is red, and the option somebody tapped by
+ * mistake only ever goes quiet.
+ */
+function statesFor(colors: Palette) {
+  return {
+    idle: {
+      face: colors.card, edge: colors.cardEdge, border: colors.line,
+      text: colors.ink, mark: "",
+    },
+    "chosen-correct": {
+      face: colors.success, edge: colors.successEdge, border: colors.successEdge,
+      text: colors.successInk, mark: "✓  ",
+    },
+    "shown-answer": {
+      face: colors.reveal, edge: colors.revealEdge, border: colors.revealEdge,
+      text: colors.revealInk, mark: "✓  ",
+    },
+    "chosen-other": {
+      face: colors.card, edge: colors.cardEdge, border: colors.line,
+      text: colors.inkSoft, mark: "",
+    },
+    settled: {
+      face: colors.card, edge: colors.cardEdge, border: colors.line,
+      text: colors.inkSoft, mark: "",
+    },
+  } as const;
+}
 
 /** What VoiceOver says about an option once the question has been answered. */
 const SPOKEN: Record<OptionState, string> = {
@@ -86,7 +73,8 @@ export function OptionButton({
   onPress: () => void;
   disabled?: boolean;
 }) {
-  const palette = STATES[state];
+  const colors = useTheme();
+  const palette = statesFor(colors)[state];
   const spoken = SPOKEN[state];
 
   return (

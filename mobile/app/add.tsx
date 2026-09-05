@@ -17,10 +17,12 @@ import { ChunkyButton } from "../components/practice/chunky-button";
 import { AppText, Hint } from "../components/practice/text";
 import { usePractice } from "../lib/practice/context";
 import { CATEGORY_ORDER, TEMPLATES } from "../lib/practice/templates";
-import { colors, space } from "../lib/design/tokens";
+import { space } from "../lib/design/tokens";
 import type { ItemCategory } from "../lib/practice/types";
+import { useTheme } from "../lib/design/theme";
 
 export default function Add() {
+  const colors = useTheme();
   const { addItem } = usePractice();
   const params = useLocalSearchParams<{ category?: string }>();
 

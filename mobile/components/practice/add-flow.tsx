@@ -13,18 +13,11 @@ import { ChunkyButton } from "./chunky-button";
 import { ProgressDots } from "./progress-dots";
 import { RekallaSays } from "./rekalla-says";
 import { AppText, Hint } from "./text";
-import {
-  TAP_MIN,
-  colors,
-  fonts,
-  lineHeightFor,
-  radius,
-  space,
-  type as typeScale,
-} from "../../lib/design/tokens";
+import { TAP_MIN, fonts, lineHeightFor, radius, space, type as typeScale } from "../../lib/design/tokens";
 import { useTextScale } from "../../lib/design/text-scale";
 import { pickFacePhoto, toDataUri } from "../../lib/practice/photos";
 import type { CategoryTemplate } from "../../lib/practice/templates";
+import { useTheme } from "../../lib/design/theme";
 
 interface AddFlowProps {
   template: CategoryTemplate;
@@ -43,6 +36,7 @@ export function AddFlow({
   onCancel,
   finishLabel = "Save",
 }: AddFlowProps) {
+  const colors = useTheme();
   const scale = useTextScale();
   const [step, setStep] = useState(0);
   const [values, setValues] = useState<Record<string, string>>({});

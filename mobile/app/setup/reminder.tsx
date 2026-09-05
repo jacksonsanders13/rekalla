@@ -12,9 +12,11 @@ import { ChunkyButton } from "../../components/practice/chunky-button";
 import { AppText, Hint } from "../../components/practice/text";
 import { usePractice } from "../../lib/practice/context";
 import { REMINDER_CHOICES, setDailyReminder } from "../../lib/practice/reminders";
-import { colors, space } from "../../lib/design/tokens";
+import { space } from "../../lib/design/tokens";
+import { useTheme } from "../../lib/design/theme";
 
 export default function Reminder() {
+  const colors = useTheme();
   const { updateUser } = usePractice();
   const [note, setNote] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);

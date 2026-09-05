@@ -7,8 +7,9 @@
  * cannot cope with the largest size is a layout to fix, not a size to limit.
  */
 import { Text, type TextProps, type TextStyle } from "react-native";
-import { colors, fonts, lineHeightFor, type } from "../../lib/design/tokens";
+import { fonts, lineHeightFor, type } from "../../lib/design/tokens";
 import { useTextScale } from "../../lib/design/text-scale";
+import { useTheme } from "../../lib/design/theme";
 
 type Size = keyof typeof type;
 
@@ -22,19 +23,23 @@ interface AppTextProps extends TextProps {
 export function AppText({
   size = "body",
   weight = "semibold",
-  color = colors.ink,
+  color,
   center = false,
   style,
   ...rest
 }: AppTextProps) {
+  const colors = useTheme();
   const scale = useTextScale();
   const fontSize = Math.round(type[size] * scale);
+  // Defaulted here rather than in the signature: the palette comes from a
+  // hook now, and a parameter default cannot call one.
+  const resolved = color ?? colors.ink;
 
   const base: TextStyle = {
     fontSize,
     lineHeight: lineHeightFor(fontSize),
     fontFamily: fonts[weight],
-    color,
+    color: resolved,
     textAlign: center ? "center" : "auto",
   };
 
@@ -48,5 +53,6 @@ export function Title(props: Omit<AppTextProps, "size" | "weight">) {
 
 /** Supporting text under a heading or a field. */
 export function Hint(props: Omit<AppTextProps, "size" | "color">) {
+  const colors = useTheme();
   return <AppText {...props} size="body" color={colors.inkSoft} />;
 }

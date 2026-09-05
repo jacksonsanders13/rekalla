@@ -18,9 +18,11 @@ import { PracticePath, type PathEntry } from "../components/practice/practice-pa
 import { RekallaSays } from "../components/practice/rekalla-says";
 import { AppText } from "../components/practice/text";
 import { usePractice } from "../lib/practice/context";
-import { colors, radius, space } from "../lib/design/tokens";
+import { radius, space } from "../lib/design/tokens";
+import { useTheme } from "../lib/design/theme";
 
 function Stat({ value, label }: { value: string; label: string }) {
+  const colors = useTheme();
   return (
     <View
       accessible
@@ -48,6 +50,7 @@ function Stat({ value, label }: { value: string; label: string }) {
 }
 
 export default function Home() {
+  const colors = useTheme();
   const { ready, items, data, dueCount, daysPractised, currentRun, user } = usePractice();
 
   const entries = useMemo<PathEntry[]>(() => {
