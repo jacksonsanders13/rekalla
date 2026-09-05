@@ -120,7 +120,7 @@ test("items due in the future are only used to fill a short session", () => {
   assert.equal(full.padding.length, 0);
 });
 
-test("nothing practised today is asked again as filler", () => {
+test("nothing practiced today is asked again as filler", () => {
   const cards = [card("done", { dueAt: iso(4) }), card("fresh", { dueAt: iso(6) })];
 
   const plan = assembleSession(cards, NOW, 10, ["done"]);

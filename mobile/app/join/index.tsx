@@ -21,28 +21,28 @@ import { useTheme } from "../../lib/design/theme";
 
 export default function Join() {
   const colors = useTheme();
-  const { items, daysPractised } = usePractice();
+  const { items, daysPracticed } = usePractice();
 
   return (
-    <Screen title="Shall I keep this safe?">
+    <Screen title="Save your practice?">
       <RekallaSays avatarSize={84}>
         <View style={{ gap: space(3) }}>
           <AppText size="body">
             {items.length === 1
-              ? "Everything you have told me so far lives on this phone, and nowhere else."
-              : `Everything you have told me, all ${items.length} of them, lives on this phone and nowhere else.`}
+              ? "Everything you've added is on this phone only."
+              : `All ${items.length} things you've added are on this phone only.`}
           </AppText>
           <AppText size="body">
-            An account keeps a copy, so a lost or replaced phone does not take
-            it with it. That is all it does. Nothing here is locked behind it.
+            An account keeps a backup, so a lost phone doesn't take it with it.
+            That's all it does. Nothing is locked behind it.
           </AppText>
         </View>
       </RekallaSays>
 
       <View style={{ gap: space(5), paddingTop: space(2) }}>
         <ChunkyButton
-          label="Keep a copy for me"
-          hint="Makes an account with an email address and a password"
+          label="Create an account"
+          hint="Email and password"
           onPress={() => router.push("/join/create")}
         />
         <ChunkyButton
@@ -52,17 +52,17 @@ export default function Join() {
         />
         <View style={{ paddingTop: space(4) }}>
           <ChunkyButton
-            label="Not just now"
+            label="Not now"
             tone="secondary"
-            hint="Carries on without an account. You can do this later from Settings"
+            hint="Continue without one. You can do this later in Settings"
             onPress={() => router.replace("/home")}
           />
         </View>
       </View>
 
-      {daysPractised > 0 ? (
+      {daysPracticed > 0 ? (
         <AppText color={colors.inkSoft} center>
-          You can do this later from Settings, whenever you like.
+          You can do this later in Settings.
         </AppText>
       ) : null}
     </Screen>

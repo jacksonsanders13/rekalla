@@ -5,7 +5,7 @@
  * blank card and no free-form authoring: every prompt in the app is phrased
  * by a template, which is what keeps them answerable and consistent.
  *
- * Whatever is added is practised straight away, while the person still has it
+ * Whatever is added is practiced right away, while the person still has it
  * in mind. That is also its introduction, so it comes back tomorrow.
  */
 import { useState } from "react";
@@ -52,8 +52,8 @@ export default function Add() {
   }
 
   return (
-    <Screen title="What would you like to remember?" onBack={() => router.back()}>
-      <Hint>Rekalla will ask you about it, starting today.</Hint>
+    <Screen title="What do you want to add?" onBack={() => router.back()}>
+      <Hint>I'll start asking you about it today.</Hint>
 
       <View style={{ gap: space(5), paddingTop: space(2) }}>
         {CATEGORY_ORDER.map((key) => (

@@ -69,7 +69,7 @@ const FALLBACK_NAMES = [
 
 const FALLBACK_RELATIONSHIPS = [
   "granddaughter", "grandson", "daughter", "son", "sister", "brother",
-  "niece", "nephew", "neighbour", "friend",
+  "niece", "nephew", "neighbor", "friend",
 ];
 
 const FALLBACK_ANSWERS: Record<ItemCategory, string[]> = {

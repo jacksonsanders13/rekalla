@@ -18,10 +18,10 @@ import { space } from "../../lib/design/tokens";
 import { SETUP_STEPS } from "./recall";
 
 export const DAILY_GOALS = [
-  { cards: 5, label: "Gentle", sublabel: "About five things a day" },
-  { cards: 10, label: "Steady", sublabel: "About ten things a day" },
-  { cards: 15, label: "Keen", sublabel: "About fifteen things a day" },
-  { cards: 20, label: "Serious", sublabel: "About twenty things a day" },
+  { cards: 5, label: "Gentle", sublabel: "5 things a day" },
+  { cards: 10, label: "Steady", sublabel: "10 things a day" },
+  { cards: 15, label: "Keen", sublabel: "15 things a day" },
+  { cards: 20, label: "Serious", sublabel: "20 things a day" },
 ];
 
 export default function Goal() {
@@ -35,16 +35,15 @@ export default function Goal() {
       footer={
         <ChunkyButton
           label="Continue"
-          hint="Goes on to how practice works"
+          hint="Next"
           onPress={() => router.push("/setup/explain")}
         />
       }
     >
-      <RekallaSays avatarSize={76}>How much practice feels right?</RekallaSays>
+      <RekallaSays avatarSize={76}>How much a day?</RekallaSays>
 
       <Hint>
-        Nothing is lost by missing a day, and you can change this whenever you
-        like.
+        You can change this later. Missing a day costs you nothing.
       </Hint>
 
       <View style={{ gap: space(4) }}>

@@ -49,11 +49,11 @@ export default function Practice() {
   }>();
   const isIntro = params.mode === "intro";
   const backToSetup = (params.after ?? (isIntro ? "setup" : "home")) === "setup";
-  const { ready, data, user, settle, daysPractised, backUpQuietly } = usePractice();
+  const { ready, data, user, settle, daysPracticed, backUpQuietly } = usePractice();
   const reduceMotion = useReduceMotion();
 
   const [state, setState] = useState<SessionState | null>(null);
-  const [practisedCount, setPractisedCount] = useState(0);
+  const [practicedCount, setPracticedCount] = useState(0);
 
   // Built once, from the state as it stood when the session opened. A session
   // that reshuffled itself underneath somebody mid-question would be unusable.
@@ -75,9 +75,9 @@ export default function Practice() {
         });
       }
     } else {
-      const practisedToday =
-        data.practisedToday.day === localDayKey(now) ? data.practisedToday.cardIds : [];
-      const plan = assembleSession(data.cards, now, goal, practisedToday);
+      const practicedToday =
+        data.practicedToday.day === localDayKey(now) ? data.practicedToday.cardIds : [];
+      const plan = assembleSession(data.cards, now, goal, practicedToday);
       queue = buildQueue({ plan, items: data.items, random: Math.random });
     }
 
@@ -108,7 +108,7 @@ export default function Practice() {
 
     setState(outcome.state);
     if (outcome.settle) {
-      setPractisedCount((count) => count + 1);
+      setPracticedCount((count) => count + 1);
       void settle(outcome.settle.cardId, outcome.settle.wasCorrect);
     }
   }
@@ -120,8 +120,8 @@ export default function Practice() {
   if (state.phase === "finished") {
     return (
       <Finished
-        count={practisedCount}
-        daysPractised={daysPractised}
+        count={practicedCount}
+        daysPracticed={daysPracticed}
         isIntro={isIntro}
         onDone={leave}
       />
@@ -147,15 +147,15 @@ export default function Practice() {
   return (
     <Screen
       onBack={leave}
-      backLabel="Finish for now"
+      backLabel="Finish"
       footer={
         answered ? (
           <ChunkyButton
             label="Continue"
             hint={
               state.phase === "reveal"
-                ? "Shows the same question again"
-                : "Goes to the next question"
+                ? "Asks the same question again"
+                : "Next question"
             }
             onPress={() => setState(advance(state))}
           />
@@ -262,7 +262,7 @@ function Feedback({
       ) : null}
       {!correct ? (
         <AppText color={colors.revealInk}>
-          Have a look, and we will come to it again in a moment.
+          Take a look. We'll come back to it.
         </AppText>
       ) : null}
     </Animated.View>
@@ -271,12 +271,12 @@ function Feedback({
 
 function Finished({
   count,
-  daysPractised,
+  daysPracticed,
   isIntro,
   onDone,
 }: {
   count: number;
-  daysPractised: number;
+  daysPracticed: number;
   isIntro: boolean;
   onDone: () => void;
 }) {
@@ -289,17 +289,15 @@ function Finished({
     >
       <View style={{ alignItems: "center", gap: space(6) }}>
         <RekallaAvatar size={140} />
-        <Title center>{isIntro ? "There you go." : "That's today done."}</Title>
+        <Title center>{isIntro ? "That's it." : "Done for today."}</Title>
         <AppText size="bodyLarge" color={colors.inkSoft} center>
-          {count === 1
-            ? "You practised one thing."
-            : `You practised ${count} things.`}
+          {count === 1 ? "You practiced 1 thing." : `You practiced ${count} things.`}
         </AppText>
-        {!isIntro && daysPractised > 0 ? (
+        {!isIntro && daysPracticed > 0 ? (
           <AppText size="bodyLarge" color={colors.inkSoft} center>
-            {daysPractised === 1
-              ? "That is your first day."
-              : `That is ${daysPractised} days of practice.`}
+            {daysPracticed === 1
+              ? "First day."
+              : `${daysPracticed} days of practice.`}
           </AppText>
         ) : null}
       </View>

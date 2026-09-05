@@ -30,11 +30,11 @@ function nextUp(dueAt: string): string {
       86_400_000,
   );
 
-  if (days <= 0) return "Ready to practise now";
-  if (days === 1) return "Coming round again tomorrow";
-  if (days < 14) return `Coming round again in ${days} days`;
+  if (days <= 0) return "Ready now";
+  if (days === 1) return "Back tomorrow";
+  if (days < 14) return `Back in ${days} days`;
   const weeks = Math.round(days / 7);
-  return `Coming round again in about ${weeks} weeks`;
+  return `Back in about ${weeks} weeks`;
 }
 
 export default function Person() {
@@ -48,9 +48,9 @@ export default function Person() {
 
   if (!item) {
     return (
-      <Screen title="Not here any more" onBack={() => router.back()}>
+      <Screen title="Not here" onBack={() => router.back()}>
         <AppText color={colors.inkSoft}>
-          This one has been removed. Everything else is where you left it.
+          This was removed. Everything else is where you left it.
         </AppText>
       </Screen>
     );
@@ -64,7 +64,7 @@ export default function Person() {
       onBack={() => router.back()}
       footer={
         <ChunkyButton
-          label="Practise this one now"
+          label="Practice this now"
           onPress={() =>
             router.replace({
               pathname: "/practice",
@@ -106,12 +106,11 @@ export default function Person() {
       {item.category === "person" ? (
         <View style={{ gap: space(4), paddingTop: space(2) }}>
           <AppText size="bodyLarge" weight="bold">
-            Where they sit on the tree
+            Where they go on the tree
           </AppText>
           {item.placement === null ? (
             <Hint>
-              I could not tell from the word you used. Choose the one that fits
-              and they will move into place.
+              I couldn't tell from the word you used. Pick the one that fits.
             </Hint>
           ) : (
             <Hint>{bandHeading(item.placement)}</Hint>
@@ -134,16 +133,16 @@ export default function Person() {
           <View style={{ gap: space(6) }}>
             <AppText weight="bold" accessibilityLiveRegion="polite">
               {item.category === "person"
-                ? `Take ${item.answer} off the tree? Their photo and everything you wrote goes too.`
+                ? `Remove ${item.answer}? Their photo and details go too.`
                 : "Remove this, along with everything you wrote about it?"}
             </AppText>
             <ChunkyButton
-              label="No, keep them"
+              label="Cancel"
               onPress={() => setConfirmingRemoval(false)}
             />
             <View style={{ paddingTop: space(6) }}>
               <ChunkyButton
-                label={`Yes, remove ${item.answer}`}
+                label={`Remove ${item.answer}`}
                 tone="secondary"
                 onPress={async () => {
                   await removeItem(item.id);
@@ -154,7 +153,7 @@ export default function Person() {
           </View>
         ) : (
           <ChunkyButton
-            label={item.category === "person" ? "Remove from my tree" : "Remove this"}
+            label={item.category === "person" ? "Remove from tree" : "Remove this"}
             tone="secondary"
             hint="Asks you to confirm first"
             onPress={() => setConfirmingRemoval(true)}

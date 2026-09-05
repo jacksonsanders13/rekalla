@@ -14,7 +14,7 @@
 /** Generations away from the person using the app. Negative is older. */
 export type Generation = -3 | -2 | -1 | 0 | 1 | 2 | 3;
 
-/** Everyone else: friends, neighbours, anyone not on the family line. */
+/** Everyone else: friends, neighbors, anyone not on the family line. */
 export const BESIDE = "beside" as const;
 
 export type Placement = Generation | typeof BESIDE;
@@ -46,7 +46,7 @@ const WORDS: Record<string, Placement> = {
 
   greatgranddaughter: 3, greatgrandson: 3, greatgrandchild: 3,
 
-  friend: BESIDE, neighbour: BESIDE, neighbor: BESIDE, carer: BESIDE,
+  friend: BESIDE, neighbor: BESIDE, carer: BESIDE,
   helper: BESIDE, colleague: BESIDE, godmother: BESIDE, godfather: BESIDE,
   godson: BESIDE, goddaughter: BESIDE,
 };

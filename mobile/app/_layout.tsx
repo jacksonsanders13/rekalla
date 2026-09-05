@@ -33,7 +33,7 @@ import {
 } from "../lib/design/theme";
 
 /**
- * One catch-up backup a launch, for anything practised while the phone was
+ * One catch-up backup a launch, for anything practiced while the phone was
  * offline. It renders nothing and it cannot fail loudly: a copy that did not
  * go up is a copy that has not gone up yet.
  */

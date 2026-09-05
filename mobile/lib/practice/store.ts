@@ -33,8 +33,8 @@ export interface PracticeData {
   cards: ScheduledCard[];
   logs: ReviewLog[];
   progress: Progress;
-  /** Cards practised on `day`, so a session is not padded with them. */
-  practisedToday: { day: string; cardIds: string[] };
+  /** Cards practiced on `day`, so a session is not padded with them. */
+  practicedToday: { day: string; cardIds: string[] };
   /**
    * Set once this data has been copied into an account, so the migration at
    * sign-up runs once and only once.
@@ -55,8 +55,8 @@ export function emptyData(): PracticeData {
     items: [],
     cards: [],
     logs: [],
-    progress: { practiceDays: [], cardsPractised: 0 },
-    practisedToday: { day: "", cardIds: [] },
+    progress: { practiceDays: [], cardsPracticed: 0 },
+    practicedToday: { day: "", cardIds: [] },
     migratedToUserId: null,
     syncedPhotoKeys: [],
     lastPushedAt: null,
@@ -86,7 +86,7 @@ function parse(raw: string | null): PracticeData {
       cards: Array.isArray(parsed.cards) ? parsed.cards : base.cards,
       logs: Array.isArray(parsed.logs) ? parsed.logs : base.logs,
       progress: parsed.progress ?? base.progress,
-      practisedToday: parsed.practisedToday ?? base.practisedToday,
+      practicedToday: parsed.practicedToday ?? base.practicedToday,
       migratedToUserId: parsed.migratedToUserId ?? base.migratedToUserId,
       syncedPhotoKeys: Array.isArray(parsed.syncedPhotoKeys)
         ? parsed.syncedPhotoKeys

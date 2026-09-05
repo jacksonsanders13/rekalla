@@ -1,7 +1,7 @@
 /**
  * Putting a session together, and running it.
  *
- * Two jobs live here. Assembly decides which items are practised and in what
+ * Two jobs live here. Assembly decides which items are practiced and in what
  * order. The state machine decides what happens when one is answered, which
  * is where the errorless rule is enforced: a wrong answer shows the right one
  * and then asks the same question again, so nobody is ever left sitting in a
@@ -18,7 +18,7 @@ import { templateCardGenerator } from "./card-generator.ts";
 export const INTRODUCTION_SHOWINGS = 4;
 
 /**
- * Cards to show in between the repeats of a new item: straight away, then
+ * Cards to show in between the repeats of a new item: right away, then
  * after 1 other card, then after 3, then after 6. Measured in cards rather
  * than in minutes, which is what makes it work in a session of any length.
  */
@@ -27,7 +27,7 @@ export const INTRODUCTION_GAPS = [1, 3, 6];
 export interface SessionPlan {
   /** Items due today, longest overdue first. */
   reviews: ScheduledCard[];
-  /** Items that have never been practised. */
+  /** Items that have never been practiced. */
   introductions: ScheduledCard[];
   /** Only used when the session would otherwise be short. */
   padding: ScheduledCard[];
@@ -47,7 +47,7 @@ function byDueAt(a: ScheduledCard, b: ScheduledCard): number {
 
 /**
  * Everything due, then anything new, and only then, if the session is still
- * short of the goal, whatever is due soonest. Anything already practised
+ * short of the goal, whatever is due soonest. Anything already practiced
  * today is left out: re-asking something answered ten minutes ago teaches
  * nothing and makes the session feel like filler.
  */
@@ -55,10 +55,10 @@ export function assembleSession(
   cards: ScheduledCard[],
   now: Date,
   goal: number,
-  practisedTodayCardIds: string[] = [],
+  practicedTodayCardIds: string[] = [],
 ): SessionPlan {
-  const practised = new Set(practisedTodayCardIds);
-  const available = cards.filter((card) => !practised.has(card.id));
+  const practiced = new Set(practicedTodayCardIds);
+  const available = cards.filter((card) => !practiced.has(card.id));
 
   const reviews = available
     .filter((card) => card.reviewCount > 0 && isDue(card, now))
@@ -169,8 +169,8 @@ export interface SessionState {
   chosen: string | null;
   /** Cards whose first attempt this session has already moved the schedule. */
   settledCardIds: string[];
-  /** Distinct cards practised, for the day's count. */
-  practisedCardIds: string[];
+  /** Distinct cards practiced, for the day's count. */
+  practicedCardIds: string[];
 }
 
 export function startSession(queue: PracticeQuestion[]): SessionState {
@@ -180,7 +180,7 @@ export function startSession(queue: PracticeQuestion[]): SessionState {
     phase: queue.length === 0 ? "finished" : "asking",
     chosen: null,
     settledCardIds: [],
-    practisedCardIds: [],
+    practicedCardIds: [],
   };
 }
 
@@ -230,9 +230,9 @@ export function answerQuestion(state: SessionState, choice: string): AnswerOutco
     });
   }
 
-  const practisedCardIds = state.practisedCardIds.includes(question.cardId)
-    ? state.practisedCardIds
-    : [...state.practisedCardIds, question.cardId];
+  const practicedCardIds = state.practicedCardIds.includes(question.cardId)
+    ? state.practicedCardIds
+    : [...state.practicedCardIds, question.cardId];
 
   return {
     wasCorrect,
@@ -245,7 +245,7 @@ export function answerQuestion(state: SessionState, choice: string): AnswerOutco
       settledCardIds: settle
         ? [...state.settledCardIds, question.cardId]
         : state.settledCardIds,
-      practisedCardIds,
+      practicedCardIds,
     },
   };
 }

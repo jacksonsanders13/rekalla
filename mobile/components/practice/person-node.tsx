@@ -21,7 +21,7 @@ export type NodeTone = "person" | "you" | "next";
  * goes down: an item that slips back simply describes itself more modestly.
  */
 export function settledPhrase(progress: number): string {
-  if (progress <= 0.01) return "not practised yet";
+  if (progress <= 0.01) return "not practiced yet";
   if (progress < 0.34) return "just getting started";
   if (progress < 0.67) return "coming along";
   if (progress < 1) return "well settled";

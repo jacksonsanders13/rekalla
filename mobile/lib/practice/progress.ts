@@ -2,12 +2,12 @@
  * Counting practice, forgivingly.
  *
  * Two numbers are shown on the home screen: how many days someone has
- * practised altogether, and how their current run is going. The run is the
+ * practiced altogether, and how their current run is going. The run is the
  * one that needs care. A missed day here usually means a hospital
  * appointment, a visit from family, or a bad night, and none of those are
  * reasons to take somebody's work away from them.
  *
- * So the run erodes instead of resetting. Practising on consecutive days adds
+ * So the run erodes instead of resetting. Practicing on consecutive days adds
  * one. Missing a single day costs nothing at all. After that each further
  * missed day takes one off, and it stops at zero. Nothing here can produce a
  * number that goes to zero overnight.
@@ -24,8 +24,8 @@ export function daysBetween(from: string, to: string): number {
   return Math.round((end - start) / DAY_MS);
 }
 
-/** Days practised altogether. This one only ever goes up. */
-export function daysPractised(practiceDays: string[]): number {
+/** Days practiced altogether. This one only ever goes up. */
+export function daysPracticed(practiceDays: string[]): number {
   return new Set(practiceDays).size;
 }
 

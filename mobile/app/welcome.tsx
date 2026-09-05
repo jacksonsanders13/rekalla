@@ -25,10 +25,9 @@ export default function Welcome() {
     >
       <View style={{ alignItems: "center", gap: space(6) }}>
         <RekallaAvatar size={140} />
-        <Title center>Practise the things that matter to you</Title>
+        <Title center>Remember the people who matter</Title>
         <AppText size="bodyLarge" color={colors.inkSoft} center>
-          Rekalla asks you about your own people, your own days. A few minutes,
-          whenever it suits you.
+          A few minutes a day. Real names, real faces, from your own life.
         </AppText>
       </View>
     </Screen>

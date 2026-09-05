@@ -71,7 +71,7 @@ export default function Tree() {
       onBack={() => router.back()}
       footer={
         <ChunkyButton
-          label="Add someone to the tree"
+          label="Add someone"
           onPress={() => router.push("/add?category=person")}
         />
       }
@@ -79,8 +79,8 @@ export default function Tree() {
       {people.length === 0 ? (
         <RekallaSays>
           {helping
-            ? "Nobody here yet. Add the people who matter most, and they will fill in around them on the tree."
-            : "Nobody here yet. Add the people who matter most to you, and they will fill in around you on the tree."}
+            ? "Nobody here yet. Add someone and they'll show up on the tree."
+            : "Nobody here yet. Add someone and they'll show up on the tree."}
         </RekallaSays>
       ) : null}
 
@@ -129,7 +129,7 @@ export default function Tree() {
               {band.placement === 0 ? (
                 <PersonNode
                   name={helping ? "Them" : "You"}
-                  sublabel={helping ? "the person practising" : null}
+                  sublabel={helping ? "the person practicing" : null}
                   tone="you"
                 />
               ) : null}
@@ -160,12 +160,11 @@ export default function Tree() {
         <View style={{ gap: space(4), paddingTop: space(4) }}>
           <AppText size="bodyLarge" weight="bold">
             {unplaced.length === 1
-              ? "One person to place"
+              ? "1 person to place"
               : `${unplaced.length} people to place`}
           </AppText>
           <AppText color={colors.inkSoft}>
-            I could not tell where these sit on the tree. Tap one to say, and it
-            will move up with the others.
+            I couldn't tell where these go. Tap one to place it.
           </AppText>
           <View
             style={{

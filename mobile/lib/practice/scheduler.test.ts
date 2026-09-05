@@ -119,7 +119,7 @@ test("the index is clamped at both ends", () => {
   assert.equal(daysUntil(topped.dueAt), 90);
 });
 
-test("a new item is due straight away and counts as unreviewed", () => {
+test("a new item is due right away and counts as unreviewed", () => {
   const fresh = newCard("card-9", "item-9", NOW);
 
   assert.equal(fresh.reviewCount, 0);

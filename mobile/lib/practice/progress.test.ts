@@ -1,11 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { currentRun, daysBetween, daysPractised, recordPracticeDay } from "./progress.ts";
+import { currentRun, daysBetween, daysPracticed, recordPracticeDay } from "./progress.ts";
 
-test("days practised counts distinct days and only goes up", () => {
-  assert.equal(daysPractised([]), 0);
-  assert.equal(daysPractised(["2026-09-01", "2026-09-01", "2026-09-02"]), 2);
+test("days practiced counts distinct days and only goes up", () => {
+  assert.equal(daysPracticed([]), 0);
+  assert.equal(daysPracticed(["2026-09-01", "2026-09-01", "2026-09-02"]), 2);
 });
 
 test("consecutive days build a run", () => {
@@ -45,7 +45,7 @@ test("a fortnight away and one day back does not wipe the record", () => {
   ];
 
   assert.ok(currentRun(days, "2026-09-12") > 0);
-  assert.equal(daysPractised(days), 11);
+  assert.equal(daysPracticed(days), 11);
 });
 
 test("no practice at all is a run of zero, not a negative number", () => {

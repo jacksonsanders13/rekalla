@@ -337,7 +337,7 @@ export async function pullEverything(userId: string): Promise<PracticeData | nul
     items: restoredItems,
     cards: restoredCards,
     logs: restoredLogs,
-    progress: { practiceDays, cardsPractised: restoredLogs.length },
+    progress: { practiceDays, cardsPracticed: restoredLogs.length },
     migratedToUserId: userId,
     syncedPhotoKeys: downloaded,
     lastPushedAt: new Date().toISOString(),

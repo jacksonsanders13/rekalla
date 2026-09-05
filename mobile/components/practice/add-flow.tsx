@@ -85,8 +85,8 @@ export function AddFlow({
     if (outcome.status === "blocked") {
       setPhotoNote(
         source === "camera"
-          ? "Rekalla does not have permission to use the camera yet. You can turn that on in the phone's Settings, or carry on without a photo."
-          : "Rekalla does not have permission to see your photos yet. You can turn that on in the phone's Settings, or carry on without a photo.",
+          ? "Rekalla can't use the camera yet. Turn it on in your phone's Settings, or skip the photo."
+          : "Rekalla can't see your photos yet. Turn it on in your phone's Settings, or skip the photo.",
       );
     }
   }
@@ -104,12 +104,12 @@ export function AddFlow({
             hint={
               filled
                 ? undefined
-                : "Fill this in first, or leave it out if it says you can"
+                : "Fill this in, or skip it"
             }
           />
           {field.optional ? (
             <ChunkyButton
-              label={isLast ? `${finishLabel} without this` : "Leave this out"}
+              label={isLast ? `${finishLabel} without this` : "Skip"}
               tone="secondary"
               onPress={forward}
               disabled={saving}
@@ -152,7 +152,7 @@ export function AddFlow({
                 onPress={() => choosePhoto("camera")}
               />
               <ChunkyButton
-                label="Choose from my photos"
+                label="Choose a photo"
                 tone="secondary"
                 onPress={() => choosePhoto("library")}
               />
@@ -190,7 +190,7 @@ export function AddFlow({
 
       {field.optional ? (
         <AppText size="body" color={colors.inkSoft}>
-          You can add this later if you would rather.
+          You can add this later.
         </AppText>
       ) : null}
     </Screen>
