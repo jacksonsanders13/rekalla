@@ -62,15 +62,18 @@ None of them are implemented. Answer this before M2 starts.
 Each one is separately verifiable. Do not start the next until `npm run check`
 is green and the change has been looked at on a device or in the browser.
 
-### M0 — Guard rails (half a day)
+### M0 — Guard rails — DONE
 
-- **A contrast test**, in the same spirit as the copy guard: a pure module
-  holding every theme's tokens, and a test asserting every text-on-background
-  pair is ≥ 7:1 by the WCAG formula. Add it to `npm run check`. Twenty lines of
-  maths, no dependency, and it makes the accessibility floor mechanical instead
-  of a promise. Do this **before** the dark palette, so the palette is checked
-  as it is written.
-- Answer the hearts/timers/streak question above.
+Built and pushed. `lib/design/contrast.ts` is the WCAG formula, no
+dependency; `lib/design/palettes.ts` holds both themes plus the list of pairs
+that must hold up; `lib/design/contrast.test.ts` fails the build on any pair
+under 7:1. It is in `npm run check`.
+
+It earned itself immediately: `focus` on a raised surface in the dark palette
+measured **6.97:1**, which no eye would have caught. The blue is now `#4CBEFF`.
+`tokens.ts` re-exports `palettes.light`, so M1 is close to a one-line swap.
+
+Still to answer: the hearts/timers/streak question above.
 
 ### M1 — Dark theme (one to two days)
 

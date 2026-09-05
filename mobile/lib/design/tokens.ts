@@ -15,39 +15,15 @@
  *     red is not in the palette at all so it cannot creep back in.
  */
 
-export const colors = {
-  /** App background: warm off-white. */
-  paper: "#FFFDF9",
-  /** Raised surfaces and unselected options. */
-  card: "#FFFFFF",
-  /** The 4pt bottom edge under a white button. */
-  cardEdge: "#E0D8CB",
-  /** Quiet dividers and outlines. Never used to carry meaning on its own. */
-  line: "#D8CFC2",
+import { light, type Palette } from "./palettes.ts";
 
-  /** Body and heading text: 17.8:1 on paper. */
-  ink: "#1A1523",
-  /** Supporting text: 9.4:1 on paper. Still well past the bar. */
-  inkSoft: "#4B4355",
-
-  /** Primary action: 7.6:1 with white text. */
-  primary: "#A3134B",
-  primaryEdge: "#71062F",
-  primaryInk: "#FFFFFF",
-
-  /** Correct: a wash with dark text on it, 9.2:1. */
-  success: "#E4F6E9",
-  successEdge: "#B6DFC4",
-  successInk: "#0C4A28",
-
-  /** Showing the answer after a miss: warm sand, 10.3:1. Never red. */
-  reveal: "#FFF3D6",
-  revealEdge: "#EBD9A8",
-  revealInk: "#4A3707",
-
-  /** Focus and selection outline: 7.7:1 with white. */
-  focus: "#1B4DB1",
-} as const;
+/**
+ * The colours in play. Sourced from the palettes module so there is one place
+ * a value is written and one test that checks it. Swapping this for `dark`
+ * is the whole of the theme change in docs/v3-plan.md, M1 — every screen
+ * already reads through these names.
+ */
+export const colors: Palette = light;
 
 /**
  * Type scale. 20 is the floor for anything a person reads, and a primary
