@@ -44,8 +44,15 @@ including the first practice session, with no account at all.
   logic tests, then 11 rendering tests. Takes about two minutes, most of it
   jest. Run it before every commit.
 - To look at it in a browser: `npx expo export --platform web --output-dir
-  /tmp/rekalla-web` then serve that folder. The Metro **dev** server needs more
-  memory than this box has and gets killed; the static export does not.
+  /tmp/rekalla-web` then serve that folder.
+- **This box is small: 2.7 GB RAM, no swap (Crostini forbids `swapon`), and the
+  disk fills up.** Both symptoms look like the same thing — a process dies with
+  no useful message. Check `df -h` first, not just `free -m`: an npm install
+  died three times here and the real cause was 1.3 GB of disk left. `npm cache
+  clean --force` reclaims a couple of gigabytes. Install with
+  `--maxsockets 3` and run jest with `--runInBand`.
+- The app targets **Expo SDK 57** (React Native 0.86, React 19.2, TypeScript 6).
+  Expo Go only ever supports the current SDK, so the SDK has to track it.
 - Scheduling lives in `mobile/lib/practice/`. Those modules are pure — no React,
   no storage, no native imports — so Node runs them and their tests directly
   with no test runner dependency. Keep them that way.
