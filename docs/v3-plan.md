@@ -5,6 +5,21 @@ Read this first, then `CLAUDE.md` for the rules that do not bend.
 
 ---
 
+## Toolchain
+
+Expo **SDK 57** — React Native 0.86.3, React 19.2.3, TypeScript 6.0.3. Upgraded
+from SDK 54 because Expo Go only supports the current SDK, so anything older
+cannot be opened on a phone at all.
+
+Two things that upgrade taught, both worth keeping:
+
+- `npx expo install --fix` cannot cross three majors in place. It half-upgrades
+  `@expo/cli` and then cannot find its own modules. Pin every package from
+  `node_modules/expo/bundledNativeModules.json`, delete `node_modules` and the
+  lockfile, and install clean.
+- TypeScript 6 no longer includes every `@types` package automatically, so
+  `types: ["jest"]` had to be named in `tsconfig.json`.
+
 ## Where things actually stand
 
 **Working and pushed** (`v3-recall`, commits `3a9730c` and `722cb7f`):

@@ -5,7 +5,11 @@
     // The pure practice modules import each other with an explicit .ts, which
     // is what lets Node run them, and their tests, with no build step and no
     // test-runner dependency. Metro resolves the exact path too.
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    // TypeScript 6 no longer pulls in every @types package automatically, so
+    // jest's globals have to be named. Everything else in this app arrives
+    // through an import rather than as an ambient type.
+    "types": ["jest"]
   },
   // Tests are run by Node's own runner, which strips types rather than
   // checking them. Checking them here would need @types/node in this package,
