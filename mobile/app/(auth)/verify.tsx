@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { supabase } from "../../lib/supabase";
 import { useT } from "../../lib/i18n";
 import { colors, font, spacing } from "../../lib/theme";
 import { isInternalAuthError } from "../../lib/utils";
 import { Screen, Card, Button, Field, Title, Subtitle } from "../../components/ui";
+import { RekallaAvatar } from "../../components/rekalla-avatar";
 import type { AccountType } from "../../lib/types";
 
 const RESEND_COOLDOWN = 60;
@@ -134,11 +135,7 @@ export default function Verify() {
   return (
     <Screen>
       <View style={styles.logoWrap}>
-        <Image
-          source={require("../../assets/icon.png")}
-          style={styles.logo}
-          accessibilityLabel="Rekalla"
-        />
+        <RekallaAvatar size={84} />
         <Text style={styles.wordmark}>{t("auth.wordmark")}</Text>
       </View>
 
@@ -194,7 +191,6 @@ export default function Verify() {
 
 const styles = StyleSheet.create({
   logoWrap: { alignItems: "center", gap: spacing(3), marginVertical: spacing(4) },
-  logo: { width: 84, height: 84, borderRadius: 20 },
   wordmark: { color: colors.label, fontSize: font.x2, fontWeight: "700" },
   error: { color: colors.red, fontSize: font.base, fontWeight: "600" },
   notice: { color: colors.green, fontSize: font.base, fontWeight: "600" },

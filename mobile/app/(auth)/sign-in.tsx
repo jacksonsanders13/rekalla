@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Link, router } from "expo-router";
 import { supabase } from "../../lib/supabase";
 import { useT } from "../../lib/i18n";
 import { colors, font, spacing } from "../../lib/theme";
 import { isInternalAuthError } from "../../lib/utils";
 import { Screen, Card, Button, Field, Title, Subtitle } from "../../components/ui";
+import { RekallaAvatar } from "../../components/rekalla-avatar";
 
 export default function SignIn() {
   const t = useT();
@@ -63,11 +64,7 @@ export default function SignIn() {
   return (
     <Screen>
       <View style={styles.logoWrap}>
-        <Image
-          source={require("../../assets/icon.png")}
-          style={styles.logo}
-          accessibilityLabel="Rekalla"
-        />
+        <RekallaAvatar size={84} />
         <Text style={styles.wordmark}>{t("auth.wordmark")}</Text>
       </View>
 
@@ -118,7 +115,6 @@ export default function SignIn() {
 
 const styles = StyleSheet.create({
   logoWrap: { alignItems: "center", gap: spacing(3), marginVertical: spacing(4) },
-  logo: { width: 84, height: 84, borderRadius: 20 },
   wordmark: { color: colors.label, fontSize: font.x2, fontWeight: "700" },
   error: { color: colors.red, fontSize: font.base, fontWeight: "600" },
   switchLink: { minHeight: 44, alignItems: "center", justifyContent: "center" },

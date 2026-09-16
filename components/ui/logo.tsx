@@ -1,9 +1,10 @@
 import Link from "next/link";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { RekallaAvatar } from "@/components/ui/rekalla-avatar";
 
-// The mark lives at public/logo.svg — replace that file with your own
-// export (same name) to swap the logo everywhere at once.
+// The mark is Rekalla himself, drawn inline from the shared geometry rather
+// than loaded as a file, so the header and the app icons cannot drift apart.
+// public/logo.svg is the same drawing, for the places that need a URL.
 const sizes = {
   sm: { box: 32, text: "text-lg" },
   md: { box: 44, text: "text-xl" },
@@ -28,14 +29,7 @@ export function Logo({
       className={cn("flex items-center gap-3", className)}
       aria-label="Rekalla home"
     >
-      <Image
-        src="/logo.svg"
-        alt=""
-        width={s.box}
-        height={s.box}
-        priority
-        className="rounded-[24%] bg-base"
-      />
+      <RekallaAvatar size={s.box} className="rounded-[24%] bg-base" />
       {wordmark && (
         <span className={cn("font-semibold tracking-tight text-label", s.text)}>
           Rekalla
