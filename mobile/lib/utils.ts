@@ -12,11 +12,18 @@ export function firstName(fullName: string | null | undefined): string {
   return fullName.trim().split(/\s+/)[0];
 }
 
+/**
+ * Formats "14:30" for display. Follows the device locale, like every other
+ * date and time in the app, so a Spanish device reads 14:30 rather than the
+ * 2:30 PM a hardcoded en-US produced. The snooze time rendered beside this one
+ * in components/occurrence-row.tsx has always used the device locale, so the
+ * two sat in the same line of text in different formats.
+ */
 export function formatTimeOfDay(time: string): string {
   const [hours, minutes] = time.split(":").map(Number);
   const d = new Date();
   d.setHours(hours, minutes, 0, 0);
-  return d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+  return d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
 }
 
 /** Local date as "YYYY-MM-DD" — the canonical day key everywhere. */
