@@ -3,9 +3,12 @@ import type { NotificationPayload, NotificationProvider, SendResult } from "../t
 /**
  * Email notifications.
  *
- * Mock implementation: logs and reports success. To go live, exchange this
- * for a Resend (or similar) API call using `metadata.email` as the
- * recipient address.
+ * Not implemented. To go live, exchange the body of `send` for a Resend (or
+ * similar) API call using `metadata.email` as the recipient address.
+ *
+ * It reports failure rather than success on purpose. This used to log and
+ * return ok, which had the dispatcher write `status: "sent"` on a message
+ * nobody ever received.
  */
 export const emailProvider: NotificationProvider = {
   channel: "email",
@@ -15,9 +18,9 @@ export const emailProvider: NotificationProvider = {
   },
 
   async send(payload: NotificationPayload): Promise<SendResult> {
-    console.info(
-      `[notifications:email] (mock) → user ${payload.userId}: ${payload.title}`,
+    console.warn(
+      `[notifications:email] not implemented, dropping → user ${payload.userId}: ${payload.title}`,
     );
-    return { ok: true, providerId: `mock-email-${Date.now()}` };
+    return { ok: false, error: "email provider is not implemented" };
   },
 };

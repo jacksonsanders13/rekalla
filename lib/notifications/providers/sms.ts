@@ -3,8 +3,12 @@ import type { NotificationPayload, NotificationProvider, SendResult } from "../t
 /**
  * SMS notifications.
  *
- * Mock implementation: logs and reports success. To go live, exchange this
- * for a Twilio API call using `metadata.phone` as the recipient number.
+ * Not implemented. To go live, exchange the body of `send` for a Twilio API
+ * call using `metadata.phone` as the recipient number.
+ *
+ * It reports failure rather than success on purpose. This used to log and
+ * return ok, which had the dispatcher write `status: "sent"` on a message
+ * nobody ever received.
  */
 export const smsProvider: NotificationProvider = {
   channel: "sms",
@@ -18,9 +22,9 @@ export const smsProvider: NotificationProvider = {
   },
 
   async send(payload: NotificationPayload): Promise<SendResult> {
-    console.info(
-      `[notifications:sms] (mock) → user ${payload.userId}: ${payload.title}`,
+    console.warn(
+      `[notifications:sms] not implemented, dropping → user ${payload.userId}: ${payload.title}`,
     );
-    return { ok: true, providerId: `mock-sms-${Date.now()}` };
+    return { ok: false, error: "sms provider is not implemented" };
   },
 };

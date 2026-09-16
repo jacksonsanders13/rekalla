@@ -19,10 +19,15 @@ const providers: Record<NotificationChannel, NotificationProvider> = {
  * it right after queueing an alert; for scheduled delivery, call it from a
  * cron job using a service-role client. Runs with the caller's Supabase
  * client, so RLS still applies.
+ *
+ * A channel whose provider has no configuration is counted as `skipped` and
+ * left `pending` rather than marked sent or failed, so nothing is recorded as
+ * delivered that no provider ever attempted, and the row is still there to
+ * send once the channel is configured.
  */
 export async function dispatchPendingNotifications(
   supabase: SupabaseClient<Database>,
-): Promise<{ sent: number; failed: number }> {
+): Promise<{ sent: number; failed: number; skipped: number }> {
   const { data: pending, error } = await supabase
     .from("notifications")
     .select("*")
@@ -34,9 +39,19 @@ export async function dispatchPendingNotifications(
 
   let sent = 0;
   let failed = 0;
+  let skipped = 0;
 
   for (const notification of pending ?? []) {
     const provider = providers[notification.channel];
+
+    // Nothing can be delivered without credentials, and marking the row either
+    // way would be a lie: `sent` claims a delivery that never happened, and
+    // `failed` blames a send that was never attempted. Leave it pending.
+    if (!provider.isConfigured()) {
+      skipped++;
+      continue;
+    }
+
     try {
       const result = await provider.send({
         userId: notification.user_id,
@@ -68,5 +83,5 @@ export async function dispatchPendingNotifications(
     }
   }
 
-  return { sent, failed };
+  return { sent, failed, skipped };
 }

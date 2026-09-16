@@ -5,8 +5,13 @@ import { dispatchPendingNotifications } from "@/lib/notifications";
 /**
  * Processes the notification outbox for the signed-in user.
  *
- * In production this is triggered by the Vercel cron in vercel.json; it can
- * also be called after queueing an alert so delivery feels immediate.
+ * Nothing calls this on a schedule. vercel.json has no `crons` entry, so the
+ * outbox is only ever drained by an explicit POST here. Scheduled delivery
+ * needs that cron adding, pointed at this route with a service-role client.
+ *
+ * Nothing writes to the outbox either, so it is empty in practice. The
+ * patient's own reminders do not come through here; they are local
+ * notifications on the device, in mobile/lib/notifications.ts.
  */
 export async function POST() {
   const supabase = await createClient();
