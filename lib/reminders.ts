@@ -1,3 +1,13 @@
+/**
+ * When a reminder counts as occurring, and what state it is in.
+ *
+ * mobile/lib/reminders.ts is a hand-kept copy of this file: the two clients are
+ * separate npm projects, so there is no shared package to import from. Every
+ * function below apart from describeSchedule exists there identically, and a
+ * change to the recurrence or status rules has to be made in both or the two
+ * apps will disagree about the same reminder. describeSchedule is web-only,
+ * because it builds English sentences and the mobile app ships Spanish too.
+ */
 import type { Reminder, ReminderEvent, ReminderOccurrence } from "@/types";
 import { fromDateKey, toDateKey } from "./utils";
 

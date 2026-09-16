@@ -1,11 +1,11 @@
-/** Shared date/text helpers (portable copy of the web app's lib/utils). */
-
-export function greetingFor(date: Date = new Date()): string {
-  const hour = date.getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 17) return "Good afternoon";
-  return "Good evening";
-}
+/**
+ * Shared date/text helpers (portable copy of the web app's lib/utils).
+ *
+ * The web copy also exports greetingFor(). It is deliberately absent here: it
+ * returns hardcoded English ("Good morning") and this app ships Spanish too.
+ * (patient)/summary.tsx builds its greeting from i18n keys instead, and
+ * nothing ever imported greetingFor on this side.
+ */
 
 export function firstName(fullName: string | null | undefined): string {
   if (!fullName) return "there";

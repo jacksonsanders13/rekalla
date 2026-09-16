@@ -1,3 +1,12 @@
+/**
+ * When a reminder counts as occurring, and what state it is in.
+ *
+ * This is a hand-kept copy of the web app's lib/reminders.ts: the two clients
+ * are separate npm projects, so there is no shared package to import from.
+ * Every function below exists there identically, and a change to the
+ * recurrence or status rules has to be made in both or the two apps will
+ * disagree about the same reminder.
+ */
 import type { Reminder, ReminderEvent, ReminderOccurrence } from "./types";
 import { fromDateKey, toDateKey } from "./utils";
 
@@ -117,38 +126,9 @@ export function completionSummary(occurrences: ReminderOccurrence[]) {
   return { done, missed, total };
 }
 
-/** Human description of a reminder's schedule ("Every day at 8:00 AM"). */
-export function describeSchedule(reminder: Reminder): string {
-  const time = formatTime(reminder.time_of_day);
-  switch (reminder.recurrence) {
-    case "once": {
-      const date = fromDateKey(reminder.start_date).toLocaleDateString(
-        "en-US",
-        { weekday: "long", month: "long", day: "numeric" },
-      );
-      return `${date} at ${time}`;
-    }
-    case "daily":
-      return `Every day at ${time}`;
-    case "weekly": {
-      const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-      const days =
-        reminder.days_of_week.length > 0
-          ? reminder.days_of_week
-          : [fromDateKey(reminder.start_date).getDay()];
-      const list = [...days].sort().map((d) => dayNames[d]).join(", ");
-      return `Every ${list} at ${time}`;
-    }
-    case "monthly": {
-      const day = fromDateKey(reminder.start_date).getDate();
-      return `Monthly on day ${day} at ${time}`;
-    }
-  }
-}
-
-function formatTime(time: string): string {
-  const [hours, minutes] = time.split(":").map(Number);
-  const d = new Date();
-  d.setHours(hours, minutes, 0, 0);
-  return d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
-}
+/*
+ * The web app also exports describeSchedule() here. It is deliberately absent
+ * from this copy: it builds its sentence from hardcoded English ("Every day
+ * at", "Sun"/"Mon"/…) and this app ships Spanish too, so it was never usable
+ * here and nothing called it. A mobile version needs to come from i18n keys.
+ */
