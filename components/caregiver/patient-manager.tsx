@@ -78,21 +78,21 @@ export function PatientManager({
           actorId={caregiverId}
           canManage
           heading={`${name}'s reminders`}
-          description={`Add and manage what ${name} gets reminded about.`}
+          description={`For the things ${name} needs to do each day.`}
         />
       )}
       {section === "routine" && (
         <RoutineView
           userId={patientId}
           canManage
-          description={`Set up ${name}'s morning-to-evening routine.`}
+          description={`For the things ${name} does every day.`}
         />
       )}
       {section === "vault" && (
         <VaultView
           userId={patientId}
           canManage
-          description={`Keep ${name}'s people, doctors, and important details up to date.`}
+          description={`For the things ${name} wants to remember.`}
         />
       )}
       {section === "wellness" && (
@@ -100,7 +100,7 @@ export function PatientManager({
           userId={patientId}
           readOnly
           heading={`${name}'s wellness`}
-          description={`How ${name} has been feeling lately.`}
+          description={`For how ${name} has been feeling.`}
         />
       )}
     </div>

@@ -39,7 +39,7 @@ export function CaregiverHome({ caregiverId }: { caregiverId: string }) {
     <div>
       <PageHeader
         title="People"
-        description="Everyone you help care for, in one place."
+        description="For everyone you look after."
       />
 
       <Card className="animate-fade-up">

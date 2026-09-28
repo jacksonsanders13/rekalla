@@ -30,7 +30,7 @@ export function RemindersView({
   actorId,
   canManage = true,
   heading = "Reminders",
-  description = "Everything on your list — check things off as you go.",
+  description = "For the things you need to do today.",
 }: {
   /** Whose reminders these are. */
   userId: string;

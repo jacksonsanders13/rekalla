@@ -172,8 +172,8 @@ export function RoutineView({
         description={
           description ??
           (total > 0
-            ? `${done} of ${total} done today — one step at a time.`
-            : "The gentle rhythm of your day, morning to evening.")
+            ? `${done} of ${total} done today.`
+            : "For the things you do every day.")
         }
         action={
           canManage ? (

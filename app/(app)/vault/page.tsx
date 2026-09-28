@@ -11,7 +11,7 @@ export default async function VaultPage() {
     <VaultView
       userId={user.id}
       canManage={false}
-      description="People, doctors, medications, and important details — kept up to date by your caregiver."
+      description="For things you want to remember. Your caregiver keeps it up to date."
     />
   );
 }

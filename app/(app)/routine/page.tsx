@@ -11,7 +11,7 @@ export default async function RoutinePage() {
     <RoutineView
       userId={user.id}
       canManage={false}
-      description="Check off each step as your day goes on."
+      description="For the things you do every day."
     />
   );
 }

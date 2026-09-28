@@ -13,7 +13,7 @@ export default async function RemindersPage() {
       userId={user.id}
       actorId={user.id}
       canManage={false}
-      description="Check things off as you go. Your caregiver keeps this list up to date."
+      description="For the things you need to do today. Your caregiver keeps it up to date."
     />
   );
 }

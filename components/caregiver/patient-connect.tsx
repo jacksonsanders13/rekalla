@@ -45,7 +45,7 @@ export function PatientConnect({
     <div>
       <PageHeader
         title="Caregivers"
-        description="Share your code so a family member can help set up your reminders."
+        description="For the people who help you."
       />
 
       <Card className="animate-fade-up">

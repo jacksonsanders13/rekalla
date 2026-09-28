@@ -28,7 +28,7 @@ export function WellnessView({
   userId,
   readOnly = false,
   heading = "Wellness",
-  description = "A quick daily check-in, and the story it tells over time.",
+  description = "For how you're feeling today.",
 }: {
   userId: string;
   readOnly?: boolean;
