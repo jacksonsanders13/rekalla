@@ -36,8 +36,11 @@ const config: Config = {
         },
       },
       fontFamily: {
-        // SF Pro on Apple devices — matches the future iOS app.
+        // Quicksand is the brand face, loaded by next/font in app/layout.tsx.
+        // The platform stack catches the gap while it loads and anywhere it
+        // fails, so text is never invisible.
         sans: [
+          "var(--font-quicksand)",
           "-apple-system",
           "BlinkMacSystemFont",
           "SF Pro Text",
