@@ -1,7 +1,7 @@
 "use client";
 
 import { Pencil, Trash2, PauseCircle, PlayCircle } from "lucide-react";
-import { REMINDER_CATEGORIES } from "@/lib/constants";
+import { reminderCategoryMeta } from "@/lib/constants";
 import { describeSchedule } from "@/lib/reminders";
 import { cn } from "@/lib/utils";
 import type { Reminder } from "@/types";
@@ -27,7 +27,7 @@ export function ReminderList({
   return (
     <ul className="space-y-4">
       {reminders.map((reminder) => {
-        const meta = REMINDER_CATEGORIES[reminder.category];
+        const meta = reminderCategoryMeta(reminder.category);
         return (
           <li
             key={reminder.id}

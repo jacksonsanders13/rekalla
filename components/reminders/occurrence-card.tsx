@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, Clock3, RotateCcw, AlarmClock } from "lucide-react";
-import { REMINDER_CATEGORIES } from "@/lib/constants";
+import { reminderCategoryMeta } from "@/lib/constants";
 import { cn, formatTimeOfDay } from "@/lib/utils";
 import type { ReminderOccurrence } from "@/types";
 import { Badge } from "@/components/ui/badge";
@@ -23,7 +23,7 @@ export function OccurrenceCard({
   readOnly?: boolean;
 }) {
   const { reminder, status, event } = occurrence;
-  const meta = REMINDER_CATEGORIES[reminder.category];
+  const meta = reminderCategoryMeta(reminder.category);
   const done = status === "completed";
   const snoozed = status === "snoozed";
   const overdue = status === "overdue";

@@ -13,7 +13,7 @@ import {
   Search,
   Trash2,
 } from "lucide-react";
-import { VAULT_CATEGORIES } from "@/lib/constants";
+import { VAULT_CATEGORIES, vaultCategoryMeta } from "@/lib/constants";
 import { cn, fromDateKey } from "@/lib/utils";
 import {
   useVaultItems,
@@ -46,7 +46,7 @@ function matchesSearch(item: VaultItem, query: string): boolean {
 export function VaultView({
   userId,
   canManage = true,
-  description = "The people, medications, and details that matter — always here when you need them.",
+  description = "For things you want to remember.",
 }: {
   userId: string;
   /** When false, entries are view-only (patient); a caregiver manages them. */
@@ -228,7 +228,7 @@ export function VaultView({
       ) : (
         <ul className="grid gap-5 sm:grid-cols-2">
           {visible.map((item) => {
-            const meta = VAULT_CATEGORIES[item.category];
+            const meta = vaultCategoryMeta(item.category);
             return (
               <li
                 key={item.id}
