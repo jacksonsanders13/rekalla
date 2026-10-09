@@ -239,6 +239,15 @@ Confirmed in the binary: build 8's bundle still contained the **old** string
 `"Someone sets up reminders for me."` and none of the new ones.
 
 ## Next steps
+
+> **Stale below this line.** This document stops at build 17; builds 18, 19 and 20
+> shipped after it and are not recorded here. Build 20 (version **3.0.0**, commit
+> `2c52dfa`, the abandoned scan product) was successfully submitted on 2026-09-02,
+> so the App Store version floor is 3.0.0 and TestFlight currently holds the scan
+> app, not this one. Take the build history from `eas build:list` and
+> `eas submit:list`, never from here. The bug histories above are still accurate
+> and still worth reading.
+
 **Build 17** (`406ce3e0-2950-43de-a1df-50af0e12b85b`, commit `5763088`) was
 **submitted to App Store Connect** on 2026-08-06
 (submission `3a9d587c-bae7-43c4-97a5-8ac7850c5c56`, ASC app id `6794918254`).

@@ -90,11 +90,13 @@ so a permissions change means a migration.
 - **`HANDOFF.md` is the real institutional memory.** Three separate iOS build bugs,
   each masking the next, with the exact commands to re-verify a binary. Read it before
   touching anything EAS.
-- **Check the App Store version before the next submission.** The abandoned v3 work
-  set `mobile/app.json` to `3.0.0`; the revert put it back to `1.0.0`. Nothing in
-  `HANDOFF.md` records a 3.0.0 build ever being uploaded (the last documented is
-  build 17, at 1.0.0), but App Store Connect will not accept a version at or below
-  one it already has. Confirm what is actually up there rather than assuming.
+- **`HANDOFF.md` stops at build 17, and three more builds shipped after it.** Builds
+  18 (1.0.0), 19 (2.0.0) and 20 (3.0.0) were all built and successfully submitted to
+  App Store Connect, build 20 from `2c52dfa`, the scan product. So the version floor
+  is **3.0.0**, not the 1.0.0 the handoff implies, and TestFlight currently holds the
+  abandoned scan app. `mobile/app.json` is now `3.1.0` for the next submission.
+  Never take the build history from `HANDOFF.md`. Run
+  `eas build:list` and `eas submit:list` instead, which are authoritative.
 - **Tailwind config changes need a dev server restart.** `next dev` reads
   `tailwind.config.ts` once at boot. Editing tokens and reloading shows the old values.
 - **Killing `next dev` can leave the port held**, and the restart silently moves to
