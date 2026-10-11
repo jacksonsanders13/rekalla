@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Link } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -19,7 +19,8 @@ import { Screen, Card, SectionTitle, EmptyNote, Loading } from "../../components
 import { ActivityRings } from "../../components/rings";
 import { OccurrenceRow } from "../../components/occurrence-row";
 import { PendingCaregivers } from "../../components/pending-caregivers";
-import { syncReminderNotifications } from "../../lib/notifications";
+import { useReminderNotifications } from "../../hooks/use-notification-sync";
+import { NotificationStatusRow } from "../../components/notification-status";
 
 export default function Summary() {
   const { session, profile } = useSession();
@@ -34,11 +35,10 @@ export default function Summary() {
   const routineDone = useRoutineCompletions(userId, todayKey);
   const wellness = useWellnessEntries(userId, 7);
 
-  useEffect(() => {
-    if (reminders.data) {
-      syncReminderNotifications(reminders.data, t);
-    }
-  }, [reminders.data, t]);
+  // Re-syncs on every foreground as well as on change, so a revoked
+  // permission, a crossed timezone or a schedule run off the end of its
+  // horizon all get noticed.
+  const notifications = useReminderNotifications(reminders.data, t);
 
   const occurrences = useMemo(
     () => occurrencesFor(reminders.data ?? [], events.data ?? [], todayKey),
@@ -91,6 +91,8 @@ export default function Summary() {
       </View>
 
       <PendingCaregivers />
+
+      <NotificationStatusRow status={notifications} />
 
       {loading ? (
         <Loading />

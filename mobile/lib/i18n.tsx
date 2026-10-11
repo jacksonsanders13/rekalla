@@ -121,6 +121,16 @@ const en: Dict = {
   "summary.ring.checkinNot": "Not yet",
   "summary.ofCount": "{done} of {total}",
   "summary.upNext": "Up next",
+  // Notification status. Says plainly whether the phone will actually speak
+  // up, because a reminder app that has quietly stopped reminding is worse
+  // than no reminder app.
+  "notifStatus.nextAt": "Next reminder at {time}",
+  "notifStatus.nextOn": "Next reminder {day} at {time}",
+  "notifStatus.repeating": "Your reminders are set",
+  "notifStatus.none": "No reminders coming up",
+  "notifStatus.blocked": "Reminders are turned off on this phone",
+  "notifStatus.blockedHow": "Open Settings to turn them back on",
+  "notifStatus.openSettings": "Open Settings",
   "summary.noneToday": "No reminders scheduled for today.",
   "summary.allCaught": "All caught up — nothing waiting on you.",
 
@@ -446,6 +456,13 @@ const es: Dict = {
   "summary.ring.checkinNot": "Aún no",
   "summary.ofCount": "{done} de {total}",
   "summary.upNext": "A continuación",
+  "notifStatus.nextAt": "Próximo recordatorio a las {time}",
+  "notifStatus.nextOn": "Próximo recordatorio {day} a las {time}",
+  "notifStatus.repeating": "Tus recordatorios están listos",
+  "notifStatus.none": "No hay recordatorios próximos",
+  "notifStatus.blocked": "Los recordatorios están desactivados en este teléfono",
+  "notifStatus.blockedHow": "Abre Ajustes para volver a activarlos",
+  "notifStatus.openSettings": "Abrir Ajustes",
   "summary.noneToday": "No hay recordatorios para hoy.",
   "summary.allCaught": "Todo al día — nada pendiente.",
 
