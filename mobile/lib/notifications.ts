@@ -1,6 +1,6 @@
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
-import { fromDateKey } from "./utils";
+import { planNotifications } from "./notification-plan";
 import type { TFunc } from "./i18n";
 import type { Reminder } from "./types";
 
@@ -37,88 +37,92 @@ export async function requestNotificationPermission(): Promise<boolean> {
   return asked.granted;
 }
 
-function parseTime(time: string) {
-  const [hour, minute] = time.split(":").map(Number);
-  return { hour, minute };
+/** What the last sync managed to do, so the UI can be honest about it. */
+export interface SyncResult {
+  /** False when the person has not granted notification permission. */
+  permitted: boolean;
+  /** How many requests the phone accepted. */
+  scheduled: number;
+  /** Requests the planner produced but the phone rejected. */
+  failed: number;
+  /** When the soonest scheduled reminder will fire, if any. */
+  nextAt: Date | null;
 }
 
 /**
  * Rebuild the phone's scheduled notifications from the current reminders.
- * Cancels everything and reschedules, so it's safe to call whenever reminders
- * change.
+ *
+ * The decisions live in planNotifications, which is pure and tested. This
+ * function only turns that plan into expo calls, so the scheduling rules
+ * cannot drift away from what the calendar screen shows.
+ *
+ * Cancels everything first, so it is safe to call whenever reminders change,
+ * when the app foregrounds, or when the clock jumps.
  */
 export async function syncReminderNotifications(
   reminders: Reminder[],
   t: TFunc,
-) {
-  if (Platform.OS === "web") return;
+  now: Date = new Date(),
+): Promise<SyncResult> {
+  const empty: SyncResult = { permitted: true, scheduled: 0, failed: 0, nextAt: null };
+  if (Platform.OS === "web") return empty;
 
   const granted = await requestNotificationPermission();
-  if (!granted) return;
+  if (!granted) return { ...empty, permitted: false };
 
   await Notifications.cancelAllScheduledNotificationsAsync();
 
-  for (const r of reminders) {
-    if (!r.is_active) continue;
-    const { hour, minute } = parseTime(r.time_of_day);
+  const plan = planNotifications(reminders, now);
+  let scheduled = 0;
+  let failed = 0;
+  let nextAt: Date | null = null;
+
+  for (const item of plan) {
     const content = {
-      title: r.title,
-      body: t(`notif.${r.category}`),
+      title: item.title,
+      body: t(`notif.${item.category}`),
       sound: true,
+      // Lets a tap open the right reminder instead of just the app.
+      data: { reminderId: item.reminderId },
     };
 
     try {
-      if (r.recurrence === "daily") {
+      const trigger = item.trigger;
+      if (trigger.kind === "daily") {
         await Notifications.scheduleNotificationAsync({
           content,
           trigger: {
             type: Notifications.SchedulableTriggerInputTypes.DAILY,
-            hour,
-            minute,
+            hour: trigger.hour,
+            minute: trigger.minute,
           },
         });
-      } else if (r.recurrence === "weekly") {
-        const days =
-          r.days_of_week.length > 0
-            ? r.days_of_week
-            : [fromDateKey(r.start_date).getDay()];
-        for (const jsDay of days) {
-          await Notifications.scheduleNotificationAsync({
-            content,
-            trigger: {
-              type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
-              weekday: jsDay + 1, // JS 0=Sun -> expo 1=Sun
-              hour,
-              minute,
-            },
-          });
-        }
-      } else if (r.recurrence === "monthly") {
+      } else if (trigger.kind === "weekly") {
         await Notifications.scheduleNotificationAsync({
           content,
           trigger: {
-            type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
-            day: fromDateKey(r.start_date).getDate(),
-            hour,
-            minute,
-            repeats: true,
+            type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
+            weekday: trigger.weekday + 1, // JS 0=Sun -> expo 1=Sun
+            hour: trigger.hour,
+            minute: trigger.minute,
           },
         });
-      } else if (r.recurrence === "once") {
-        const when = fromDateKey(r.start_date);
-        when.setHours(hour, minute, 0, 0);
-        if (when.getTime() > Date.now()) {
-          await Notifications.scheduleNotificationAsync({
-            content,
-            trigger: {
-              type: Notifications.SchedulableTriggerInputTypes.DATE,
-              date: when,
-            },
-          });
-        }
+      } else {
+        await Notifications.scheduleNotificationAsync({
+          content,
+          trigger: {
+            type: Notifications.SchedulableTriggerInputTypes.DATE,
+            date: trigger.at,
+          },
+        });
+        if (!nextAt || trigger.at < nextAt) nextAt = trigger.at;
       }
+      scheduled++;
     } catch {
-      // A single reminder failing to schedule shouldn't break the rest.
+      // One bad reminder should not cost the person all the others.
+      failed++;
     }
   }
+
+  return { permitted: true, scheduled, failed, nextAt };
 }

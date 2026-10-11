@@ -1,6 +1,12 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true
+    "strict": true,
+    // Test files import with an explicit .ts extension because Node's ESM
+    // resolver needs one, and `npm test` runs them through Node directly
+    // rather than through Metro. Safe here: this project only ever
+    // typechecks, it never emits.
+    "allowImportingTsExtensions": true,
+    "noEmit": true
   }
 }

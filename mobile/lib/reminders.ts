@@ -7,8 +7,8 @@
  * recurrence or status rules has to be made in both or the two apps will
  * disagree about the same reminder.
  */
-import type { Reminder, ReminderEvent, ReminderOccurrence } from "./types";
-import { fromDateKey, toDateKey } from "./utils";
+import type { Reminder, ReminderEvent, ReminderOccurrence } from "./types.ts";
+import { fromDateKey, toDateKey } from "./utils.ts";
 
 /** Does this reminder occur on the given local date? */
 export function occursOn(reminder: Reminder, dateKey: string): boolean {
@@ -129,6 +129,7 @@ export function completionSummary(occurrences: ReminderOccurrence[]) {
 /*
  * The web app also exports describeSchedule() here. It is deliberately absent
  * from this copy: it builds its sentence from hardcoded English ("Every day
- * at", "Sun"/"Mon"/…) and this app ships Spanish too, so it was never usable
+ * at", "Sun"/"Mon"/â€¦) and this app ships Spanish too, so it was never usable
  * here and nothing called it. A mobile version needs to come from i18n keys.
  */
+

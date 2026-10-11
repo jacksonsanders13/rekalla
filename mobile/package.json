@@ -35,7 +35,8 @@
     "start": "expo start",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --test lib/**/*.test.ts"
   },
   "private": true
 }
