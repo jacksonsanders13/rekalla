@@ -3,7 +3,7 @@ import { Linking, Pressable, StyleSheet, Text, TextInput, View } from "react-nat
 import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "../../lib/session";
 import { useT } from "../../lib/i18n";
-import { colors, font, radius, spacing } from "../../lib/theme";
+import { colors, font, radius, spacing, weight } from "../../lib/theme";
 import { useVaultItems } from "../../hooks/data";
 import { Screen, Subtitle, EmptyNote, Loading } from "../../components/ui";
 import { ManageButton } from "../../components/manage-button";
@@ -131,11 +131,11 @@ const styles = StyleSheet.create({
   icon: {
     width: 44,
     height: 44,
-    borderRadius: 14,
+    borderRadius: radius.md,
     alignItems: "center",
     justifyContent: "center",
   },
-  title: { color: colors.label, fontSize: font.lg, fontWeight: "700" },
+  title: { color: colors.label, fontSize: font.lg, fontWeight: weight.semibold },
   subtitle: { color: colors.label3, fontSize: font.sm, marginTop: 2 },
   callButton: {
     flexDirection: "row",
@@ -146,6 +146,6 @@ const styles = StyleSheet.create({
     minHeight: 48,
     paddingHorizontal: spacing(4),
   },
-  callText: { color: colors.green, fontSize: font.base, fontWeight: "700" },
+  callText: { color: colors.green, fontSize: font.base, fontWeight: weight.medium },
   notes: { color: colors.label3, fontSize: font.base, lineHeight: 23 },
 });

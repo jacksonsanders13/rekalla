@@ -42,6 +42,7 @@ function AppStack() {
 export default function RootLayout() {
   const [termsResolved, setTermsResolved] = useState(false);
 
+
   useEffect(() => {
     configureNotifications();
   }, []);
@@ -52,6 +53,7 @@ export default function RootLayout() {
         defaultOptions: { queries: { staleTime: 30_000, retry: 1 } },
       }),
   );
+
 
   return (
     <QueryClientProvider client={queryClient}>

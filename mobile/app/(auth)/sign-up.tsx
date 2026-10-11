@@ -4,7 +4,7 @@ import { Link, router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { supabase } from "../../lib/supabase";
 import { useT } from "../../lib/i18n";
-import { colors, font, radius, spacing } from "../../lib/theme";
+import { colors, font, radius, spacing, weight } from "../../lib/theme";
 import { isInternalAuthError } from "../../lib/utils";
 import { Screen, Card, Button, Field, Title, Subtitle } from "../../components/ui";
 import { RekallaAvatar } from "../../components/rekalla-avatar";
@@ -149,7 +149,7 @@ export default function SignUp() {
                   <Ionicons
                     name={option.icon}
                     size={22}
-                    color={selected ? "#000" : colors.label2}
+                    color={selected ? colors.onFill : colors.label2}
                   />
                 </View>
                 <View style={{ flex: 1 }}>
@@ -181,7 +181,7 @@ export default function SignUp() {
                       <Ionicons
                         name={option.icon}
                         size={22}
-                        color={selected ? "#000" : colors.label2}
+                        color={selected ? colors.onFill : colors.label2}
                       />
                     </View>
                     <View style={{ flex: 1 }}>
@@ -237,9 +237,9 @@ export default function SignUp() {
 
 const styles = StyleSheet.create({
   logoWrap: { alignItems: "center", gap: spacing(3), marginVertical: spacing(4) },
-  wordmark: { color: colors.label, fontSize: font.x2, fontWeight: "700" },
-  error: { color: colors.red, fontSize: font.base, fontWeight: "600" },
-  legend: { color: colors.label2, fontSize: font.base, fontWeight: "600" },
+  wordmark: { color: colors.label, fontSize: font.x2, fontWeight: weight.bold },
+  error: { color: colors.red, fontSize: font.base, fontWeight: weight.semibold },
+  legend: { color: colors.label2, fontSize: font.base, fontWeight: weight.semibold },
   option: {
     flexDirection: "row",
     alignItems: "center",
@@ -251,21 +251,21 @@ const styles = StyleSheet.create({
     padding: spacing(4),
   },
   optionSelected: {
-    borderColor: colors.label,
+    borderColor: colors.fill,
     backgroundColor: "rgba(255,255,255,0.10)",
   },
   optionIcon: {
     width: 44,
     height: 44,
-    borderRadius: 14,
+    borderRadius: radius.md,
     backgroundColor: colors.elev3,
     alignItems: "center",
     justifyContent: "center",
   },
-  optionIconSelected: { backgroundColor: colors.label },
-  optionTitle: { color: colors.label, fontSize: font.base, fontWeight: "700" },
+  optionIconSelected: { backgroundColor: colors.fill },
+  optionTitle: { color: colors.label, fontSize: font.base, fontWeight: weight.semibold },
   optionDetail: { color: colors.label3, fontSize: font.sm, marginTop: 2 },
   switchLink: { minHeight: 44, alignItems: "center", justifyContent: "center" },
   switchText: { color: colors.label3, fontSize: font.base },
-  switchStrong: { color: colors.label, fontWeight: "700" },
+  switchStrong: { color: colors.label, fontWeight: weight.medium },
 });

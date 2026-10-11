@@ -4,7 +4,7 @@ import { Link } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "../../lib/session";
 import { useT } from "../../lib/i18n";
-import { colors, font, spacing } from "../../lib/theme";
+import { colors, font, radius, spacing, weight } from "../../lib/theme";
 import { firstName, toDateKey } from "../../lib/utils";
 import { occurrencesFor, openOccurrences, completionSummary } from "../../lib/reminders";
 import {
@@ -169,20 +169,20 @@ const styles = StyleSheet.create({
   eyebrow: {
     color: colors.label3,
     fontSize: font.xs,
-    fontWeight: "700",
+    fontWeight: weight.medium,
     letterSpacing: 0.6,
   },
   greeting: {
     color: colors.label,
     fontSize: font.x3,
-    fontWeight: "700",
+    fontWeight: weight.medium,
     letterSpacing: -0.5,
     marginTop: 2,
   },
   headerButton: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: radius.full,
     alignItems: "center",
     justifyContent: "center",
   },

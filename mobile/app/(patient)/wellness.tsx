@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSession } from "../../lib/session";
 import { useT } from "../../lib/i18n";
-import { colors, font, radius, spacing } from "../../lib/theme";
+import { colors, font, radius, spacing, weight } from "../../lib/theme";
 import { toDateKey, fromDateKey } from "../../lib/utils";
 import { useWellnessEntries, useSaveWellness } from "../../hooks/data";
 import { Screen, Card, Subtitle, SectionTitle, Button, Loading } from "../../components/ui";
@@ -175,7 +175,7 @@ export default function Wellness() {
 }
 
 const styles = StyleSheet.create({
-  question: { color: colors.label, fontSize: font.lg, fontWeight: "700" },
+  question: { color: colors.label, fontSize: font.lg, fontWeight: weight.semibold },
   moodRow: { flexDirection: "row", gap: spacing(2) },
   mood: {
     flex: 1,
@@ -189,9 +189,9 @@ const styles = StyleSheet.create({
     gap: 2,
     paddingVertical: spacing(2),
   },
-  moodSelected: { borderColor: colors.label, backgroundColor: "rgba(255,255,255,0.10)" },
-  moodEmoji: { fontSize: 26 },
-  moodLabel: { color: colors.label3, fontSize: 11, textAlign: "center" },
+  moodSelected: { borderColor: colors.fill, backgroundColor: "rgba(255,255,255,0.10)" },
+  moodEmoji: { fontSize: font.x2 },
+  moodLabel: { color: colors.label3, fontSize: font.xs, textAlign: "center" },
   sleepRow: { flexDirection: "row", alignItems: "center", gap: spacing(4) },
   stepper: {
     width: 52,
@@ -201,13 +201,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  stepperText: { color: colors.label, fontSize: 28, fontWeight: "600" },
+  stepperText: { color: colors.label, fontSize: font.x2, fontWeight: weight.semibold },
   sleepValue: {
     flex: 1,
     textAlign: "center",
     color: colors.label,
     fontSize: font.x2,
-    fontWeight: "700",
+    fontWeight: weight.medium,
   },
   energyRow: { flexDirection: "row", gap: spacing(2) },
   energy: {
@@ -220,8 +220,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  energyText: { color: colors.label, fontSize: font.lg, fontWeight: "700" },
-  saved: { color: colors.green, fontSize: font.base, fontWeight: "600", textAlign: "center" },
+  energyText: { color: colors.label, fontSize: font.lg, fontWeight: weight.medium },
+  saved: { color: colors.green, fontSize: font.base, fontWeight: weight.medium, textAlign: "center" },
   historyRow: {
     backgroundColor: colors.elev1,
     borderRadius: radius.md,
@@ -230,6 +230,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  historyDate: { color: colors.label2, fontSize: font.base, fontWeight: "600" },
+  historyDate: { color: colors.label2, fontSize: font.base, fontWeight: weight.medium },
   historyValues: { color: colors.label3, fontSize: font.sm },
 });

@@ -1,6 +1,6 @@
-import { View, Text, StyleSheet } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import Svg, { Circle, G } from "react-native-svg";
-import { colors, font, spacing } from "../lib/theme";
+import { colors, font, radius, spacing, weight } from "../lib/theme";
 
 export interface RingSpec {
   label: string;
@@ -77,12 +77,12 @@ const styles = StyleSheet.create({
   row: { flexDirection: "row", alignItems: "center", gap: spacing(6) },
   legend: { flex: 1, gap: spacing(4) },
   legendHeader: { flexDirection: "row", alignItems: "center", gap: spacing(2) },
-  dot: { width: 10, height: 10, borderRadius: 5 },
+  dot: { width: 10, height: 10, borderRadius: radius.full },
   legendLabel: {
     color: colors.label3,
     fontSize: font.xs,
-    fontWeight: "700",
+    fontWeight: weight.medium,
     letterSpacing: 0.6,
   },
-  legendValue: { fontSize: font.xl, fontWeight: "700" },
+  legendValue: { fontSize: font.xl, fontWeight: weight.medium },
 });

@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Link, router } from "expo-router";
 import { supabase } from "../../lib/supabase";
 import { useT } from "../../lib/i18n";
-import { colors, font, spacing } from "../../lib/theme";
+import { colors, font, spacing, weight } from "../../lib/theme";
 import { isInternalAuthError } from "../../lib/utils";
 import { Screen, Card, Button, Field, Title, Subtitle } from "../../components/ui";
 import { RekallaAvatar } from "../../components/rekalla-avatar";
@@ -115,10 +115,10 @@ export default function SignIn() {
 
 const styles = StyleSheet.create({
   logoWrap: { alignItems: "center", gap: spacing(3), marginVertical: spacing(4) },
-  wordmark: { color: colors.label, fontSize: font.x2, fontWeight: "700" },
-  error: { color: colors.red, fontSize: font.base, fontWeight: "600" },
+  wordmark: { color: colors.label, fontSize: font.x2, fontWeight: weight.bold },
+  error: { color: colors.red, fontSize: font.base, fontWeight: weight.semibold },
   switchLink: { minHeight: 44, alignItems: "center", justifyContent: "center" },
   switchText: { color: colors.label3, fontSize: font.base },
-  switchStrong: { color: colors.label, fontWeight: "700" },
-  forgotText: { color: colors.label2, fontSize: font.base, fontWeight: "600" },
+  switchStrong: { color: colors.label, fontWeight: weight.medium },
+  forgotText: { color: colors.label2, fontSize: font.base, fontWeight: weight.medium },
 });

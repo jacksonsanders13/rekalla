@@ -4,7 +4,7 @@ import { Link } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "../../lib/session";
 import { useT } from "../../lib/i18n";
-import { colors, font, radius, spacing } from "../../lib/theme";
+import { colors, font, radius, spacing, weight } from "../../lib/theme";
 import { initials } from "../../lib/utils";
 import { useMyPatients, useConnectWithCode } from "../../hooks/data";
 import { Screen, Card, Button, Subtitle, SectionTitle, EmptyNote, Loading } from "../../components/ui";
@@ -105,9 +105,9 @@ export default function People() {
 }
 
 const styles = StyleSheet.create({
-  cardTitle: { color: colors.label, fontSize: font.xl, fontWeight: "700" },
+  cardTitle: { color: colors.label, fontSize: font.xl, fontWeight: weight.semibold },
   cardBody: { color: colors.label3, fontSize: font.base, lineHeight: 24 },
-  message: { fontSize: font.base, fontWeight: "600" },
+  message: { fontSize: font.base, fontWeight: weight.medium },
   codeInput: {
     minHeight: 56,
     borderRadius: radius.md,
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     color: colors.label,
     paddingHorizontal: spacing(4),
     fontSize: font.xl,
-    fontWeight: "700",
+    fontWeight: weight.medium,
     letterSpacing: 6,
     textAlign: "center",
   },
@@ -130,12 +130,12 @@ const styles = StyleSheet.create({
   avatar: {
     width: 52,
     height: 52,
-    borderRadius: 26,
+    borderRadius: radius.xl,
     backgroundColor: "rgba(191,90,242,0.2)",
     alignItems: "center",
     justifyContent: "center",
   },
-  avatarText: { color: colors.purple, fontSize: font.lg, fontWeight: "700" },
-  personName: { color: colors.label, fontSize: font.lg, fontWeight: "700" },
+  avatarText: { color: colors.purple, fontSize: font.lg, fontWeight: weight.medium },
+  personName: { color: colors.label, fontSize: font.lg, fontWeight: weight.semibold },
   personMeta: { color: colors.label3, fontSize: font.sm, marginTop: 2 },
 });

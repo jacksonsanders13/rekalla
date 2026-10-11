@@ -3,7 +3,7 @@ import { useSession } from "../lib/session";
 import { useT } from "../lib/i18n";
 import { usePendingCaregivers, useRespondToCaregiver } from "../hooks/data";
 import { Card, Button } from "./ui";
-import { colors, font, spacing } from "../lib/theme";
+import { colors, font, spacing, weight } from "../lib/theme";
 
 /**
  * Shows caregiver connection requests waiting for the patient's approval, with
@@ -58,7 +58,7 @@ export function PendingCaregivers() {
 
 const styles = StyleSheet.create({
   card: { borderWidth: 1, borderColor: colors.blue, gap: spacing(2) },
-  title: { color: colors.label, fontSize: font.lg, fontWeight: "700" },
+  title: { color: colors.label, fontSize: font.lg, fontWeight: weight.semibold },
   body: { color: colors.label2, fontSize: font.base, lineHeight: 23 },
   row: { flexDirection: "row", gap: spacing(3), marginTop: spacing(2) },
 });

@@ -4,7 +4,7 @@ import { supabase } from "../lib/supabase";
 import { useSession } from "../lib/session";
 import { useT } from "../lib/i18n";
 import { Card } from "./ui";
-import { colors, font, spacing } from "../lib/theme";
+import { colors, font, spacing, weight } from "../lib/theme";
 
 /**
  * Lets a Loved One turn self-management on or off. When on, they can add and
@@ -50,6 +50,6 @@ export function SelfManageToggle() {
 
 const styles = StyleSheet.create({
   row: { flexDirection: "row", alignItems: "center" },
-  title: { color: colors.label, fontSize: font.base, fontWeight: "700" },
+  title: { color: colors.label, fontSize: font.base, fontWeight: weight.semibold },
   body: { color: colors.label3, fontSize: font.sm, marginTop: 2, lineHeight: 20 },
 });

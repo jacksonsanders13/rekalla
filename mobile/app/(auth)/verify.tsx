@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { supabase } from "../../lib/supabase";
 import { useT } from "../../lib/i18n";
-import { colors, font, spacing } from "../../lib/theme";
+import { colors, font, spacing, weight } from "../../lib/theme";
 import { isInternalAuthError } from "../../lib/utils";
 import { Screen, Card, Button, Field, Title, Subtitle } from "../../components/ui";
 import { RekallaAvatar } from "../../components/rekalla-avatar";
@@ -191,9 +191,9 @@ export default function Verify() {
 
 const styles = StyleSheet.create({
   logoWrap: { alignItems: "center", gap: spacing(3), marginVertical: spacing(4) },
-  wordmark: { color: colors.label, fontSize: font.x2, fontWeight: "700" },
-  error: { color: colors.red, fontSize: font.base, fontWeight: "600" },
-  notice: { color: colors.green, fontSize: font.base, fontWeight: "600" },
+  wordmark: { color: colors.label, fontSize: font.x2, fontWeight: weight.bold },
+  error: { color: colors.red, fontSize: font.base, fontWeight: weight.semibold },
+  notice: { color: colors.green, fontSize: font.base, fontWeight: weight.medium },
   // Only the overrides — `Field` merges these over its base input style, which
   // is what supplies the white text, background, height and padding.
   codeInput: { fontSize: font.x2, letterSpacing: 6, textAlign: "center" },

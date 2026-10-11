@@ -1,18 +1,7 @@
 import type { ReactNode } from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  type PressableProps,
-  type TextInputProps,
-  type ViewStyle,
-} from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View, type PressableProps, type TextInputProps, type ViewStyle } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { colors, font, radius, spacing } from "../lib/theme";
+import { colors, font, radius, spacing, weight } from "../lib/theme";
 
 /** Full-screen dark scroll container with safe-area padding. */
 export function Screen({
@@ -70,9 +59,9 @@ export function Button({
   style?: ViewStyle;
 }) {
   const palette = {
-    primary: { bg: colors.label, fg: "#000000" },
+    primary: { bg: colors.fill, fg: colors.onFill },
     secondary: { bg: colors.elev2, fg: colors.label },
-    danger: { bg: colors.red, fg: "#ffffff" },
+    danger: { bg: colors.red, fg: colors.onFill },
     ghost: { bg: "transparent", fg: colors.label2 },
   }[variant];
 
@@ -138,14 +127,14 @@ const styles = StyleSheet.create({
   title: {
     color: colors.label,
     fontSize: font.x3,
-    fontWeight: "700",
+    fontWeight: weight.bold,
     letterSpacing: -0.5,
   },
   subtitle: { color: colors.label3, fontSize: font.base, lineHeight: 24 },
   sectionTitle: {
     color: colors.label,
     fontSize: font.xl,
-    fontWeight: "700",
+    fontWeight: weight.medium,
     marginTop: spacing(2),
   },
   card: {
@@ -161,8 +150,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: spacing(5),
   },
-  buttonLabel: { fontSize: font.base, fontWeight: "700" },
-  fieldLabel: { color: colors.label2, fontSize: font.base, fontWeight: "600" },
+  buttonLabel: { fontSize: font.base, fontWeight: weight.semibold },
+  fieldLabel: { color: colors.label2, fontSize: font.base, fontWeight: weight.semibold },
   input: {
     minHeight: 52,
     borderRadius: radius.md,

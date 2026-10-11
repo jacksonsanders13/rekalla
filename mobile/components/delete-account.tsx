@@ -3,7 +3,7 @@ import { StyleSheet, Text, TextInput } from "react-native";
 import { router } from "expo-router";
 import { supabase } from "../lib/supabase";
 import { useT } from "../lib/i18n";
-import { colors, font, radius, spacing } from "../lib/theme";
+import { colors, font, radius, spacing, weight } from "../lib/theme";
 import { Card, Button } from "./ui";
 
 /**
@@ -81,10 +81,10 @@ export function DeleteAccount() {
 }
 
 const styles = StyleSheet.create({
-  title: { color: colors.red, fontSize: font.xl, fontWeight: "700" },
+  title: { color: colors.red, fontSize: font.xl, fontWeight: weight.semibold },
   body: { color: colors.label2, fontSize: font.base, lineHeight: 24 },
-  strong: { fontWeight: "700", color: colors.label },
-  error: { color: colors.red, fontSize: font.base, fontWeight: "600" },
+  strong: { fontWeight: weight.medium, color: colors.label },
+  error: { color: colors.red, fontSize: font.base, fontWeight: weight.semibold },
   input: {
     minHeight: 52,
     borderRadius: radius.md,

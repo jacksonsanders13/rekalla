@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { colors, font, radius, spacing } from "../lib/theme";
+import { colors, font, radius, spacing, weight } from "../lib/theme";
 import { formatTimeOfDay } from "../lib/utils";
 import { useT } from "../lib/i18n";
 import type { ReminderOccurrence } from "../lib/types";
@@ -112,11 +112,11 @@ const styles = StyleSheet.create({
   icon: {
     width: 44,
     height: 44,
-    borderRadius: 14,
+    borderRadius: radius.md,
     alignItems: "center",
     justifyContent: "center",
   },
-  title: { color: colors.label, fontSize: font.lg, fontWeight: "700" },
+  title: { color: colors.label, fontSize: font.lg, fontWeight: weight.semibold },
   titleDone: { textDecorationLine: "line-through", color: colors.label3 },
   meta: { color: colors.label3, fontSize: font.sm, marginTop: 2 },
   description: { color: colors.label3, fontSize: font.sm, marginTop: spacing(1) },

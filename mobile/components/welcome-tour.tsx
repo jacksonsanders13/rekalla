@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSession } from "../lib/session";
 import { useT } from "../lib/i18n";
-import { colors, font, radius, spacing } from "../lib/theme";
+import { colors, font, radius, spacing, weight } from "../lib/theme";
 
 const VERSION = "v1";
 const keyFor = (userId: string) => `rekalla:welcome-seen:${VERSION}:${userId}`;
@@ -127,12 +127,12 @@ export function WelcomeTour({ enabled }: { enabled: boolean }) {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.base, padding: spacing(6) },
   skip: { alignSelf: "flex-end", minHeight: 44, justifyContent: "center", paddingHorizontal: spacing(2) },
-  skipText: { color: colors.label3, fontSize: font.base, fontWeight: "600" },
+  skipText: { color: colors.label3, fontSize: font.base, fontWeight: weight.medium },
   body: { flex: 1, alignItems: "center", justifyContent: "center", gap: spacing(5) },
   iconWrap: {
     width: 112,
     height: 112,
-    borderRadius: 32,
+    borderRadius: radius.xl,
     backgroundColor: colors.elev1,
     alignItems: "center",
     justifyContent: "center",
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.label,
     fontSize: font.x2,
-    fontWeight: "700",
+    fontWeight: weight.semibold,
     textAlign: "center",
     letterSpacing: -0.5,
   },
@@ -156,16 +156,16 @@ const styles = StyleSheet.create({
   dot: {
     width: 8,
     height: 8,
-    borderRadius: 4,
+    borderRadius: radius.full,
     backgroundColor: colors.elev3,
   },
-  dotActive: { backgroundColor: colors.label, width: 22 },
+  dotActive: { backgroundColor: colors.fill, width: 22 },
   button: {
     minHeight: 54,
     borderRadius: radius.md,
-    backgroundColor: colors.label,
+    backgroundColor: colors.fill,
     alignItems: "center",
     justifyContent: "center",
   },
-  buttonText: { color: "#000000", fontSize: font.base, fontWeight: "700" },
+  buttonText: { color: colors.onFill, fontSize: font.base, fontWeight: weight.semibold },
 });

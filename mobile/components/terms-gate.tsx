@@ -1,19 +1,10 @@
 import { useEffect, useState } from "react";
-import {
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  type NativeScrollEvent,
-  type NativeSyntheticEvent,
-} from "react-native";
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View, type NativeScrollEvent, type NativeSyntheticEvent } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSession } from "../lib/session";
 import { useT } from "../lib/i18n";
-import { colors, font, radius, spacing } from "../lib/theme";
+import { colors, font, radius, spacing, weight } from "../lib/theme";
 
 /**
  * Bump this version to force everyone to re-accept when the agreement changes
@@ -199,7 +190,7 @@ const styles = StyleSheet.create({
     paddingBottom: spacing(3),
     gap: spacing(2),
   },
-  title: { color: colors.label, fontSize: font.x2, fontWeight: "700" },
+  title: { color: colors.label, fontSize: font.x2, fontWeight: weight.semibold },
   subtitle: { color: colors.label3, fontSize: font.base, lineHeight: 23 },
   scroll: {
     flex: 1,
@@ -208,10 +199,10 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
   },
   scrollContent: { padding: spacing(5), gap: spacing(4) },
-  heading: { color: colors.label, fontSize: font.xl, fontWeight: "700" },
+  heading: { color: colors.label, fontSize: font.xl, fontWeight: weight.bold },
   meta: { color: colors.label4, fontSize: font.sm, marginTop: -spacing(2) },
   section: { gap: spacing(2) },
-  sectionHeading: { color: colors.label, fontSize: font.lg, fontWeight: "700" },
+  sectionHeading: { color: colors.label, fontSize: font.lg, fontWeight: weight.semibold },
   body: { color: colors.label2, fontSize: font.base, lineHeight: 25 },
   finePrint: {
     color: colors.label3,
@@ -222,7 +213,7 @@ const styles = StyleSheet.create({
   scrollHint: {
     color: colors.label3,
     fontSize: font.sm,
-    fontWeight: "600",
+    fontWeight: weight.medium,
     textAlign: "center",
     marginTop: spacing(2),
   },
@@ -230,12 +221,12 @@ const styles = StyleSheet.create({
   acceptButton: {
     minHeight: 54,
     borderRadius: radius.md,
-    backgroundColor: colors.label,
+    backgroundColor: colors.fill,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: spacing(5),
   },
   acceptButtonDisabled: { backgroundColor: colors.elev2 },
-  acceptLabel: { color: "#000000", fontSize: font.base, fontWeight: "700" },
+  acceptLabel: { color: colors.onFill, fontSize: font.base, fontWeight: weight.semibold },
   acceptLabelDisabled: { color: colors.label4 },
 });

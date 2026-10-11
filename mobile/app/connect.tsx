@@ -3,7 +3,7 @@ import { Stack } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "../lib/session";
 import { useT } from "../lib/i18n";
-import { colors, font, radius, spacing } from "../lib/theme";
+import { colors, font, radius, spacing, weight } from "../lib/theme";
 import { initials } from "../lib/utils";
 import { useMyCaregivers, useRespondToCaregiver } from "../hooks/data";
 import { PendingCaregivers } from "../components/pending-caregivers";
@@ -90,8 +90,8 @@ const styles = StyleSheet.create({
   codeLabel: { color: colors.label3, fontSize: font.base },
   code: {
     color: colors.label,
-    fontSize: 40,
-    fontWeight: "700",
+    fontSize: font.x3,
+    fontWeight: weight.medium,
     letterSpacing: 8,
   },
   codeHelp: {
@@ -111,13 +111,13 @@ const styles = StyleSheet.create({
   avatar: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: radius.full,
     backgroundColor: "rgba(10,132,255,0.2)",
     alignItems: "center",
     justifyContent: "center",
   },
-  avatarText: { color: colors.blue, fontSize: font.base, fontWeight: "700" },
-  name: { color: colors.label, fontSize: font.lg, fontWeight: "700", flex: 1 },
+  avatarText: { color: colors.blue, fontSize: font.base, fontWeight: weight.medium },
+  name: { color: colors.label, fontSize: font.lg, fontWeight: weight.semibold, flex: 1 },
   removeButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -127,5 +127,5 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     backgroundColor: "rgba(255,69,58,0.12)",
   },
-  removeText: { color: colors.red, fontSize: font.sm, fontWeight: "700" },
+  removeText: { color: colors.red, fontSize: font.sm, fontWeight: weight.medium },
 });

@@ -4,7 +4,7 @@ import { Stack, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "../../lib/session";
 import { useT, type TFunc } from "../../lib/i18n";
-import { colors, font, radius, spacing } from "../../lib/theme";
+import { colors, font, radius, spacing, weight } from "../../lib/theme";
 import { firstName, formatTimeOfDay, fromDateKey, toDateKey } from "../../lib/utils";
 import { pickPhoto, uploadVaultPhoto, type PickedPhoto } from "../../lib/photos";
 import { VaultPhoto } from "../../components/vault-photo";
@@ -815,19 +815,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  segmentActive: { backgroundColor: colors.label },
-  segmentText: { color: colors.label2, fontSize: font.sm, fontWeight: "600" },
-  segmentTextActive: { color: "#000" },
+  segmentActive: { backgroundColor: colors.fill },
+  segmentText: { color: colors.label2, fontSize: font.sm, fontWeight: weight.medium },
+  segmentTextActive: { color: colors.onFill },
   summaryLine: { color: colors.label3, fontSize: font.base },
-  error: { color: colors.red, fontSize: font.base, fontWeight: "600" },
+  error: { color: colors.red, fontSize: font.base, fontWeight: weight.semibold },
   editingLabel: {
     color: colors.label3,
     fontSize: font.sm,
-    fontWeight: "700",
+    fontWeight: weight.medium,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
-  fieldLabel: { color: colors.label2, fontSize: font.base, fontWeight: "600" },
+  fieldLabel: { color: colors.label2, fontSize: font.base, fontWeight: weight.semibold },
   input: {
     minHeight: 52,
     borderRadius: radius.md,
@@ -840,15 +840,15 @@ const styles = StyleSheet.create({
   chips: { flexDirection: "row", flexWrap: "wrap", gap: spacing(2) },
   chip: {
     minHeight: 44,
-    borderRadius: 22,
+    borderRadius: radius.full,
     paddingHorizontal: spacing(4),
     backgroundColor: colors.elev2,
     alignItems: "center",
     justifyContent: "center",
   },
-  chipSelected: { backgroundColor: colors.label },
-  chipText: { color: colors.label2, fontSize: font.sm, fontWeight: "600" },
-  chipTextSelected: { color: "#000" },
+  chipSelected: { backgroundColor: colors.fill },
+  chipText: { color: colors.label2, fontSize: font.sm, fontWeight: weight.medium },
+  chipTextSelected: { color: colors.onFill },
   row: {
     flexDirection: "row",
     alignItems: "center",
@@ -858,7 +858,7 @@ const styles = StyleSheet.create({
     padding: spacing(4),
   },
   rowActive: { borderWidth: 1, borderColor: colors.label3 },
-  rowTitle: { color: colors.label, fontSize: font.base, fontWeight: "700" },
+  rowTitle: { color: colors.label, fontSize: font.base, fontWeight: weight.semibold },
   rowMeta: { color: colors.label3, fontSize: font.sm, marginTop: 2 },
   rowPhoto: {
     width: 52,
@@ -880,7 +880,7 @@ const styles = StyleSheet.create({
   editButton: {
     width: 44,
     height: 44,
-    borderRadius: 14,
+    borderRadius: radius.md,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.elev2,
@@ -888,7 +888,7 @@ const styles = StyleSheet.create({
   deleteButton: {
     width: 44,
     height: 44,
-    borderRadius: 14,
+    borderRadius: radius.md,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "rgba(255,69,58,0.12)",

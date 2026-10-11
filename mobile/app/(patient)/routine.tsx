@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "../../lib/session";
 import { useT } from "../../lib/i18n";
-import { colors, font, radius, spacing } from "../../lib/theme";
+import { colors, font, radius, spacing, weight } from "../../lib/theme";
 import { toDateKey } from "../../lib/utils";
 import {
   useRoutineItems,
@@ -67,7 +67,7 @@ export default function Routine() {
                   >
                     <View style={[styles.check, done && styles.checkDone]}>
                       {done && (
-                        <Ionicons name="checkmark" size={22} color="#000" />
+                        <Ionicons name="checkmark" size={22} color={colors.onFill} />
                       )}
                     </View>
                     <View style={{ flex: 1 }}>
@@ -103,15 +103,15 @@ const styles = StyleSheet.create({
   check: {
     width: 44,
     height: 44,
-    borderRadius: 14,
+    borderRadius: radius.md,
     borderWidth: 2,
     borderColor: "rgba(255,255,255,0.25)",
     backgroundColor: colors.elev2,
     alignItems: "center",
     justifyContent: "center",
   },
-  checkDone: { backgroundColor: colors.label, borderColor: colors.label },
-  title: { color: colors.label, fontSize: font.lg, fontWeight: "600" },
+  checkDone: { backgroundColor: colors.fill, borderColor: colors.fill },
+  title: { color: colors.label, fontSize: font.lg, fontWeight: weight.semibold },
   titleDone: { textDecorationLine: "line-through", color: colors.label3 },
   time: { color: colors.label3, fontSize: font.sm, marginTop: 2 },
 });

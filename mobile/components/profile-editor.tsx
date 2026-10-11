@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { supabase } from "../lib/supabase";
 import { useSession } from "../lib/session";
 import { useT } from "../lib/i18n";
-import { colors, font, radius, spacing } from "../lib/theme";
+import { colors, font, radius, spacing, weight } from "../lib/theme";
 import { Card, Button } from "./ui";
 
 /** Shows the signed-in person's name + email, with inline editing of the name. */
@@ -84,10 +84,10 @@ export function ProfileEditor({ fallbackName }: { fallbackName: string }) {
 
 const styles = StyleSheet.create({
   row: { flexDirection: "row", alignItems: "center", gap: spacing(3) },
-  name: { color: colors.label, fontSize: font.xl, fontWeight: "700" },
+  name: { color: colors.label, fontSize: font.xl, fontWeight: weight.semibold },
   email: { color: colors.label3, fontSize: font.base },
-  fieldLabel: { color: colors.label2, fontSize: font.base, fontWeight: "600" },
-  error: { color: colors.red, fontSize: font.base, fontWeight: "600" },
+  fieldLabel: { color: colors.label2, fontSize: font.base, fontWeight: weight.semibold },
+  error: { color: colors.red, fontSize: font.base, fontWeight: weight.semibold },
   input: {
     minHeight: 52,
     borderRadius: radius.md,
@@ -104,5 +104,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  editText: { color: colors.label, fontSize: font.base, fontWeight: "700" },
+  editText: { color: colors.label, fontSize: font.base, fontWeight: weight.medium },
 });
