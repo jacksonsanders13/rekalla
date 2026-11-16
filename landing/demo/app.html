@@ -24,6 +24,7 @@
     --yellow: #ffd60a;
     --red: #ff453a;
   }
+  [hidden] { display: none !important; }
   html, body { height: 100%; }
   body {
     background: var(--base);
@@ -204,6 +205,12 @@
   .code-input { text-align: center; letter-spacing: 6px; font-size: 19px; font-weight: 600; min-height: 54px; margin-bottom: 12px; text-transform: uppercase; }
   .msg-ok { color: var(--green); font-size: 14px; font-weight: 600; margin-bottom: 12px; }
   .chev { color: var(--label4); flex: 0 0 auto; }
+  .big-code { font-size: 32px; font-weight: 600; letter-spacing: 8px; margin: 10px 0 12px; padding-left: 8px; }
+  .avatar.round { width: 48px; height: 48px; border-radius: 999px; background: rgba(10,132,255,0.2); color: var(--blue); font-size: 16px; }
+  .remove { flex: 0 0 auto; display: flex; align-items: center; gap: 4px; min-height: 44px; padding: 0 12px; border: 0; border-radius: 13px; background: rgba(255,69,58,0.12); color: var(--red); font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .legal { display: flex; align-items: center; justify-content: space-between; min-height: 46px; color: var(--label); font-size: 16px; text-decoration: none; }
+  .legal svg { color: var(--label3); }
+  .btn-danger { background: rgba(255,69,58,0.12); color: var(--red); flex: none; }
 
   /* something the other phone just changed */
   @keyframes flash { 0% { box-shadow: 0 0 0 2px #fff; } 100% { box-shadow: 0 0 0 2px rgba(255,255,255,0); } }
@@ -298,7 +305,7 @@
   };
 
   // ---- what only this phone knows ----------------------------------------
-  var state = { tab: "summary", vaultQuery: "" };
+  var state = { tab: "summary", sub: null, vaultQuery: "" };
   var cg = { view: "people", seg: "reminders", formOpen: false, error: "", code: "", codeMsg: "", form: null };
   function blankForm() {
     return { title: "", cat: "medication", time: "09:00", freq: "daily", period: "Morning", stepTime: "", kind: "family", name: "", desc: "", phone: "" };
@@ -380,6 +387,8 @@
       "chevron-forward": "<path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"48\" d=\"M184 112l144 144-144 144\"/>",
       "time": "<path d=\"M256 48C141.13 48 48 141.13 48 256s93.13 208 208 208 208-93.13 208-208S370.87 48 256 48zm96 240h-96a16 16 0 01-16-16V128a16 16 0 0132 0v128h80a16 16 0 010 32z\"/>"
   };
+  IONS["close"] = '<path d="M289.94 256l95-95A24 24 0 00351 127l-95 95-95-95a24 24 0 00-34 34l95 95-95 95a24 24 0 1034 34l95-95 95 95a24 24 0 0034-34z"/>';
+  IONS["open-outline"] = '<path d="M384 224v184a40 40 0 01-40 40H104a40 40 0 01-40-40V168a40 40 0 0140-40h167.48M336 64h112v112M224 288L440 72" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>';
   function ion(name, size, cls) {
     return '<svg' + (cls ? ' class="' + cls + '"' : '') + ' width="' + size + '" height="' + size + '" viewBox="0 0 512 512" fill="currentColor" aria-hidden="true">' + IONS[name] + '</svg>';
   }
@@ -473,8 +482,8 @@
         '<div><div class="kicker">' + todayLabel() + '</div>' +
         '<div class="greeting">' + greetingWord() + ',<br>' + PATIENT.first + '</div></div>' +
         '<div class="head-actions">' +
-          '<button class="icon-btn" data-toast="Saved to favorites" aria-label="Favorites">' + ICONS.heart + '</button>' +
-          '<button class="icon-btn" data-toast="Settings" aria-label="Settings">' + ICONS.gear + '</button>' +
+          '<button class="icon-btn" data-act="open-sub" data-id="connect" aria-label="Connected caregivers">' + ICONS.heart + '</button>' +
+          '<button class="icon-btn" data-act="open-sub" data-id="settings" aria-label="Account">' + ICONS.gear + '</button>' +
         '</div>' +
       '</div>' +
       '<div class="card rings-card">' + svg +
@@ -586,6 +595,49 @@
   }
 
   var pendingMood = null;
+
+  // The two screens behind the heart and the gear on Summary.
+  function subBar(title) {
+    topbar.innerHTML = '<button class="back" data-act="close-sub" aria-label="Back">' + ICONS.chevL + '</button>' +
+      '<div class="title">' + title + '</div>';
+  }
+  function renderConnect() {
+    subBar("Connected caregivers");
+    screen.innerHTML =
+      '<div class="lede" style="margin-top:6px">Share your code so a family member can help set up your reminders.</div>' +
+      '<div class="card" style="text-align:center">' +
+        '<div class="kicker">Your connect code</div>' +
+        '<div class="big-code">R7K2QX</div>' +
+        '<div class="row-sub">Give this code to the person who cares for you. They’ll type it into their own Rekalla account to connect.</div>' +
+      '</div>' +
+      '<div class="section-title">Connected caregivers</div>' +
+      '<div class="mrow">' +
+        '<div class="avatar round">SM</div>' +
+        '<div class="row-main"><div class="row-title">' + CAREGIVER.full + '</div></div>' +
+        '<button class="remove" data-toast="Removing is switched off in this preview">' + ion("close", 18) + 'Remove</button>' +
+      '</div>';
+  }
+  function renderSettings() {
+    subBar("Account");
+    screen.innerHTML =
+      '<div class="card" style="margin-top:8px">' +
+        '<div class="field-label">Your name</div>' +
+        '<input class="input" type="text" value="' + PATIENT.full + '" aria-label="Your name">' +
+        '<button class="btn btn-done btn-block" style="margin:14px 0 0" data-toast="Name changes are switched off in this preview">Save name</button>' +
+      '</div>' +
+      '<div class="card">' +
+        '<div class="field-label">Language</div>' +
+        '<div class="chips"><button class="chip on" aria-pressed="true">English</button>' +
+        '<button class="chip" aria-pressed="false" data-toast="This preview is in English only">Español</button></div>' +
+      '</div>' +
+      '<div class="card">' +
+        '<div class="field-label">Legal</div>' +
+        '<a class="legal" href="/terms" target="_blank" rel="noopener">Terms of Use' + ion("open-outline", 19) + '</a>' +
+        '<a class="legal" href="/privacy" target="_blank" rel="noopener">Privacy Policy' + ion("open-outline", 19) + '</a>' +
+      '</div>' +
+      '<button class="btn btn-ghost btn-block" data-toast="Sign out is switched off in this preview">Sign out</button>' +
+      '<button class="btn btn-block btn-danger" data-toast="Deleting is switched off in this preview">Delete my account</button>';
+  }
 
   // ---- caregiver's screens -----------------------------------------------
   function chips(name, options, value) {
@@ -764,11 +816,14 @@
       else if (state.tab === "account") renderAccount();
       else renderPeople();
       tabbar.hidden = cg.view === "manage";
+    } else if (state.sub) {
+      if (state.sub === "connect") renderConnect(); else renderSettings();
     } else if (state.tab === "summary") renderSummary();
     else if (state.tab === "reminders") renderReminders();
     else if (state.tab === "routine") renderRoutine();
     else if (state.tab === "vault") renderVault();
     else if (state.tab === "wellness") renderWellness();
+    if (ROLE === "patient") { topbar.hidden = !state.sub; tabbar.hidden = !!state.sub; }
     renderTabs();
     screen.scrollTop = keepScroll ? top : 0;
     showFlash();
@@ -781,6 +836,8 @@
       document.getElementById("cg-summary").textContent = summaryLine();
       document.getElementById("cg-lists").innerHTML = listsHtml();
       showFlash();
+    } else if (ROLE === "patient" && state.sub) {
+      flashId = null; // nothing on these screens comes from the other phone
     } else if (ROLE === "patient" && state.tab === "wellness" && pendingMood != null && shared.checkin == null) {
       flashId = null; // mid check-in, and nothing on this screen changed
     } else {
@@ -824,6 +881,8 @@
       if (save) { save.style.opacity = "1"; save.style.pointerEvents = "auto"; }
     }
     else if (act === "edit-checkin") { shared.checkin = null; publish(); render(); }
+    else if (act === "open-sub") { state.sub = id; render(); }
+    else if (act === "close-sub") { state.sub = null; render(); }
     // caregiver
     else if (act === "open-patient") { cg.view = "manage"; cg.seg = "reminders"; cg.formOpen = false; render(); }
     else if (act === "back") { cg.view = "people"; cg.formOpen = false; cg.error = ""; render(); }
