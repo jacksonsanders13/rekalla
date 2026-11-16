@@ -59,6 +59,7 @@
   .btn:hover { opacity: .85; }
   .btn-primary { background: var(--label); color: #000; }
   .btn-secondary { background: var(--elev2); color: var(--label); }
+  .nav-links a.demo-link { color: var(--label); font-weight: 700; }
   .nav-links .btn { min-height: 40px; padding: 0 18px; font-size: 15px; }
 
   /* ---- hero ---- */
@@ -156,6 +157,7 @@
     .feature li { text-align: left; }
     .steps, .principles { grid-template-columns: 1fr; }
     .nav-links a.link { display: none; }
+    .nav-links { gap: 16px; }
     section { padding: 52px 0; }
     .join-form { flex-direction: column; }
   }
@@ -191,39 +193,6 @@
   .faq summary::after { content: "+"; color: var(--label3); font-size: 24px; font-weight: 400; }
   .faq details[open] summary::after { content: "\2013"; }
   .faq details p { color: var(--label3); font-size: 16px; padding: 0 0 20px; margin: 0; }
-
-  /* ---- interactive demo ---- */
-  .demo { text-align: center; }
-  .demo-stage { display: flex; justify-content: center; align-items: flex-start; gap: 56px; margin-top: 8px; }
-  .demo-label { color: var(--label3); font-size: 15px; margin-bottom: 16px; }
-  .demo-label strong { display: block; color: var(--label); font-size: 19px; font-weight: 700; letter-spacing: -0.3px; }
-  .demo-phone {
-    width: min(330px, 84vw);
-    margin: 0 auto;
-    aspect-ratio: 9 / 19;
-    border-radius: 48px; padding: 11px;
-    background: #0a0a0b;
-    border: 1px solid rgba(255,255,255,0.14);
-    box-shadow: 0 30px 80px rgba(0,0,0,0.65), 0 0 0 1px rgba(0,0,0,0.8);
-  }
-  .demo-frame {
-    width: 100%; height: 100%;
-    border: 0; border-radius: 38px; display: block;
-    background: #000;
-  }
-  /* One phone at a time on a narrow screen. Both stay loaded, so they stay in step. */
-  .demo-switch { display: none; background: var(--elev1); border-radius: 14px; padding: 4px; max-width: 330px; margin: 0 auto 24px; }
-  .demo-switch button {
-    flex: 1 1 0; min-height: 44px; border: 0; border-radius: 11px; cursor: pointer;
-    background: none; color: var(--label3); font: inherit; font-size: 16px; font-weight: 700;
-  }
-  .demo-switch button.on { background: var(--elev3); color: var(--label); }
-  @media (max-width: 820px) {
-    .demo-switch { display: flex; }
-    .demo-stage[data-show="caregiver"] [data-side="patient"],
-    .demo-stage[data-show="patient"] [data-side="caregiver"] { display: none; }
-  }
-  .demo-hint { color: var(--label4); font-size: 14px; margin-top: 24px; }
 </style>
 </head>
 <body>
@@ -236,7 +205,7 @@
     </a>
     <div class="nav-links">
       <a class="link" href="#features">Features</a>
-      <a class="link" href="#demo">Demo</a>
+      <a class="demo-link" href="/demo">Demo</a>
       <a class="link" href="#how">How it works</a>
       <a class="link" href="/privacy">Privacy</a>
       <a class="btn btn-primary" href="#join">Get early access</a>
@@ -321,39 +290,6 @@
     </div>
     <div class="media"><div class="phone phone-sm"><img src="https://raw.githubusercontent.com/jacksonsanders13/rekalla/main/landing/img/routine.png" alt="The Routine screen: morning, afternoon, and evening steps with large checkboxes." width="480" height="1043"></div></div>
   </div>
-</section>
-
-<section id="demo" class="wrap demo">
-  <div class="section-head" style="margin-left:auto;margin-right:auto;">
-    <h2>Try both sides.</h2>
-    <p>
-      Two phones, connected the way a real family would be. Add a reminder on
-      Sarah&apos;s phone and it appears on her mother Rosa&apos;s. Tap Done on
-      Rosa&apos;s and Sarah sees it.
-    </p>
-  </div>
-
-  <div class="demo-switch" role="group" aria-label="Choose a phone to show">
-    <button type="button" class="on" data-show="caregiver" aria-pressed="true">Caregiver</button>
-    <button type="button" data-show="patient" aria-pressed="false">Loved one</button>
-  </div>
-
-  <div class="demo-stage" id="demo-stage" data-show="caregiver">
-    <div class="demo-side" data-side="caregiver">
-      <p class="demo-label"><strong>Caregiver</strong> Sarah, on her own phone</p>
-      <div class="demo-phone">
-        <iframe class="demo-frame" src="/demo/app.html?role=caregiver" title="Interactive preview of Rekalla for a caregiver"></iframe>
-      </div>
-    </div>
-    <div class="demo-side" data-side="patient">
-      <p class="demo-label"><strong>Loved one</strong> Rosa, at home</p>
-      <div class="demo-phone">
-        <iframe class="demo-frame" src="/demo/app.html?role=patient" title="Interactive preview of Rekalla for a loved one"></iframe>
-      </div>
-    </div>
-  </div>
-
-  <p class="demo-hint">A hands-on preview with sample data. Nothing you type here is saved or sent anywhere.</p>
 </section>
 
 <section id="how" class="wrap">
@@ -470,23 +406,6 @@
     </p>
   </div>
 </footer>
-
-<script>
-  // Demo: on a narrow screen, pick which of the two phones is showing.
-  (function () {
-    var stage = document.getElementById("demo-stage");
-    var buttons = document.querySelectorAll(".demo-switch button");
-    Array.prototype.forEach.call(buttons, function (btn) {
-      btn.addEventListener("click", function () {
-        stage.setAttribute("data-show", btn.getAttribute("data-show"));
-        Array.prototype.forEach.call(buttons, function (b) {
-          b.classList.toggle("on", b === btn);
-          b.setAttribute("aria-pressed", b === btn);
-        });
-      });
-    });
-  })();
-</script>
 
 <script>
   // Waitlist sign-up. Posts to a Supabase table that only allows inserts —
