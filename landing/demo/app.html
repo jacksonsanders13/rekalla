@@ -168,6 +168,47 @@
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+  /* ---- caregiver side ---- */
+  .topbar { flex: 0 0 auto; display: flex; align-items: center; min-height: 46px; padding: 0 10px; position: relative; }
+  .topbar .title { position: absolute; left: 0; right: 0; text-align: center; font-size: 18px; font-weight: 700; letter-spacing: -0.3px; pointer-events: none; }
+  .back { background: none; border: 0; color: var(--label); cursor: pointer; display: flex; align-items: center; gap: 2px; font-family: inherit; font-size: 16px; font-weight: 600; padding: 8px 6px; position: relative; z-index: 1; }
+  .seg { display: flex; background: var(--elev1); border-radius: 14px; padding: 4px; margin-bottom: 16px; }
+  .seg button { flex: 1 1 0; min-height: 40px; border: 0; border-radius: 11px; background: none; color: var(--label3); font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; padding: 0 4px; }
+  .seg button.on { background: var(--elev3); color: var(--label); }
+  .summary-line { color: var(--label2); font-size: 15px; margin: 0 2px 14px; }
+  .btn-block { width: 100%; margin-bottom: 14px; }
+  .field-label { font-size: 14px; font-weight: 700; color: var(--label2); margin: 14px 0 8px; }
+  .field-label:first-child { margin-top: 0; }
+  .input {
+    width: 100%; min-height: 48px; background: var(--elev2); border: 0; border-radius: 13px;
+    padding: 0 14px; color: var(--label); font-size: 16px; font-family: inherit; color-scheme: dark;
+  }
+  .input::placeholder { color: var(--label4); }
+  .input:focus { outline: 2px solid var(--label3); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { min-height: 38px; padding: 0 14px; border-radius: 999px; border: 0; background: var(--elev2); color: var(--label2); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .chip.on { background: var(--label); color: #000; }
+  .form-error { color: var(--red); font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+  .mrow { display: flex; align-items: center; gap: 12px; background: var(--elev1); border-radius: 18px; padding: 13px 14px; margin-bottom: 10px; }
+  .mrow .row-title { font-size: 16px; }
+  .status { flex: 0 0 auto; font-size: 13px; font-weight: 700; padding: 5px 10px; border-radius: 999px; background: var(--elev2); color: var(--label3); }
+  .status.done { background: rgba(48,209,88,0.16); color: var(--green); }
+  .status.snoozed { background: rgba(255,159,10,0.16); color: var(--orange); }
+  .del { flex: 0 0 auto; width: 40px; height: 40px; border-radius: 12px; border: 0; background: var(--elev2); color: var(--label3); cursor: pointer; display: grid; place-items: center; }
+  .del:active { color: var(--red); }
+  .person-row { display: flex; align-items: center; gap: 14px; background: var(--elev1); border-radius: 22px; padding: 16px; cursor: pointer; border: 0; width: 100%; text-align: left; font-family: inherit; color: inherit; }
+  .person-row:active { background: var(--elev2); }
+  .avatar { width: 52px; height: 52px; border-radius: 18px; background: rgba(191,90,242,0.2); color: var(--purple); display: grid; place-items: center; font-size: 18px; font-weight: 600; flex: 0 0 auto; }
+  .card-title { font-size: 19px; font-weight: 700; letter-spacing: -0.3px; }
+  .card-body { color: var(--label3); font-size: 15px; margin: 6px 0 14px; }
+  .code-input { text-align: center; letter-spacing: 6px; font-size: 19px; font-weight: 600; min-height: 54px; margin-bottom: 12px; text-transform: uppercase; }
+  .msg-ok { color: var(--green); font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+  .chev { color: var(--label4); flex: 0 0 auto; }
+
+  /* something the other phone just changed */
+  @keyframes flash { 0% { box-shadow: 0 0 0 2px #fff; } 100% { box-shadow: 0 0 0 2px rgba(255,255,255,0); } }
+  .flash { animation: flash 2.4s ease-out 1; }
+
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
@@ -183,6 +224,8 @@
     </span>
   </div>
 
+  <div class="topbar" id="topbar" hidden></div>
+
   <div class="screen" id="screen"></div>
 
   <nav class="tabbar" id="tabbar" aria-label="Sections"></nav>
@@ -193,38 +236,120 @@
 (function () {
   "use strict";
 
-  // ---- data / state ------------------------------------------------------
-  var state = {
-    tab: "summary",
+  // One file, two phones. ?role=caregiver shows the caregiver's app, anything
+  // else shows the loved one's. The landing page loads both side by side and
+  // they share their sample data over a BroadcastChannel, so a reminder added
+  // on one phone appears on the other. Nothing leaves the browser.
+  var ROLE = /[?&]role=caregiver\b/.test(location.search) ? "caregiver" : "patient";
+  var PATIENT = { full: "Rosa Martinez", first: "Rosa", initials: "RM" };
+  var CAREGIVER = { full: "Sarah Martinez", first: "Sarah" };
+
+  var REM_CATS = [
+    { value: "medication", label: "Medication", icon: "💊", tint: "#ff453a" },
+    { value: "meals", label: "Meals", icon: "🍽️", tint: "#ff9f0a" },
+    { value: "appointments", label: "Appointments", icon: "📅", tint: "#0a84ff" },
+    { value: "exercise", label: "Exercise", icon: "🚶", tint: "#30d158" },
+    { value: "family_calls", label: "Family calls", icon: "📞", tint: "#bf5af2" },
+    { value: "custom", label: "Personal", icon: "⭐", tint: "#ffd60a" }
+  ];
+  var FREQS = [
+    { value: "daily", label: "Every day" },
+    { value: "once", label: "Just once" },
+    { value: "weekly", label: "Weekly" }
+  ];
+  var PERIODS = [
+    { value: "Morning", label: "Morning" },
+    { value: "Afternoon", label: "Afternoon" },
+    { value: "Evening", label: "Evening" }
+  ];
+  var VAULT_KINDS = [
+    { value: "family", label: "Family", icon: "👥", tint: "#bf5af2" },
+    { value: "contact", label: "Contact", icon: "👤", tint: "#64d2ff" },
+    { value: "doctor", label: "Doctor", icon: "⚕️", tint: "#0a84ff" },
+    { value: "medication", label: "Medication", icon: "💊", tint: "#ff453a" },
+    { value: "important_date", label: "Important date", icon: "📅", tint: "#ffd60a" },
+    { value: "emergency", label: "Emergency", icon: "❗", tint: "#ff453a" },
+    { value: "note", label: "Note", icon: "📝", tint: "#ff9f0a" }
+  ];
+  function byValue(list, v) { return list.filter(function (o) { return o.value === v; })[0] || list[list.length - 1]; }
+
+  // ---- data both phones share --------------------------------------------
+  var shared = {
     reminders: [
-      { id: "r1", title: "Morning pills", time: "8:00 AM", cat: "Medication", icon: "💊", tint: "#ff453a", status: "done" },
-      { id: "r2", title: "Water the plants", time: "9:00 AM", cat: "Home", icon: "🪴", tint: "#30d158", status: "done" },
-      { id: "r3", title: "Lunch", time: "12:30 PM", cat: "Meals", icon: "🍽️", tint: "#ff9f0a", status: "done" },
-      { id: "r4", title: "Call Sarah", time: "9:30 PM", cat: "Family calls", icon: "📞", tint: "#bf5af2", status: "open" }
+      { id: "r1", title: "Morning pills", time: "08:00", cat: "medication", freq: "daily", status: "done" },
+      { id: "r2", title: "Water the plants", time: "09:00", cat: "custom", freq: "daily", icon: "🪴", tint: "#30d158", status: "done" },
+      { id: "r3", title: "Lunch", time: "12:30", cat: "meals", freq: "daily", status: "done" },
+      { id: "r4", title: "Call Sarah", time: "21:30", cat: "family_calls", freq: "daily", status: "open" }
     ],
     routine: [
-      { id: "m1", period: "Morning", title: "Brush teeth", time: "around 8:00 AM", done: true },
-      { id: "m2", period: "Morning", title: "Water the plants", time: "around 9:00 AM", done: true },
-      { id: "a1", period: "Afternoon", title: "Short walk outside", time: "around 2:00 PM", done: true },
-      { id: "e1", period: "Evening", title: "Take evening pills", time: "around 8:00 PM", done: false }
+      { id: "m1", period: "Morning", title: "Brush teeth", time: "08:00", done: true },
+      { id: "m2", period: "Morning", title: "Water the plants", time: "09:00", done: true },
+      { id: "a1", period: "Afternoon", title: "Short walk outside", time: "14:00", done: true },
+      { id: "e1", period: "Evening", title: "Take evening pills", time: "20:00", done: false }
     ],
     vault: [
-      { id: "v1", title: "Sarah (daughter)", sub: "Lives 10 minutes away", icon: "👥", tint: "#bf5af2", star: true, phone: "(555) 987-6543" },
-      { id: "v2", title: "Dr. Alvarez", sub: "Primary care · Tuesdays", icon: "⚕️", tint: "#0a84ff", star: true, phone: "(555) 123-4567" },
-      { id: "v3", title: "Metformin", sub: "500mg with breakfast and dinner", icon: "💊", tint: "#ff453a" },
-      { id: "v4", title: "Wedding anniversary", sub: "June 12th", icon: "📅", tint: "#ffd60a" },
-      { id: "v5", title: "Emergency contact", sub: "Sarah, then Dr. Alvarez", icon: "❗", tint: "#ff453a" }
+      { id: "v1", kind: "family", title: "Sarah (daughter)", sub: "Lives 10 minutes away", star: true, phone: "(555) 987-6543" },
+      { id: "v2", kind: "doctor", title: "Dr. Alvarez", sub: "Primary care · Tuesdays", star: true, phone: "(555) 123-4567" },
+      { id: "v3", kind: "medication", title: "Metformin", sub: "500mg with breakfast and dinner" },
+      { id: "v4", kind: "important_date", title: "Wedding anniversary", sub: "June 12th" },
+      { id: "v5", kind: "emergency", title: "Emergency contact", sub: "Sarah, then Dr. Alvarez" }
     ],
-    vaultQuery: "",
-    checkin: null // {mood: 1-5}
+    checkin: null // {mood: 0-4}
   };
+
+  // ---- what only this phone knows ----------------------------------------
+  var state = { tab: "summary", vaultQuery: "" };
+  var cg = { view: "people", seg: "reminders", formOpen: false, error: "", code: "", codeMsg: "", form: null };
+  function blankForm() {
+    return { title: "", cat: "medication", time: "09:00", freq: "daily", period: "Morning", stepTime: "", kind: "family", name: "", desc: "", phone: "" };
+  }
+  cg.form = blankForm();
 
   var MOODS = ["😞", "😕", "🙂", "😊", "😄"];
 
   // ---- derived -----------------------------------------------------------
-  function remindersDone() { return state.reminders.filter(function (r) { return r.status === "done"; }).length; }
-  function routineDone() { return state.routine.filter(function (r) { return r.done; }).length; }
-  function nextReminder() { return state.reminders.filter(function (r) { return r.status !== "done"; })[0] || null; }
+  function sortedReminders() {
+    return shared.reminders.slice().sort(function (a, b) { return a.time < b.time ? -1 : a.time > b.time ? 1 : 0; });
+  }
+  function remindersDone() { return shared.reminders.filter(function (r) { return r.status === "done"; }).length; }
+  function routineDone() { return shared.routine.filter(function (r) { return r.done; }).length; }
+  function nextReminder() { return sortedReminders().filter(function (r) { return r.status !== "done"; })[0] || null; }
+  function fmtTime(t) {
+    var m = /^(\d{1,2}):(\d{2})$/.exec(t || "");
+    if (!m) return "";
+    var h = parseInt(m[1], 10), ap = h >= 12 ? "PM" : "AM";
+    h = h % 12; if (h === 0) h = 12;
+    return h + ":" + m[2] + " " + ap;
+  }
+  function remLook(r) { var c = byValue(REM_CATS, r.cat); return { icon: r.icon || c.icon, tint: r.tint || c.tint, label: c.label }; }
+  function vaultLook(v) { return byValue(VAULT_KINDS, v.kind); }
+  function scheduleText(r) {
+    if (r.freq === "once") return "Today at " + fmtTime(r.time);
+    if (r.freq === "weekly") return "Every week at " + fmtTime(r.time);
+    return "Every day at " + fmtTime(r.time);
+  }
+
+  // ---- keeping the two phones in step ------------------------------------
+  var chan = null, dirty = false, flashId = null;
+  try { chan = new BroadcastChannel("rekalla-demo"); } catch (e) { chan = null; }
+  function publish(flash) {
+    dirty = true;
+    if (chan) chan.postMessage({ type: "state", shared: shared, flash: flash || null });
+  }
+  if (chan) {
+    chan.onmessage = function (ev) {
+      var m = ev.data || {};
+      if (m.type === "hello") { if (dirty) publish(); return; }
+      if (m.type !== "state") return;
+      shared = m.shared;
+      dirty = true;
+      flashId = m.flash;
+      refresh();
+    };
+    chan.postMessage({ type: "hello" });
+  }
+  var idCount = 0;
+  function newId() { idCount += 1; return ROLE.charAt(0) + Date.now().toString(36) + idCount; }
 
   // ---- icons -------------------------------------------------------------
   var ICONS = {
@@ -244,16 +369,25 @@
     wellness: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5 5 0 0 0-7.1 0L12 7.3l-1.7-1.7a5 5 0 0 0-7.1 7.1l1.7 1.7L12 21.4l7.1-7.1 1.7-1.7a5 5 0 0 0 0-7z"/></svg>'
   };
 
-  var TABS = [
-    { id: "summary", label: "Summary" },
-    { id: "reminders", label: "Reminders" },
-    { id: "routine", label: "Routine" },
-    { id: "vault", label: "Vault" },
-    { id: "wellness", label: "Wellness" }
-  ];
+  ICONS.chevL = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg>';
+  ICONS.chevR = '<svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>';
+  ICONS.trash = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
+  TAB_ICONS.people = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17.5" cy="9" r="2.6"/><path d="M17 14.2a5.2 5.2 0 0 1 4.6 5.3"/></svg>';
+  TAB_ICONS.account = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>';
+
+  var TABS = ROLE === "caregiver"
+    ? [{ id: "people", label: "People" }, { id: "account", label: "Account" }]
+    : [
+      { id: "summary", label: "Summary" },
+      { id: "reminders", label: "Reminders" },
+      { id: "routine", label: "Routine" },
+      { id: "vault", label: "Vault" },
+      { id: "wellness", label: "Wellness" }
+    ];
 
   // ---- helpers -----------------------------------------------------------
   var screen = document.getElementById("screen");
+  var topbar = document.getElementById("topbar");
   var tabbar = document.getElementById("tabbar");
   var toastEl = document.getElementById("toast");
   var toastTimer;
@@ -273,38 +407,46 @@
     return '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + color + '" stroke-opacity="0.22" stroke-width="' + w + '"/>' +
       '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + color + '" stroke-width="' + w + '" stroke-linecap="round" stroke-dasharray="' + c.toFixed(1) + '" stroke-dashoffset="' + off.toFixed(1) + '" transform="rotate(-90 ' + cx + ' ' + cy + ')"/>';
   }
+  function tile(look) {
+    return '<div class="tile" style="background:' + look.tint + '1f;color:' + look.tint + '">' + look.icon + '</div>';
+  }
 
-  // ---- screens -----------------------------------------------------------
+  // ---- loved one's screens -----------------------------------------------
   function renderSummary() {
-    var rDone = remindersDone(), rTot = state.reminders.length;
-    var oDone = routineDone(), oTot = state.routine.length;
-    var checkedIn = state.checkin != null;
+    var rDone = remindersDone(), rTot = shared.reminders.length;
+    var oDone = routineDone(), oTot = shared.routine.length;
+    var checkedIn = shared.checkin != null;
     var nxt = nextReminder();
 
     var svg = '<svg class="rings" width="140" height="140" viewBox="0 0 140 140" aria-hidden="true">' +
-      ring(70, 70, 56, 15, "var(--pink)", rDone / rTot) +
-      ring(70, 70, 39, 15, "var(--green)", oDone / oTot) +
+      ring(70, 70, 56, 15, "var(--pink)", rTot ? rDone / rTot : 0) +
+      ring(70, 70, 39, 15, "var(--green)", oTot ? oDone / oTot : 0) +
       ring(70, 70, 22, 15, "var(--blue)", checkedIn ? 1 : 0) +
       '</svg>';
 
-    var upNext = nxt
-      ? '<div class="card">' +
-          '<div class="row">' +
-            '<div class="tile" style="background:' + nxt.tint + '1f;color:' + nxt.tint + '">' + nxt.icon + '</div>' +
+    var upNext;
+    if (nxt) {
+      var look = remLook(nxt);
+      upNext = '<div class="card" data-item="' + nxt.id + '">' +
+          '<div class="row">' + tile(look) +
             '<div class="row-main"><div class="row-title">' + esc(nxt.title) + '</div>' +
-            '<div class="row-sub">' + esc(nxt.time) + ' · ' + esc(nxt.cat) + '</div></div>' +
+            '<div class="row-sub">' + fmtTime(nxt.time) + ' · ' + look.label + '</div></div>' +
           '</div>' +
           '<div class="btn-row">' +
             '<button class="btn btn-done" data-act="done" data-id="' + nxt.id + '">Done</button>' +
             '<button class="btn btn-snooze" data-act="snooze" data-id="' + nxt.id + '">Snooze</button>' +
           '</div>' +
-        '</div>'
-      : '<div class="card"><div class="done-badge">' + ICONS.checkGreen + ' All reminders done for today</div></div>';
+        '</div>';
+    } else if (rTot) {
+      upNext = '<div class="card"><div class="done-badge">' + ICONS.checkGreen + ' All reminders done for today</div></div>';
+    } else {
+      upNext = '<div class="card"><div class="row-sub">No reminders scheduled for today.</div></div>';
+    }
 
     screen.innerHTML =
       '<div class="head">' +
         '<div><div class="kicker">' + todayLabel() + '</div>' +
-        '<div class="greeting">' + greetingWord() + ',<br>Rosa</div></div>' +
+        '<div class="greeting">' + greetingWord() + ',<br>' + PATIENT.first + '</div></div>' +
         '<div class="head-actions">' +
           '<button class="icon-btn" data-toast="Saved to favorites" aria-label="Favorites">' + ICONS.heart + '</button>' +
           '<button class="icon-btn" data-toast="Settings" aria-label="Settings">' + ICONS.gear + '</button>' +
@@ -312,8 +454,8 @@
       '</div>' +
       '<div class="card rings-card">' + svg +
         '<div class="legend">' +
-          legRow("var(--pink)", "Reminders", rDone + " of " + rTot) +
-          legRow("var(--green)", "Routine", oDone + " of " + oTot) +
+          legRow("var(--pink)", "Reminders", rTot ? rDone + " of " + rTot : "None today") +
+          legRow("var(--green)", "Routine", oTot ? oDone + " of " + oTot : "Not set up") +
           legRow("var(--blue)", "Check-in", checkedIn ? "Done" : "Not yet") +
         '</div>' +
       '</div>' +
@@ -322,20 +464,21 @@
   }
 
   function legRow(color, label, val) {
-    var valColor = val === "Not yet" ? "var(--label3)" : color;
+    var muted = val === "Not yet" || val === "None today" || val === "Not set up";
     return '<div class="leg-row"><div class="leg-top"><span class="dot" style="background:' + color + '"></span>' + label + '</div>' +
-      '<div class="leg-val" style="color:' + valColor + '">' + val + '</div></div>';
+      '<div class="leg-val" style="color:' + (muted ? "var(--label3)" : color) + '">' + val + '</div></div>';
   }
 
   function renderReminders() {
     var html = '<div class="h1">Reminders</div><div class="lede">Tap Done when you’ve finished, or Snooze for later.</div>';
-    state.reminders.forEach(function (r) {
-      var done = r.status === "done", snoozed = r.status === "snoozed";
-      html += '<div class="card' + (done ? " completed" : "") + '">' +
-        '<div class="row">' +
-          '<div class="tile" style="background:' + r.tint + '1f;color:' + r.tint + '">' + r.icon + '</div>' +
+    var list = sortedReminders();
+    if (!list.length) html += '<div class="empty">No reminders scheduled for today.</div>';
+    list.forEach(function (r) {
+      var done = r.status === "done", snoozed = r.status === "snoozed", look = remLook(r);
+      html += '<div class="card' + (done ? " completed" : "") + '" data-item="' + r.id + '">' +
+        '<div class="row">' + tile(look) +
           '<div class="row-main"><div class="row-title">' + esc(r.title) + '</div>' +
-          '<div class="row-sub">' + esc(r.time) + ' · ' + esc(r.cat) + '</div></div>' +
+          '<div class="row-sub">' + fmtTime(r.time) + ' · ' + look.label + '</div></div>' +
         '</div>';
       if (done) {
         html += '<div class="done-badge">' + ICONS.checkGreen + ' Done ' +
@@ -356,15 +499,16 @@
 
   function renderRoutine() {
     var html = '<div class="h1">Routine</div><div class="lede">Check off each step as your day goes on.</div>';
-    ["Morning", "Afternoon", "Evening"].forEach(function (period) {
-      var items = state.routine.filter(function (i) { return i.period === period; });
+    if (!shared.routine.length) html += '<div class="empty">No routine set up yet.</div>';
+    PERIODS.forEach(function (p) {
+      var items = shared.routine.filter(function (i) { return i.period === p.value; });
       if (!items.length) return;
-      html += '<div class="section-title">' + period + '</div>';
+      html += '<div class="section-title">' + p.label + '</div>';
       items.forEach(function (i) {
-        html += '<div class="check-row' + (i.done ? " on" : "") + '" data-act="toggle" data-id="' + i.id + '" role="button" tabindex="0">' +
+        html += '<div class="check-row' + (i.done ? " on" : "") + '" data-act="toggle" data-id="' + i.id + '" data-item="' + i.id + '" role="button" tabindex="0">' +
           '<div class="checkbox' + (i.done ? " on" : "") + '">' + ICONS.check + '</div>' +
           '<div><div class="check-title">' + esc(i.title) + '</div>' +
-          '<div class="check-sub">' + esc(i.time) + '</div></div>' +
+          '<div class="check-sub">' + (i.time ? "around " + fmtTime(i.time) : "any time") + '</div></div>' +
         '</div>';
       });
     });
@@ -373,15 +517,14 @@
 
   function renderVault() {
     var q = state.vaultQuery.trim().toLowerCase();
-    var items = state.vault.filter(function (v) {
-      return !q || (v.title + " " + v.sub).toLowerCase().indexOf(q) !== -1;
+    var items = shared.vault.filter(function (v) {
+      return !q || (v.title + " " + (v.sub || "")).toLowerCase().indexOf(q) !== -1;
     });
     var list = items.map(function (v) {
-      return '<div class="vault-card">' +
-        '<div class="row">' +
-          '<div class="tile" style="background:' + v.tint + '1f;color:' + v.tint + '">' + v.icon + '</div>' +
+      return '<div class="vault-card" data-item="' + v.id + '">' +
+        '<div class="row">' + tile(vaultLook(v)) +
           '<div class="row-main"><div class="row-title">' + esc(v.title) + (v.star ? ' <span class="star">★</span>' : '') + '</div>' +
-          '<div class="row-sub">' + esc(v.sub) + '</div></div>' +
+          (v.sub ? '<div class="row-sub">' + esc(v.sub) + '</div>' : '') + '</div>' +
         '</div>' +
         (v.phone ? '<button class="vault-phone" data-toast="Calling ' + esc(v.phone) + '">' + ICONS.phone + esc(v.phone) + '</button>' : '') +
       '</div>';
@@ -390,7 +533,7 @@
       '<div class="h1">Vault</div>' +
       '<div class="lede">People, doctors, and important details — kept up to date by your caregiver.</div>' +
       '<input class="search" id="vault-search" type="text" placeholder="Search names, medications, notes…" value="' + esc(state.vaultQuery) + '">' +
-      (list || '<div class="empty">Nothing matches “' + esc(state.vaultQuery) + '”.</div>');
+      (list || '<div class="empty">' + (q ? 'Nothing matches “' + esc(state.vaultQuery) + '”.' : 'Nothing saved yet.') + '</div>');
     var s = document.getElementById("vault-search");
     if (s) {
       s.addEventListener("input", function () { state.vaultQuery = s.value; renderVault(); });
@@ -399,55 +542,254 @@
   }
 
   function renderWellness() {
-    var html = '<div class="h1">Daily check-in</div><div class="lede">A quick note on how today feels. Your caregiver can see the trend, never the details you keep private.</div>';
-    if (state.checkin != null) {
+    var html = '<div class="h1">Daily check-in</div><div class="lede">A quick note on how today feels.</div>';
+    if (shared.checkin != null) {
       html += '<div class="card well-done">' +
-        '<div class="big">' + MOODS[state.checkin.mood] + '</div>' +
+        '<div class="big">' + MOODS[shared.checkin.mood] + '</div>' +
         '<div class="done-badge" style="justify-content:center">' + ICONS.checkGreen + ' Checked in for today</div>' +
-        '<button class="btn btn-ghost" style="margin-top:16px" data-act="edit-checkin">Change my answer</button>' +
+        '<button class="btn btn-ghost" style="margin-top:16px;width:100%" data-act="edit-checkin">Change my answer</button>' +
       '</div>';
     } else {
       html += '<div class="well-label">How are you feeling today?</div><div class="mood-row">';
       MOODS.forEach(function (m, i) {
-        html += '<button class="mood" data-act="mood" data-mood="' + i + '" aria-label="Mood ' + (i + 1) + '">' + m + '</button>';
+        html += '<button class="mood" data-act="mood" data-mood="' + i + '" aria-label="Mood ' + (i + 1) + ' of 5">' + m + '</button>';
       });
       html += '</div>' +
-        '<button class="btn btn-done" id="save-checkin" style="width:100%;opacity:.5;pointer-events:none">Save check-in</button>';
+        '<button class="btn btn-done" id="save-checkin" style="width:100%;opacity:.5;pointer-events:none">Save today’s check-in</button>';
     }
     screen.innerHTML = html;
   }
 
   var pendingMood = null;
 
+  // ---- caregiver's screens -----------------------------------------------
+  function chips(name, options, value) {
+    return '<div class="chips">' + options.map(function (o) {
+      return '<button type="button" class="chip' + (o.value === value ? " on" : "") + '" data-chip="' + name + '" data-value="' + o.value + '" aria-pressed="' + (o.value === value) + '">' + o.label + '</button>';
+    }).join("") + '</div>';
+  }
+  function field(label, name, placeholder, type) {
+    return '<div class="field-label">' + label + '</div>' +
+      '<input class="input" data-field="' + name + '" type="' + (type || "text") + '" placeholder="' + esc(placeholder || "") + '" value="' + esc(cg.form[name]) + '">';
+  }
+  function delBtn(kind, id, title) {
+    return '<button class="del" data-act="del-' + kind + '" data-id="' + id + '" aria-label="Delete ' + esc(title) + '">' + ICONS.trash + '</button>';
+  }
+
+  function renderPeople() {
+    topbar.innerHTML = '<div class="title">People</div>';
+    screen.innerHTML =
+      '<div class="lede" style="margin-top:6px">Everyone you help care for, in one place.</div>' +
+      '<div class="card">' +
+        '<div class="card-title">Connect to someone</div>' +
+        '<div class="card-body">Ask them to read you the six-character code from their app. They approve the request on their own phone.</div>' +
+        (cg.codeMsg ? '<div class="msg-ok">' + esc(cg.codeMsg) + '</div>' : '') +
+        '<input class="input code-input" id="code" maxlength="6" placeholder="R7K2QX" aria-label="Connect code" value="' + esc(cg.code) + '">' +
+        '<button class="btn btn-done btn-block" style="margin-bottom:0" data-act="connect">Connect</button>' +
+      '</div>' +
+      '<div class="section-title">People I care for</div>' +
+      '<button class="person-row" data-act="open-patient">' +
+        '<div class="avatar">' + PATIENT.initials + '</div>' +
+        '<div class="row-main"><div class="row-title">' + PATIENT.full + '</div>' +
+        '<div class="row-sub">Reminders, routine &amp; memory bank</div></div>' + ICONS.chevR +
+      '</button>';
+  }
+
+  function renderAccount() {
+    topbar.innerHTML = '<div class="title">Account</div>';
+    screen.innerHTML =
+      '<div class="card" style="margin-top:8px"><div class="row">' +
+        '<div class="avatar" style="background:rgba(10,132,255,0.2);color:var(--blue)">SM</div>' +
+        '<div class="row-main"><div class="row-title">' + CAREGIVER.full + '</div><div class="row-sub">Caregiver account</div></div>' +
+      '</div></div>' +
+      '<div class="card"><div class="row-title">Language</div><div class="row-sub">English · Español</div></div>' +
+      '<button class="btn btn-ghost btn-block" data-toast="Sign out is switched off in this preview">Sign out</button>';
+  }
+
+  function formHtml() {
+    if (!cg.formOpen) return "";
+    var err = cg.error ? '<div class="form-error">' + esc(cg.error) + '</div>' : "";
+    if (cg.seg === "reminders") {
+      return '<div class="card">' + err +
+        field("What should we remind " + PATIENT.first + " about?", "title", "e.g. Call the dentist") +
+        '<div class="field-label">Category</div>' + chips("cat", REM_CATS, cg.form.cat) +
+        field("At what time?", "time", "", "time") +
+        '<div class="field-label">How often?</div>' + chips("freq", FREQS, cg.form.freq) +
+        '<button class="btn btn-done btn-block" style="margin:18px 0 0" data-act="save">Add reminder</button></div>';
+    }
+    if (cg.seg === "routine") {
+      return '<div class="card">' + err +
+        field("What’s the step?", "title", "e.g. Brush teeth") +
+        '<div class="field-label">Time of day</div>' + chips("period", PERIODS, cg.form.period) +
+        field("Around what time? (optional)", "stepTime", "", "time") +
+        '<button class="btn btn-done btn-block" style="margin:18px 0 0" data-act="save">Add step</button></div>';
+    }
+    return '<div class="card">' + err +
+      '<div class="field-label">What kind of thing is this?</div>' + chips("kind", VAULT_KINDS, cg.form.kind) +
+      field("Name", "name", "e.g. Dr. Alvarez, or Sarah (daughter)") +
+      field("Short description (optional)", "desc", "e.g. Primary care doctor") +
+      field("Phone number (optional)", "phone", "e.g. (555) 123-4567", "tel") +
+      '<button class="btn btn-done btn-block" style="margin:18px 0 0" data-act="save">Save to memory bank</button></div>';
+  }
+
+  function listsHtml() {
+    var html = "";
+    if (cg.seg === "reminders") {
+      var list = sortedReminders();
+      html += '<div class="section-title">Today</div>';
+      if (!list.length) html += '<div class="empty">Nothing scheduled for ' + PATIENT.first + ' today.</div>';
+      list.forEach(function (r) {
+        var look = remLook(r);
+        var st = r.status === "done" ? ["done", "Done"] : r.status === "snoozed" ? ["snoozed", "Snoozed"] : ["", "Not yet"];
+        html += '<div class="mrow" data-item="' + r.id + '">' + tile(look) +
+          '<div class="row-main"><div class="row-title">' + esc(r.title) + '</div>' +
+          '<div class="row-sub">' + fmtTime(r.time) + ' · ' + look.label + '</div></div>' +
+          '<span class="status ' + st[0] + '">' + st[1] + '</span></div>';
+      });
+      html += '<div class="section-title">All reminders</div>';
+      if (!list.length) html += '<div class="empty">No reminders yet — add the first one above.</div>';
+      list.forEach(function (r) {
+        html += '<div class="mrow"><div class="row-main"><div class="row-title">' + esc(r.title) + '</div>' +
+          '<div class="row-sub">' + scheduleText(r) + '</div></div>' + delBtn("reminder", r.id, r.title) + '</div>';
+      });
+    } else if (cg.seg === "routine") {
+      if (!shared.routine.length) html += '<div class="empty">No routine yet — add ' + PATIENT.first + '’s first step above.</div>';
+      PERIODS.forEach(function (p) {
+        var items = shared.routine.filter(function (i) { return i.period === p.value; });
+        if (!items.length) return;
+        html += '<div class="section-title">' + p.label + '</div>';
+        items.forEach(function (i) {
+          html += '<div class="mrow" data-item="' + i.id + '"><div class="row-main"><div class="row-title">' + esc(i.title) + '</div>' +
+            '<div class="row-sub">' + (i.time ? "around " + fmtTime(i.time) : "any time") + '</div></div>' +
+            (i.done ? '<span class="status done">Done</span>' : '') + delBtn("routine", i.id, i.title) + '</div>';
+        });
+      });
+    } else {
+      if (!shared.vault.length) html += '<div class="empty">Nothing saved yet — add the first person or detail above.</div>';
+      shared.vault.forEach(function (v) {
+        var look = vaultLook(v);
+        html += '<div class="mrow" data-item="' + v.id + '">' + tile(look) +
+          '<div class="row-main"><div class="row-title">' + esc(v.title) + '</div>' +
+          '<div class="row-sub">' + esc([look.label, v.sub].filter(Boolean).join(" · ")) + '</div></div>' +
+          delBtn("vault", v.id, v.title) + '</div>';
+      });
+    }
+    return html;
+  }
+
+  function summaryLine() {
+    if (cg.seg === "reminders") {
+      var tot = shared.reminders.length;
+      return tot ? remindersDone() + " of " + tot + " reminders done today." : "No reminders scheduled today.";
+    }
+    if (cg.seg === "routine") return "Steps for " + PATIENT.first + "’s day — they check these off themselves.";
+    return "People, doctors, and details " + PATIENT.first + " can look up any time.";
+  }
+  function addLabel() {
+    if (cg.formOpen) return "Cancel";
+    if (cg.seg === "reminders") return "Add reminder for " + PATIENT.first;
+    if (cg.seg === "routine") return "Add a routine step for " + PATIENT.first;
+    return "Add to " + PATIENT.first + "’s memory bank";
+  }
+
+  function renderManage() {
+    topbar.innerHTML = '<button class="back" data-act="back" aria-label="Back to People">' + ICONS.chevL + '</button>' +
+      '<div class="title">' + PATIENT.full + '</div>';
+    var segs = [["reminders", "Reminders"], ["routine", "Routine"], ["vault", "Memory"]];
+    screen.innerHTML =
+      '<div class="seg" style="margin-top:6px">' + segs.map(function (s) {
+        return '<button class="' + (cg.seg === s[0] ? "on" : "") + '" data-seg="' + s[0] + '" aria-pressed="' + (cg.seg === s[0]) + '">' + s[1] + '</button>';
+      }).join("") + '</div>' +
+      '<div class="summary-line" id="cg-summary">' + summaryLine() + '</div>' +
+      '<button class="btn ' + (cg.formOpen ? "btn-snooze" : "btn-done") + ' btn-block" data-act="toggle-form">' + addLabel() + '</button>' +
+      formHtml() +
+      '<div id="cg-lists">' + listsHtml() + '</div>';
+  }
+
+  function saveForm() {
+    var f = cg.form, id = newId();
+    if (cg.seg === "reminders") {
+      if (!f.title.trim()) return fail("Please give the reminder a name.");
+      if (!fmtTime(f.time)) return fail("Please choose a time.");
+      shared.reminders.push({ id: id, title: f.title.trim(), time: f.time, cat: f.cat, freq: f.freq, status: "open" });
+      toast("Reminder added");
+    } else if (cg.seg === "routine") {
+      if (!f.title.trim()) return fail("Please name this step.");
+      shared.routine.push({ id: id, period: f.period, title: f.title.trim(), time: f.stepTime, done: false });
+      toast("Step added");
+    } else {
+      if (!f.name.trim()) return fail("Please give this a name.");
+      shared.vault.push({ id: id, kind: f.kind, title: f.name.trim(), sub: f.desc.trim(), phone: f.phone.trim() });
+      toast("Saved to memory bank");
+    }
+    cg.formOpen = false; cg.error = ""; cg.form = blankForm();
+    publish(id);
+    flashId = id;
+    render(true);
+  }
+  function fail(msg) { cg.error = msg; render(true); }
+
   // ---- render dispatch ---------------------------------------------------
-  function render() {
+  function render(keepScroll) {
+    var top = screen.scrollTop;
     pendingMood = null;
-    if (state.tab === "summary") renderSummary();
+    if (ROLE === "caregiver") {
+      topbar.hidden = false;
+      if (cg.view === "manage") renderManage();
+      else if (state.tab === "account") renderAccount();
+      else renderPeople();
+      tabbar.hidden = cg.view === "manage";
+    } else if (state.tab === "summary") renderSummary();
     else if (state.tab === "reminders") renderReminders();
     else if (state.tab === "routine") renderRoutine();
     else if (state.tab === "vault") renderVault();
     else if (state.tab === "wellness") renderWellness();
     renderTabs();
-    screen.scrollTop = 0;
+    screen.scrollTop = keepScroll ? top : 0;
+    showFlash();
+  }
+
+  // The other phone changed something. Redraw without disturbing a form
+  // that is half filled in.
+  function refresh() {
+    if (ROLE === "caregiver" && cg.view === "manage") {
+      document.getElementById("cg-summary").textContent = summaryLine();
+      document.getElementById("cg-lists").innerHTML = listsHtml();
+      showFlash();
+    } else if (ROLE === "patient" && state.tab === "wellness" && pendingMood != null && shared.checkin == null) {
+      flashId = null; // mid check-in, and nothing on this screen changed
+    } else {
+      render(true);
+    }
+  }
+
+  function showFlash() {
+    if (!flashId) return;
+    var el = screen.querySelector('[data-item="' + flashId + '"]');
+    flashId = null;
+    if (!el) return;
+    el.classList.add("flash");
+    if (el.scrollIntoView) el.scrollIntoView({ block: "nearest" });
   }
 
   function renderTabs() {
+    var current = ROLE === "caregiver" && state.tab !== "account" ? "people" : state.tab;
     tabbar.innerHTML = TABS.map(function (t) {
-      return '<button class="tab' + (state.tab === t.id ? " on" : "") + '" data-tab="' + t.id + '" aria-current="' + (state.tab === t.id) + '">' +
+      return '<button class="tab' + (current === t.id ? " on" : "") + '" data-tab="' + t.id + '" aria-current="' + (current === t.id) + '">' +
         TAB_ICONS[t.id] + '<span class="label">' + t.label + '</span></button>';
     }).join("");
   }
 
   // ---- interactions ------------------------------------------------------
-  function findReminder(id) { return state.reminders.filter(function (r) { return r.id === id; })[0]; }
-  function findRoutine(id) { return state.routine.filter(function (r) { return r.id === id; })[0]; }
+  function find(list, id) { return list.filter(function (r) { return r.id === id; })[0]; }
+  function removeFrom(key, id) { shared[key] = shared[key].filter(function (r) { return r.id !== id; }); }
 
   function handleAct(act, el) {
     var id = el.getAttribute("data-id");
-    if (act === "done") { var r = findReminder(id); if (r) { r.status = "done"; toast("Nice — marked done"); render(); } }
-    else if (act === "snooze") { var s = findReminder(id); if (s) { s.status = "snoozed"; toast("Snoozed for 10 minutes"); render(); } }
-    else if (act === "reopen") { var o = findReminder(id); if (o) { o.status = "open"; render(); } }
-    else if (act === "toggle") { var it = findRoutine(id); if (it) { it.done = !it.done; render(); } }
+    if (act === "done") { var r = find(shared.reminders, id); if (r) { r.status = "done"; toast("Nice — marked done"); publish(id); render(true); } }
+    else if (act === "snooze") { var s = find(shared.reminders, id); if (s) { s.status = "snoozed"; toast("Snoozed for 10 minutes"); publish(id); render(true); } }
+    else if (act === "reopen") { var o = find(shared.reminders, id); if (o) { o.status = "open"; publish(id); render(true); } }
+    else if (act === "toggle") { var it = find(shared.routine, id); if (it) { it.done = !it.done; publish(id); render(true); } }
     else if (act === "mood") {
       pendingMood = parseInt(el.getAttribute("data-mood"), 10);
       Array.prototype.forEach.call(document.querySelectorAll(".mood"), function (m) {
@@ -456,15 +798,48 @@
       var save = document.getElementById("save-checkin");
       if (save) { save.style.opacity = "1"; save.style.pointerEvents = "auto"; }
     }
-    else if (act === "edit-checkin") { state.checkin = null; render(); }
+    else if (act === "edit-checkin") { shared.checkin = null; publish(); render(); }
+    // caregiver
+    else if (act === "open-patient") { cg.view = "manage"; cg.seg = "reminders"; cg.formOpen = false; render(); }
+    else if (act === "back") { cg.view = "people"; cg.formOpen = false; cg.error = ""; render(); }
+    else if (act === "toggle-form") { cg.formOpen = !cg.formOpen; cg.error = ""; if (!cg.formOpen) cg.form = blankForm(); render(true); focusFirstField(); }
+    else if (act === "save") { saveForm(); }
+    else if (act === "connect") {
+      var code = (document.getElementById("code").value || "").trim().toUpperCase();
+      if (!code) return;
+      cg.code = "";
+      cg.codeMsg = "In the real app, this sends a request that they approve on their own phone. " + PATIENT.first + " is already connected in this preview.";
+      render(true);
+    }
+    else if (act === "del-reminder") { removeFrom("reminders", id); toast("Reminder removed"); publish(); render(true); }
+    else if (act === "del-routine") { removeFrom("routine", id); toast("Step removed"); publish(); render(true); }
+    else if (act === "del-vault") { removeFrom("vault", id); toast("Removed from memory bank"); publish(); render(true); }
+  }
+  function focusFirstField() {
+    var first = cg.formOpen && screen.querySelector(".input[data-field]");
+    if (first) first.focus();
   }
 
   document.addEventListener("click", function (e) {
     var tab = e.target.closest("[data-tab]");
-    if (tab) { state.tab = tab.getAttribute("data-tab"); render(); return; }
+    if (tab) { state.tab = tab.getAttribute("data-tab"); cg.codeMsg = ""; render(); return; }
+
+    var seg = e.target.closest("[data-seg]");
+    if (seg) { cg.seg = seg.getAttribute("data-seg"); cg.formOpen = false; cg.error = ""; cg.form = blankForm(); render(); return; }
+
+    var chip = e.target.closest("[data-chip]");
+    if (chip) {
+      var name = chip.getAttribute("data-chip");
+      cg.form[name] = chip.getAttribute("data-value");
+      Array.prototype.forEach.call(screen.querySelectorAll('[data-chip="' + name + '"]'), function (c) {
+        c.classList.toggle("on", c === chip);
+        c.setAttribute("aria-pressed", c === chip);
+      });
+      return;
+    }
 
     var save = e.target.closest("#save-checkin");
-    if (save && pendingMood != null) { state.checkin = { mood: pendingMood }; toast("Thanks for checking in"); render(); return; }
+    if (save && pendingMood != null) { shared.checkin = { mood: pendingMood }; toast("Saved. Have a lovely day!"); publish(); render(); return; }
 
     var toastBtn = e.target.closest("[data-toast]");
     if (toastBtn) { toast(toastBtn.getAttribute("data-toast")); return; }
@@ -473,10 +848,20 @@
     if (actEl) { handleAct(actEl.getAttribute("data-act"), actEl); }
   });
 
+  document.addEventListener("input", function (e) {
+    var name = e.target.getAttribute && e.target.getAttribute("data-field");
+    if (name) cg.form[name] = e.target.value;
+  });
+
   document.addEventListener("keydown", function (e) {
     if ((e.key === "Enter" || e.key === " ") && e.target.classList && e.target.classList.contains("check-row")) {
       e.preventDefault();
       handleAct("toggle", e.target);
+    } else if (e.key === "Enter" && e.target.getAttribute && e.target.getAttribute("data-field")) {
+      e.preventDefault();
+      saveForm();
+    } else if (e.key === "Enter" && e.target.id === "code") {
+      handleAct("connect", e.target);
     }
   });
 
@@ -501,6 +886,7 @@
   tickClock();
   setInterval(tickClock, 15000);
 
+  if (ROLE === "caregiver") state.tab = "people";
   render();
 })();
 </script>
